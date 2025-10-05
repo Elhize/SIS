@@ -6,7 +6,7 @@ import EaristLogoBW from "../assets/earistblackandwhite.png";
 import "../styles/Print.css";
 
 // ✅ Accept personId as a prop
-const ExamPermit = ({ personId }) => {
+const RegistrarExamPermit = ({ personId }) => {
     const divToPrintRef = useRef(null);
     const [person, setPerson] = useState(null);
     const [examSchedule, setExamSchedule] = useState(null);
@@ -476,7 +476,7 @@ const ExamPermit = ({ personId }) => {
                                             style={{
                                                 width: "4.5cm", // same as profile box
                                                 height: "4.5cm",
-
+                                             
                                                 borderRadius: "4px",
                                                 background: "#fff",       // ✅ white background
                                                 display: "flex",
@@ -512,7 +512,6 @@ const ExamPermit = ({ personId }) => {
 
                                 </div>
                             </td>
-
                         </tr>
 
                         {/* Scheduled By */}
@@ -533,10 +532,7 @@ const ExamPermit = ({ personId }) => {
                                     </span>
                                 </div>
                             </td>
-
                         </tr>
-
-
 
                         {/* Date */}
                         <tr>
@@ -561,27 +557,6 @@ const ExamPermit = ({ personId }) => {
                                     </span>
                                 </div>
                             </td>
-
-
-                        </tr>
-                        <tr>
-                            <td colSpan={40} style={{ width: "60%", textAlign: "center", lineHeight: "1.4" }}>
-
-                                <div style={{ marginTop: "10px" }}>
-                                    <b style={{ fontSize: "24px", fontFamily: "Arial",  }}>COLLEGE APPROVAL</b>
-                                </div>
-                            </td>
-
-                        </tr>
-
-                              <tr>
-                            <td colSpan={40} style={{ width: "60%", textAlign: "center", lineHeight: "1.4" }}>
-
-                                <div style={{ marginTop: "30px" }}>
-                                    <b style={{ fontSize: "24px", fontFamily: "Arial",  }}>CLINIC APPROVAL</b>
-                                </div>
-                            </td>
-
                         </tr>
                     </tbody>
                 </table>
@@ -596,14 +571,11 @@ const ExamPermit = ({ personId }) => {
                         margin: "0 auto", // Center the table inside the form
                         textAlign: "center",
                         tableLayout: "fixed",
-                        border: "1px solid black",
-                        marginTop: "50px"
+                        border: "1px solid black"
                     }}
                 >
                     <tbody>
-
                         <tr>
-
                             <td
                                 colSpan={40}
                                 style={{
@@ -625,24 +597,6 @@ const ExamPermit = ({ personId }) => {
                                     <div>(no sleeveless or shorts) at least 1 hour before the examination</div>
                                 </strong>
                             </td>
-
-                        </tr>
-
-                    </tbody>
-                </table>
-
-                <table
-                    style={{
-                        borderCollapse: "collapse",
-                        width: "8in",
-                        margin: "0 auto",
-                        textAlign: "center",
-                    }}
-                >
-                    <tbody>
-                        <tr>
-
-
                         </tr>
                     </tbody>
                 </table>
@@ -652,4 +606,4 @@ const ExamPermit = ({ personId }) => {
     );
 };
 
-export default ExamPermit;
+export default RegistrarExamPermit;

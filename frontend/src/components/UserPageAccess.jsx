@@ -15,8 +15,12 @@ import {
     createTheme,
     AppBar,
     Toolbar,
-    IconButton
+    IconButton,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FaRegMoon, FaMoon } from "react-icons/fa";
 
 const UserPageAccess = () => {
@@ -41,7 +45,6 @@ const UserPageAccess = () => {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
     };
 
-    // 🔎 Search user and load their access
     const handleSearchUser = async (e) => {
         e.preventDefault();
         if (!userID) return;
@@ -56,7 +59,6 @@ const UserPageAccess = () => {
                 return acc;
             }, {});
 
-            // default deny for any missing pages
             allPages.forEach((page) => {
                 if (accessMap[page.id] === undefined) {
                     accessMap[page.id] = false;
@@ -76,27 +78,23 @@ const UserPageAccess = () => {
     };
 
     useEffect(() => {
-    
         const storedUser = localStorage.getItem("email");
         const storedRole = localStorage.getItem("role");
         const storedID = localStorage.getItem("person_id");
 
         if (storedUser && storedRole && storedID) {
-        setUser(storedUser);
-        setUserRole(storedRole);
-        setUserID(storedID);
+            setUser(storedUser);
+            setUserRole(storedRole);
+            setUserID(storedID);
 
-        if (storedRole === "registrar") {
-            
+            if (storedRole !== "registrar") {
+                window.location.href = "/login";
+            }
         } else {
             window.location.href = "/login";
         }
-        } else {
-        window.location.href = "/login";
-        }
     }, []);
 
-    // 🔄 Refresh pages & access
     const fetchPages = async () => {
         try {
             const { data: allPages } = await axios.get('http://localhost:5000/api/pages');
@@ -120,143 +118,178 @@ const UserPageAccess = () => {
         }
     };
 
-
-    // ✅ Toggle access on/off
     const handleToggleChange = async (pageId, hasAccess) => {
-        const updatedAccess = !hasAccess; // true = allow, false = deny
+        const updatedAccess = !hasAccess;
         try {
-            const res = await axios.put(`http://localhost:5000/api/page_access/${userID}/${pageId}`, {
-                page_privilege: updatedAccess ? 0 : 1, // ✅ ON = 0 (allow), OFF = 1 (deny)
+            await axios.put(`http://localhost:5000/api/page_access/${userID}/${pageId}`, {
+                page_privilege: updatedAccess ? 0 : 1,
             });
-            console.log("Toggle response:", res.data);
             await fetchPages();
         } catch (error) {
             console.error('Error updating page access:', error);
         }
     };
 
-    const containerStyle = {
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        padding: '40px 20px',
-        boxSizing: 'border-box',
-    };
-
-    const formStyle = {
-        width: '100%',
-        maxWidth: '800px',
-        padding: '30px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        backgroundColor: '#ffffff',
-        border: '4px solid #000000',
-    };
-
+    // divide pages into 5 groups (like elevator style)
+    const chunkSize = Math.ceil(pages.length / 5);
+    const groupedPages = [];
+    for (let i = 0; i < pages.length; i += chunkSize) {
+        groupedPages.push(pages.slice(i, i + chunkSize));
+    }
+    // inside your return
     return (
-        <div style={containerStyle}>
-            <div style={formStyle}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <AppBar position="static" color="primary">
-                        <Toolbar>
-                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                User Page Access
+        <Box sx={{ height: "calc(100vh - 100px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    mt: 2,
+
+                    mb: 2,
+                    px: 2,
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        color: 'maroon',
+                        fontSize: '36px',
+                    }}
+                >
+                   USER PAGE ACCESS MANAGEMENT
+                </Typography>
+
+
+
+
+            </Box>
+            <hr style={{ border: "1px solid #ccc", width: "100%" }} />
+
+            <br />
+
+            <div style={{
+                width: '100%',
+                minHeight: '100vh',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                padding: '20px',
+           
+            }}>
+                <div style={{
+                    width: '13in',     // ✅ landscape width
+                    height: '8.5in',   // ✅ landscape height
+                    border: '2px solid maroon',
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    padding: '20px',
+                    overflowY: 'auto', // scroll inside "page" if too much
+                    boxShadow: '0 0 10px rgba(0,0,0,0.3)'
+                }}>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+
+
+                        <Container sx={{ mt: 3, mb: 3 }}>
+                            <Typography variant="h4" fontWeight="bold" align="center" gutterBottom>
+                                User Page Access Management
                             </Typography>
-                            <IconButton color="inherit" onClick={toggleTheme}>
-                                {mode === 'dark' ? <FaMoon /> : <FaRegMoon />}
-                            </IconButton>
-                        </Toolbar>
-                    </AppBar>
-                    <Container
-                        maxWidth="md"
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            mt: 4,
-                            mb: 4,
-                            p: 3,
-                            bgcolor: 'background.paper',
-                            borderRadius: 1,
-                            boxShadow: 3,
-                            border: '4px solid black',
-                        }}
-                    >
-                        <Typography variant="h4" fontWeight="bold" gutterBottom align="center">
-                            User Page Access Management
-                        </Typography>
-                        <Box
-                            component="form"
-                            onSubmit={handleSearchUser}
-                            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', mb: 3 }}
-                        >
-                            <TextField
-                                label="Enter User ID"
-                                variant="outlined"
-                                value={userID}
-                                onChange={(e) => setUserID(e.target.value)}
-                                required
-                                sx={{ mr: 2 }}
-                            />
-                            <Button type="submit" variant="contained" color="primary">
-                                Search User
-                            </Button>
-                        </Box>
 
-                        {loading && <CircularProgress sx={{ display: 'block', mx: 'auto' }} />}
-
-                        {userFound && (
-                            <Box mt={4} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Typography variant="h6" align="center">
-                                    Manage Page Access for User: ID {userFound.id}
-                                </Typography>
-
-                                {pages.length > 0 ? (
-                                    pages.map((page) => {
-                                        const pageId = page.id; // always from page_table
-                                        const hasAccess = !!pageAccess[pageId];
-
-                                        return (
-                                            <ListItem
-                                                key={pageId}
-                                                divider
-                                                sx={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    width: '100%',
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    primary={page.page_description || 'Page Description Not Available'}
-                                                    secondary={`ID: ${pageId}`}
-                                                />
-                                                <Switch
-                                                    checked={hasAccess}   // ✅ true = access granted
-                                                    onChange={() => handleToggleChange(pageId, hasAccess)}
-                                                    color="primary"
-                                                />
-
-                                            </ListItem>
-                                        );
-                                    })
-                                ) : (
-                                    <Typography align="center">No pages found.</Typography>
-                                )}
+                            {/* Search Bar */}
+                            <Box component="form" onSubmit={handleSearchUser}
+                                sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}
+                            >
+                                <TextField
+                                    label="Enter User ID"
+                                    variant="outlined"
+                                    value={userID}
+                                    onChange={(e) => setUserID(e.target.value)}
+                                    required
+                                    sx={{ mr: 2 }}
+                                />
+                                <Button type="submit" variant="contained" color="primary">
+                                    Search User
+                                </Button>
                             </Box>
-                        )}
 
-                        {!userFound && !loading && (
-                            <Typography align="center">No user found. Please enter a valid User ID.</Typography>
-                        )}
-                    </Container>
-                </ThemeProvider>
+                            {loading && <CircularProgress sx={{ display: 'block', mx: 'auto' }} />}
+
+                            {/* User Found */}
+                            {userFound && (
+                                <Box>
+                                    <Typography variant="h6" align="center" gutterBottom>
+                                        Manage Page Access for User: ID {userFound.id}
+                                    </Typography>
+
+                                    <Box
+                                        sx={{
+                                            display: "grid",
+                                            gridTemplateColumns: "repeat(10, 1fr)", // ✅ 10 columns
+                                            gridAutoRows: "minmax(60px, auto)",    // ✅ uniform row height
+                                            gap: 1,
+                                            width: "100%",
+                                        }}
+                                    >
+                                        {pages.map((page) => {
+                                            const pageId = page.id;
+                                            const hasAccess = !!pageAccess[pageId];
+                                            return (
+                                                <Box
+                                                    key={pageId}
+                                                    sx={{
+                                                        border: "1px solid #ccc",
+                                                        borderRadius: "6px",
+                                                        padding: "8px",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        justifyContent: "space-between",
+                                                        alignItems: "center",
+                                                        textAlign: "center",
+                                                        backgroundColor: "#fafafa",
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            width: "100%",
+                                                        }}
+                                                    >
+                                                        {page.page_description || "No Description"}
+                                                    </Typography>
+                                                    <Switch
+                                                        checked={hasAccess}
+                                                        onChange={() => handleToggleChange(pageId, hasAccess)}
+                                                        color="primary"
+                                                        size="small"
+                                                    />
+                                                </Box>
+                                            );
+                                        })}
+                                    </Box>
+                                </Box>
+                            )}
+
+
+                            {/* No user */}
+                            {!userFound && !loading && (
+                                <Typography align="center">
+                                    No user found. Please enter a valid User ID.
+                                </Typography>
+                            )}
+                        </Container>
+                    </ThemeProvider>
+                </div>
             </div>
-        </div>
+        </Box>
     );
+
 };
 
 export default UserPageAccess;

@@ -410,7 +410,10 @@ const MedicalClearance = () => {
                 status: Number(remarkValue),
                 remarks,
                 user_id: userID,
+                document_status: person.document_status || "Disapproved", // ✅ keep status
             });
+
+            fetchApplicantUploads(applicantNumber);
 
             setUploads(prev =>
                 prev.map(u =>
@@ -432,34 +435,35 @@ const MedicalClearance = () => {
         }
     };
 
-  // ✅ FIXED: Upload Vaccine Card (Admin)
-const handleUploadSubmit = async () => {
-    if (!selectedFiles.file || !selectedPerson?.person_id) {
-        showSnackbar("⚠️ Please select a file and a person first.", "warning");
-        return;
-    }
-
-    try {
-        const formData = new FormData();
-        formData.append("file", selectedFiles.file);
-        formData.append("person_id", selectedPerson.person_id);
-        formData.append("remarks", selectedFiles.remarks || "");
-
-        await axios.post("http://localhost:5000/api/upload/vaccine", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        showSnackbar("✅ Vaccine Card uploaded successfully!", "success");
-        setSelectedFiles({});
-
-        if (selectedPerson?.applicant_number) {
-            await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
+    // ✅ FIXED: Upload Vaccine Card (Admin)
+    const handleUploadSubmit = async () => {
+        if (!selectedFiles.file || !selectedPerson?.person_id) {
+            showSnackbar("⚠️ Please select a file and a person first.", "warning");
+            return;
         }
-    } catch (error) {
-        console.error("Upload failed:", error);
-        showSnackbar("❌ Upload failed.", "error");
-    }
-};
+
+        try {
+            const formData = new FormData();
+            formData.append("file", selectedFiles.file);
+            formData.append("person_id", selectedPerson.person_id);
+            formData.append("remarks", selectedFiles.remarks || "");
+
+            await axios.post("http://localhost:5000/api/upload/vaccine", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+                "x-person-id": localStorage.getItem("person_id"),
+            });
+
+            showSnackbar("✅ Vaccine Card uploaded successfully!", "success");
+            setSelectedFiles({});
+
+            if (selectedPerson?.applicant_number) {
+                await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
+            }
+        } catch (error) {
+            console.error("Upload failed:", error);
+            showSnackbar("❌ Upload failed.", "error");
+        }
+    };
 
     const handleDelete = async (uploadId) => {
         try {
@@ -489,7 +493,7 @@ const handleUploadSubmit = async () => {
         if (name !== "document_status") return;
 
         const newValue = value || "";
-        setPerson(prev => ({ ...prev, document_status: newValue }));
+        setPerson(prev => ({ ...prev, document_status: newValue })); // ✅ keep local state
 
         try {
             const vaccineUpload = uploads.find(u =>
@@ -509,9 +513,8 @@ const handleUploadSubmit = async () => {
                 );
             }
 
-            if (selectedPerson?.person_id) {
-                await fetchPersonData(selectedPerson.person_id);
-            }
+            // ❌ REMOVE fetchPersonData because it overwrites with stale status
+            // ✅ only refresh uploads, not person
             if (selectedPerson?.applicant_number) {
                 await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
             }
@@ -542,34 +545,6 @@ const handleUploadSubmit = async () => {
 
         // local save handler (rename to avoid shadowing top-level handler)
         // ✅ REMARKS SAVE inside renderRow
-        const handleSaveRowRemarks = async (id) => {
-            const newRemark = (remarksMap[id] ?? "").trim();
-            if (!newRemark || newRemark === "__NEW__" || newRemark === "New Remarks") {
-                setEditingRemarkId(null);
-                setNewRemarkMode((prev) => ({ ...prev, [id]: false }));
-                return;
-            }
-
-            try {
-                await axios.put(`http://localhost:5000/uploads/remarks/${id}`, {
-                    remarks: newRemark,
-                    status: uploads.find((u) => u.upload_id === id)?.status || "0",
-                    user_id: userID,
-                });
-
-                if (selectedPerson?.applicant_number) {
-                    await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
-                }
-
-                showSnackbar("✅ Updated successfully!", "success");
-            } catch (err) {
-                console.error("Failed to save remarks:", err);
-                showSnackbar("❌ Something went wrong.", "error");
-            } finally {
-                setEditingRemarkId(null);
-                setNewRemarkMode((prev) => ({ ...prev, [id]: false }));
-            }
-        };
 
 
         return (
@@ -1094,11 +1069,18 @@ const handleUploadSubmit = async () => {
                                     <MenuItem value="Disapproved">Disapproved</MenuItem>
                                     <MenuItem value="Program Closed">Program Closed</MenuItem>
                                 </TextField>
-                                {uploads[0]?.evaluator_email && (
+                                {person?.evaluator?.evaluator_email && (
                                     <Typography variant="caption" sx={{ marginLeft: 1 }}>
-                                        Updated by: {uploads[0].evaluator_email}
+                                        Status Changed By:{" "}
+                                        {person.evaluator.evaluator_email.replace(/@gmail\.com$/i, "")} (
+                                        {person.evaluator.evaluator_lname || ""}, {person.evaluator.evaluator_fname || ""}{" "}
+                                        {person.evaluator.evaluator_mname || ""}
+                                        )
+                                        <br />
+                                        Updated At: {new Date(person.evaluator.created_at).toLocaleString()}
                                     </Typography>
                                 )}
+
                             </Box>
 
 

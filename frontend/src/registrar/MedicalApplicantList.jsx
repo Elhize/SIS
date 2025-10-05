@@ -12,7 +12,6 @@ import {
     FormControl,
     Select,
     Card,
-
     TableCell,
     TextField,
     MenuItem,
@@ -33,20 +32,20 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { FcPrint } from "react-icons/fc";
 import EaristLogo from "../assets/EaristLogo.png";
 import { Link } from "react-router-dom";
-import SchoolIcon from "@mui/icons-material/School";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import ScheduleIcon from "@mui/icons-material/Schedule";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import PeopleIcon from "@mui/icons-material/People";
-
-
-
+import PersonIcon from "@mui/icons-material/Person";
+import DescriptionIcon from "@mui/icons-material/Description";
+import QuizIcon from '@mui/icons-material/Quiz';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import SchoolIcon from '@mui/icons-material/School';        // For Entrance Examination Scores
+import FactCheckIcon from '@mui/icons-material/FactCheck';  // For Qualifying Examination Scores
 
 const socket = io("http://localhost:5000");
 
-const AdminApplicantList = () => {
+const MedicalApplicantList = () => {
     const documentOptions = [
         { label: 'PSA Birth Certificate', key: 'BirthCertificate' },
         { label: 'Form 138 (4th Quarter / No failing Grades)', key: 'Form138' },
@@ -71,25 +70,19 @@ const AdminApplicantList = () => {
         navigate(`/admin_dashboard1?person_id=${person_id}`);
     };
 
-    const tabs = [
-        {
-            label: <>Admission Process for <br /> Registrar</>,
-            to: "/applicant_list_admin",
-            icon: <SchoolIcon fontSize="large" />
-        },
-        { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
-        { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
-        { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
-        { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
-        { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
-        { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+    const tabs1 = [
+        { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
+        { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
+        { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
+        { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
+        { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
+        { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
+        { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
     ];
-
-
 
     const navigate = useNavigate();
     const [activeStep, setActiveStep] = useState(0);
-    const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
+    const [clickedSteps, setClickedSteps] = useState(Array(tabs1.length).fill(false));
 
 
     const handleStepClick = (index, to) => {
@@ -186,6 +179,7 @@ const AdminApplicantList = () => {
     };
 
 
+
     const [error, setError] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -223,25 +217,26 @@ const AdminApplicantList = () => {
         try {
             const res = await axios.put(
                 `http://localhost:5000/api/submitted-documents/${upload_id}`,
-                { submitted_documents: checked ? 1 : 0 }
+                {
+                    submitted_documents: checked ? 1 : 0,
+                    user_person_id: localStorage.getItem("person_id")
+                }
             );
 
-            // kung lahat complete -> update registrar_status = 1
             if (checked && res.data.allCompleted) {
                 await handleRegistrarStatusChange(person_id, 1);
                 setSnack({ open: true, message: "All documents completed ✅ Registrar status set to Submitted", severity: "success" });
-            }
-            // kung na-uncheck -> balik registrar_status = 0
-            else if (!checked) {
+            } else if (!checked) {
                 await handleRegistrarStatusChange(person_id, 0);
                 setSnack({ open: true, message: "Marked as Unsubmitted ❌", severity: "warning" });
             }
 
-            fetchApplicants(); // refresh table data
+            fetchApplicants();
         } catch (err) {
             console.error("❌ Failed to update submitted documents:", err);
         }
     };
+
 
 
 
@@ -274,7 +269,6 @@ const AdminApplicantList = () => {
 
 
 
-
     useEffect(() => {
         // Replace this with your actual API endpoint
         fetch("http://localhost:5000/api/all-applicants")
@@ -294,23 +288,8 @@ const AdminApplicantList = () => {
 
 
 
+
     const [curriculumOptions, setCurriculumOptions] = useState([]);
-
-    useEffect(() => {
-        if (!adminData.dprtmnt_id) return;
-
-        const fetchCurriculums = async () => {
-            try {
-                const response = await axios.get(`http://localhost:5000/api/applied_program/${adminData.dprtmnt_id}`);
-                console.log("✅ curriculumOptions:", response.data);
-                setCurriculumOptions(response.data);
-            } catch (error) {
-                console.error("Error fetching curriculum options:", error);
-            }
-        };
-
-        fetchCurriculums();
-    }, [adminData.dprtmnt_id]);
 
     const [selectedApplicantStatus, setSelectedApplicantStatus] = useState("");
     const [sortBy, setSortBy] = useState("name");
@@ -351,8 +330,8 @@ const AdminApplicantList = () => {
                 }
             })
             .catch((err) => console.error(err));
-
     }, []);
+
 
     const handleSchoolYearChange = (event) => {
         setSelectedSchoolYear(event.target.value);
@@ -592,8 +571,6 @@ const AdminApplicantList = () => {
         setSnack(prev => ({ ...prev, open: false }));
     };
 
-
-
     useEffect(() => {
         axios.get("http://localhost:5000/api/applied_program")
             .then(res => {
@@ -601,8 +578,6 @@ const AdminApplicantList = () => {
                 setCurriculumOptions(res.data);
             });
     }, []);
-
-
 
     useEffect(() => {
         if (department.length > 0 && !selectedDepartmentFilter) {
@@ -623,6 +598,7 @@ const AdminApplicantList = () => {
         }
         setSelectedProgramFilter("");
     };
+
 
     const [applicants, setApplicants] = useState([]);
     const divToPrintRef = useRef();
@@ -711,7 +687,7 @@ const AdminApplicantList = () => {
               <div>${campusAddress}</div>
               <div style="margin-top: 30px;">
                 <b style="font-size: 24px; letter-spacing: 1px;">
-                  Applicant List
+                Medical Records For Applicant
                 </b>
               </div>
             </div>
@@ -724,7 +700,7 @@ const AdminApplicantList = () => {
                 <th>Applicant ID</th>
                 <th>Applicant Name</th>
                 <th>Program</th>
-                <th>SHS GWA</th>
+                
                 <th>Date Applied</th>
                 <th>Status</th>
               </tr>
@@ -737,7 +713,7 @@ const AdminApplicantList = () => {
                   <td>${curriculumOptions.find(
             item => item.curriculum_id?.toString() === person.program?.toString()
         )?.program_code ?? "N/A"}</td>
-                  <td>${person.generalAverage1 ?? ""}</td>
+                 
                   <td>${new Date(person.created_at).toLocaleDateString("en-PH")}</td>
                   <td>${person.registrar_status === 1
                 ? "Submitted"
@@ -763,7 +739,7 @@ const AdminApplicantList = () => {
         <Box sx={{ height: 'calc(100vh - 150px)', overflowY: 'auto', pr: 1, p: 2 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4" fontWeight="bold" color="maroon">
-                    ADMISSION PROCESS FOR REGISTRAR
+                MEDICAL RECORDS
                 </Typography>
                 <Box sx={{ position: 'absolute', top: 10, right: 24 }}>
                     <Button
@@ -839,44 +815,65 @@ const AdminApplicantList = () => {
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    flexWrap: "nowrap", // ❌ prevent wrapping
+                    alignItems: "center",
                     width: "100%",
-                    mt: 3,
-                    gap: 2,
+                    mt: 2,
                 }}
             >
-                {tabs.map((tab, index) => (
-                    <Card
-                        key={index}
-                        onClick={() => handleStepClick(index, tab.to)}
-                        sx={{
-                            flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
-                            height: 120,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "pointer",
-                            borderRadius: 2,
-                            border: "2px solid #6D2323",
-                            backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                            color: activeStep === index ? "#fff" : "#000",
-                            boxShadow:
-                                activeStep === index
-                                    ? "0px 4px 10px rgba(0,0,0,0.3)"
-                                    : "0px 2px 6px rgba(0,0,0,0.15)",
-                            transition: "0.3s ease",
-                            "&:hover": {
-                                backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
-                            },
-                        }}
-                    >
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                            <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
-                            <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
-                                {tab.label}
-                            </Typography>
-                        </Box>
-                    </Card>
+                {tabs1.map((tab, index) => (
+                    <React.Fragment key={index}>
+                        {/* Step Card */}
+                        <Card
+                            onClick={() => handleStepClick(index, tab.to)}
+                            sx={{
+                                flex: 1,
+                                maxWidth: `${100 / tabs1.length}%`, // evenly fit 100%
+                                height: 100,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                borderRadius: 2,
+                                border: "2px solid #6D2323",
+
+                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                                color: activeStep === index ? "#fff" : "#000",
+                                boxShadow:
+                                    activeStep === index
+                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                        : "0px 2px 6px rgba(0,0,0,0.15)",
+                                transition: "0.3s ease",
+                                "&:hover": {
+                                    backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{tab.icon}</Box>
+                                <Typography
+                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
+                                >
+                                    {tab.label}
+                                </Typography>
+                            </Box>
+                        </Card>
+
+                        {/* Spacer instead of line */}
+                        {index < tabs1.length - 1 && (
+                            <Box
+                                sx={{
+                                    flex: 0.1,
+                                    mx: 1, // margin to keep spacing
+                                }}
+                            />
+                        )}
+                    </React.Fragment>
                 ))}
             </Box>
 
@@ -1341,7 +1338,7 @@ const AdminApplicantList = () => {
                                 #
                             </TableCell>
                             <TableCell sx={{ color: "white", textAlign: "center", width: "3%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
-                                Submitted Orig Documents
+                                Submitted Medical Documents
                             </TableCell>
                             <TableCell sx={{ color: "white", textAlign: "center", width: "4%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Applicant ID
@@ -1352,15 +1349,11 @@ const AdminApplicantList = () => {
                             <TableCell sx={{ color: "white", textAlign: "center", width: "10%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Program
                             </TableCell>
-                            <TableCell sx={{ color: "white", textAlign: "center", width: "6%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
-                                SHS GWA
-                            </TableCell>
+                        
                             <TableCell sx={{ color: "white", textAlign: "center", width: "8%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Date Applied
                             </TableCell>
-                            <TableCell sx={{ color: "white", textAlign: "center", width: "8%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
-                                Date Last Updated
-                            </TableCell>
+                         
                             <TableCell sx={{ color: "white", textAlign: "center", width: "16%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Applicant Status
                             </TableCell>
@@ -1400,7 +1393,7 @@ const AdminApplicantList = () => {
 
                     <TableBody>
                         {currentPersons.map((person, index) => (
-                            <TableRow key={person.person_id} sx={{ height: "48px" }}>
+                            <TableRow key={person.person_id}>
                                 {/* # */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
                                     {index + 1}
@@ -1409,7 +1402,6 @@ const AdminApplicantList = () => {
                                 {/* ✅ Submitted Checkbox */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
                                     <Checkbox
-                                        disabled
                                         checked={Number(person.submitted_documents) === 1}
                                         onChange={(e) => {
                                             const checked = e.target.checked;
@@ -1477,26 +1469,14 @@ const AdminApplicantList = () => {
                                     )?.program_code ?? "N/A"}
                                 </TableCell>
 
-                                {/* SHS GWA */}
-                                <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
-                                    {person.generalAverage1}
-                                </TableCell>
+                            
 
                                 {/* Created Date */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
                                     {person.created_at}
                                 </TableCell>
 
-                                {/* Last Updated */}
-                                <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
-                                    {person.last_updated
-                                        ? new Date(person.last_updated).toLocaleDateString("en-PH", {
-                                            year: "numeric",
-                                            month: "2-digit",
-                                            day: "2-digit",
-                                        })
-                                        : ""}
-                                </TableCell>
+                           
 
                                 {/* Status */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
@@ -1575,67 +1555,67 @@ const AdminApplicantList = () => {
 
 
                                 {/*
-                                                               <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
-                                                                   {person.registrar_status === 1 ? (
-                                                                       <Box
-                                                                           sx={{
-                                                                               background: "#4CAF50",
-                                                                               color: "white",
-                                                                               borderRadius: 1,
-                                                                               p: 0.5,
-                                                                           }}
-                                                                       >
-                                                                           <Typography sx={{ fontWeight: "bold" }}>Submitted</Typography>
-                                                                       </Box>
-                                                                   ) : person.registrar_status === 0 ? (
-                                                                       <Box
-                                                                           sx={{
-                                                                               background: "#F44336",
-                                                                               color: "white",
-                                                                               borderRadius: 1,
-                                                                               p: 0.5,
-                                                                           }}
-                                                                       >
-                                                                           <Typography sx={{ fontWeight: "bold" }}>
-                                                                               Unsubmitted / Incomplete
-                                                                           </Typography>
-                                                                       </Box>
-                                                                   ) : (
-                                                                       <Box display="flex" justifyContent="center" gap={1}>
-                                                                           <Button
-                                                                               variant="contained"
-                                                                               onClick={() => {
-                                                                                   setConfirmMessage(
-                                                                                       "Are you sure you want to set Registrar Status to Submitted?"
-                                                                                   );
-                                                                                   setConfirmAction(() => async () => {
-                                                                                       await handleRegistrarStatusChange(person.person_id, 1);
-                                                                                   });
-                                                                                   setConfirmOpen(true);
-                                                                               }}
-                                                                               sx={{ backgroundColor: "green", color: "white" }}
-                                                                           >
-                                                                               Submitted
-                                                                           </Button>
-                                                                           <Button
-                                                                               variant="contained"
-                                                                               onClick={() => {
-                                                                                   setConfirmMessage(
-                                                                                       "Are you sure you want to set Registrar Status to Unsubmitted?"
-                                                                                   );
-                                                                                   setConfirmAction(() => async () => {
-                                                                                       await handleRegistrarStatusChange(person.person_id, 0);
-                                                                                   });
-                                                                                   setConfirmOpen(true);
-                                                                               }}
-                                                                               sx={{ backgroundColor: "red", color: "white" }}
-                                                                           >
-                                                                               Unsubmitted
-                                                                           </Button>
-                                                                       </Box>
-                                                                   )}
-                                                               </TableCell>
-                                                               */}
+                                <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
+                                    {person.registrar_status === 1 ? (
+                                        <Box
+                                            sx={{
+                                                background: "#4CAF50",
+                                                color: "white",
+                                                borderRadius: 1,
+                                                p: 0.5,
+                                            }}
+                                        >
+                                            <Typography sx={{ fontWeight: "bold" }}>Submitted</Typography>
+                                        </Box>
+                                    ) : person.registrar_status === 0 ? (
+                                        <Box
+                                            sx={{
+                                                background: "#F44336",
+                                                color: "white",
+                                                borderRadius: 1,
+                                                p: 0.5,
+                                            }}
+                                        >
+                                            <Typography sx={{ fontWeight: "bold" }}>
+                                                Unsubmitted / Incomplete
+                                            </Typography>
+                                        </Box>
+                                    ) : (
+                                        <Box display="flex" justifyContent="center" gap={1}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setConfirmMessage(
+                                                        "Are you sure you want to set Registrar Status to Submitted?"
+                                                    );
+                                                    setConfirmAction(() => async () => {
+                                                        await handleRegistrarStatusChange(person.person_id, 1);
+                                                    });
+                                                    setConfirmOpen(true);
+                                                }}
+                                                sx={{ backgroundColor: "green", color: "white" }}
+                                            >
+                                                Submitted
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setConfirmMessage(
+                                                        "Are you sure you want to set Registrar Status to Unsubmitted?"
+                                                    );
+                                                    setConfirmAction(() => async () => {
+                                                        await handleRegistrarStatusChange(person.person_id, 0);
+                                                    });
+                                                    setConfirmOpen(true);
+                                                }}
+                                                sx={{ backgroundColor: "red", color: "white" }}
+                                            >
+                                                Unsubmitted
+                                            </Button>
+                                        </Box>
+                                    )}
+                                </TableCell>
+                                */}
                             </TableRow>
                         ))}
                     </TableBody>
@@ -1670,15 +1650,11 @@ const AdminApplicantList = () => {
                                     ? activePerson.missing_documents
                                     : [];
 
+                                // 👉 Completed lang kung walang missing docs + naka-submit
                                 const isCompleted =
                                     selectedArray.length === 0 &&
                                     activePerson?.submitted_documents === 1 &&
                                     activePerson?.registrar_status === 1;
-
-                                const isMarking =
-                                    !isCompleted &&
-                                    Array.isArray(activePerson?.missing_documents) &&
-                                    activePerson.missing_documents.length >= 0;
 
                                 return (
                                     <FormControlLabel
@@ -1686,9 +1662,9 @@ const AdminApplicantList = () => {
                                         control={
                                             <Checkbox
                                                 checked={isCompleted ? true : selectedArray.includes(doc.key)}
-                                                disabled={isCompleted || isMarking} // 🔒 disable both modes
+                                                disabled={isCompleted} // disable only kapag completed talaga
                                                 onChange={(e) => {
-                                                    if (isCompleted || isMarking) return;
+                                                    if (isCompleted) return; // block changes if completed
                                                     const updated = e.target.checked
                                                         ? [...selectedArray, doc.key]
                                                         : selectedArray.filter((x) => x !== doc.key);
@@ -1743,4 +1719,4 @@ const AdminApplicantList = () => {
     );
 };
 
-export default AdminApplicantList;
+export default MedicalApplicantList;

@@ -6,6 +6,7 @@ import {
   Button,
   Typography,
   Table,
+  Card,
   TableHead,
   TableRow,
   TableCell,
@@ -17,16 +18,28 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search } from "@mui/icons-material";
 import { FcPrint } from "react-icons/fc";
 import EaristLogo from "../assets/EaristLogo.png";
+import SchoolIcon from '@mui/icons-material/School';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+
 
 const InterviewerApplicantList = () => {
 
   const tabs = [
-    { label: "Interview Room Assignment", to: "/assign_interview_exam" },
-    { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview" },
-    { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list" },
+    { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
+    { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+    { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
+    { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+    { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
+    { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
   ];
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(4);
   const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
 
 
@@ -34,6 +47,8 @@ const InterviewerApplicantList = () => {
     setActiveStep(index);
     navigate(to); // this will actually change the page
   };
+
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const [proctor, setProctor] = useState(null);
@@ -143,7 +158,8 @@ th {
                 <div style="letter-spacing: 1px; font-size: 20px;">
                   <b>Institute of Science and Technology</b>
                 </div>
-                <div>Nagtahan St. Sampaloc, Manila</div>
+                <div>Nagtahan St. Sampaloc - Manila Campus</div>
+                <div> Poblacion 5, Congressional Road, General <br/> Mariano Alvarez - Cavite Campus</div>
                 <div style="margin-top: 25px;">
                   <b style="font-size: 22px; letter-spacing: 1px;">
                     Interviewer Applicant List
@@ -157,7 +173,7 @@ th {
 
   <!-- Row 1 -->
   <div style="display: flex; justify-content: space-between; width: 100%;">
-    <span><b>Interviewer:</b> ${proctor?.proctor || "N/A"}</span>
+    <span><b>Interviewer:</b> ${proctor?.interviewer || "N/A"}</span>
     <span><b>Building:</b> ${proctor?.building_description || "N/A"}</span>
   </div>
 
@@ -287,43 +303,51 @@ th {
 
       <br />
 
-      <Box display="flex" sx={{ border: "2px solid maroon", borderRadius: "4px", overflow: "hidden" }}>
-        {tabs.map((tab, index) => {
-          const isActive = location.pathname === tab.to;
-
-          return (
-            <Link
-              key={index}
-              to={tab.to}
-              style={{ textDecoration: "none", flex: 1 }}
-            >
-              <Box
-                sx={{
-                  backgroundColor: isActive ? "#6D2323" : "#E8C999",  // ✅ active vs default
-                  padding: "16px",
-                  color: isActive ? "#ffffff" : "#000000",            // ✅ text color contrast
-                  textAlign: "center",
-                  height: "75px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  borderRight: index !== tabs.length - 1 ? "2px solid white" : "none",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    backgroundColor: isActive ? "#6D2323" : "#f9f9f9",
-                    color: isActive ? "#ffffff" : "#6D2323",
-                  },
-                }}
-              >
-                <Typography sx={{ color: "inherit", fontWeight: "bold", wordBreak: "break-word" }}>
-                  {tab.label}
-                </Typography>
-              </Box>
-            </Link>
-          );
-        })}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "nowrap", // ❌ prevent wrapping
+          width: "100%",
+          mt: 3,
+          gap: 2,
+        }}
+      >
+        {tabs.map((tab, index) => (
+          <Card
+            key={index}
+            onClick={() => handleStepClick(index, tab.to)}
+            sx={{
+              flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
+              height: 120,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              borderRadius: 2,
+              border: "2px solid #6D2323",
+              backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+              color: activeStep === index ? "#fff" : "#000",
+              boxShadow:
+                activeStep === index
+                  ? "0px 4px 10px rgba(0,0,0,0.3)"
+                  : "0px 2px 6px rgba(0,0,0,0.15)",
+              transition: "0.3s ease",
+              "&:hover": {
+                backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+              },
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
+              <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
+                {tab.label}
+              </Typography>
+            </Box>
+          </Card>
+        ))}
       </Box>
+
 
       <br />
       {proctor && (

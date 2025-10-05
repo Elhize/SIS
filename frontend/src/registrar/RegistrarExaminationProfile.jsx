@@ -1,31 +1,44 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Box, Container, Typography, Button, TextField, TableBody, TableContainer, Paper, Table, TableHead, TableRow, TableCell } from "@mui/material";
+import { Box, Typography, TextField, TableContainer, Paper, Table, TableHead, TableRow, TableCell, Card } from "@mui/material";
 import EaristLogo from "../assets/EaristLogo.png";
 import EaristLogoBW from "../assets/earistblackandwhite.png";
-import '../styles/Print.css'
+import "../styles/Print.css";
 import { FcPrint } from "react-icons/fc";
-import Search from '@mui/icons-material/Search';
+import Search from "@mui/icons-material/Search";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { QRCodeCanvas } from "qrcode.react";
 import { QRCodeSVG } from "qrcode.react";
+import SchoolIcon from "@mui/icons-material/School";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
 
-const ExaminationProfile = () => {
 
+
+const ExaminationProfile = ({ personId }) => {
     const tabs = [
-        { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam" },
-        { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant" },
-        { label: "Examination Profile", to: "/examination_profile" },
-        { label: "Proctor's Applicant List", to: "/proctor_applicant_list" },
-    ];
-
+       { 
+           label: <>Admission Process for <br /> Registrar</>, 
+           to: "/applicant_list_admin", 
+           icon: <SchoolIcon fontSize="large" /> 
+       },
+       { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+       { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+       { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+       { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+       { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+       { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+   ];
+   
 
 
     const location = useLocation();
     const navigate = useNavigate();
-    const [activeStep, setActiveStep] = useState(3);
+    const [activeStep, setActiveStep] = useState(5);
     const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
-
 
     const handleStepClick = (index, to) => {
         setActiveStep(index);
@@ -33,7 +46,7 @@ const ExaminationProfile = () => {
     };
 
 
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState("");
     const [persons, setPersons] = useState([]);
     const [selectedPerson, setSelectedPerson] = useState(null);
     const [userID, setUserID] = useState("");
@@ -41,224 +54,142 @@ const ExaminationProfile = () => {
     const [userRole, setUserRole] = useState("");
     const [person, setPerson] = useState({
         profile_img: "",
-        generalAverage1: "",
-        height: "",
-        applyingAs: "",
-        document_status: "",
         last_name: "",
         first_name: "",
         middle_name: "",
         extension: "",
     });
 
+    const [curriculumOptions, setCurriculumOptions] = useState([]);
+    const [examSchedule, setExamSchedule] = useState(null);
+    const [applicantNumber, setApplicantNumber] = useState("");
 
+    const divToPrintRef = useRef();
+
+    // ✅ Check logged-in user
     useEffect(() => {
         const storedUser = localStorage.getItem("email");
         const storedRole = localStorage.getItem("role");
         const storedID = localStorage.getItem("person_id");
-
-        console.log("Stored user:", storedUser);
-        console.log("Stored role:", storedRole);
-        console.log("Stored person_id:", storedID);
 
         if (storedUser && storedRole && storedID && storedID !== "undefined") {
             setUser(storedUser);
             setUserRole(storedRole);
             setUserID(storedID);
 
-            if (storedRole === "registrar") {
-
-            } else {
+            if (storedRole !== "registrar") {
                 window.location.href = "/login";
             }
         } else {
-            console.warn("Login required or invalid stored data.");
             window.location.href = "/login";
         }
     }, []);
 
-
-
-
+    // ✅ Fetch persons list
     useEffect(() => {
         const fetchPersons = async () => {
             try {
                 const res = await axios.get("http://localhost:5000/api/upload_documents");
-                setPersons(res.data);
+                setPersons(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Error fetching persons:", err);
             }
         };
-
         fetchPersons();
     }, []);
 
-
-
+    // ✅ Fetch single person
     const fetchPersonData = async (personID) => {
-        if (!personID || personID === "undefined") {
-            console.warn("Invalid personID for person data:", personID);
-            return;
-        }
-
+        if (!personID || personID === "undefined") return;
         try {
             const res = await axios.get(`http://localhost:5000/api/person/${personID}`);
-
-            const safePerson = Object.fromEntries(
-                Object.entries(res.data).map(([key, val]) => [key, val ?? ""])
-            );
-
-            setPerson(safePerson);
+            setPerson(res.data || {});
         } catch (error) {
             console.error("❌ Failed to fetch person data:", error?.response?.data || error.message);
         }
     };
 
-
+    // ✅ When a person is selected, fetch data
     useEffect(() => {
         if (selectedPerson?.person_id) {
             fetchPersonData(selectedPerson.person_id);
+            if (selectedPerson.applicant_number) {
+                setApplicantNumber(selectedPerson.applicant_number);
+            }
         }
     }, [selectedPerson]);
 
-
+    // ✅ Handle search by applicant number or name
     useEffect(() => {
         if (!searchQuery.trim()) {
             setSelectedPerson(null);
-            setPerson({
-                profile_img: "",
-                last_name: "",
-                first_name: "",
-                middle_name: "",
-                extension: "",
-            });
             return;
         }
 
         const match = persons.find((p) => {
             const fullString = `${p.first_name ?? ""} ${p.middle_name ?? ""} ${p.last_name ?? ""} ${p.emailAddress ?? ""}`.toLowerCase();
-            const numberMatch = (p.applicant_number || '').toLowerCase() === searchQuery.toLowerCase();
+            const numberMatch = (p.applicant_number || "").toLowerCase() === searchQuery.toLowerCase();
             const textMatch = fullString.includes(searchQuery.toLowerCase());
             return numberMatch || textMatch;
         });
 
         if (match) {
-            console.log("✅ Found match locally:", match);
             setSelectedPerson(match);
             setPerson(match);
         } else {
-            axios.get(`http://localhost:5000/api/person-by-applicant/${searchQuery}`)
-                .then(res => {
-                    console.log("✅ API match:", res.data);
+            axios
+                .get(`http://localhost:5000/api/person-by-applicant/${searchQuery}`)
+                .then((res) => {
                     if (res.data?.person_id) {
                         setSelectedPerson(res.data);
                         fetchPersonData(res.data.person_id);
                     }
                 })
-                .catch(err => {
-                    console.error("❌ Applicant not found:", err);
-                    setSelectedPerson(null);
-                });
+                .catch(() => setSelectedPerson(null));
         }
     }, [searchQuery, persons]);
 
-
-
-    const divToPrintRef = useRef();
-
-    const printDiv = () => {
-        const divToPrint = divToPrintRef.current;
-        if (divToPrint) {
-            const newWin = window.open('', 'Print-Window');
-            newWin.document.open();
-            newWin.document.write(`
-      <html>
-        <head>
-          <title>Print</title>
-          <style>
-            @page {
-              size: A4;
-              margin: 0;
-            }
-
-            html, body {
-              margin: 0;
-              padding: 0;
-              width: 210mm;
-              height: 297mm;
-            
-              font-family: Arial, sans-serif;
-              overflow: hidden;
-            }
-
-            .print-container {
-              width: 110%;
-              height: 100%;
-
-              box-sizing: border-box;
-   
-              transform: scale(0.90);
-              transform-origin: top left;
-            }
-
-            * {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
-
-            button {
-              display: none;
-            }
-
-            .student-table {
-              margin-top: 5px !important;
-            }
-          </style>
-        </head>
-        <body onload="window.print(); setTimeout(() => window.close(), 100);">
-          <div class="print-container">
-            ${divToPrint.innerHTML}
-          </div>
-        </body>
-      </html>
-    `);
-            newWin.document.close();
-        } else {
-            console.error("divToPrintRef is not set.");
-        }
-    };
-
-    const [curriculumOptions, setCurriculumOptions] = useState([]);
-
+    // ✅ Fetch curriculum options
     useEffect(() => {
         const fetchCurriculums = async () => {
             try {
                 const response = await axios.get("http://localhost:5000/api/applied_program");
-                setCurriculumOptions(response.data);
+                setCurriculumOptions(Array.isArray(response.data) ? response.data : []);
             } catch (error) {
                 console.error("Error fetching curriculum options:", error);
             }
         };
-
         fetchCurriculums();
     }, []);
 
-    console.log("person.program:", person.program);
-    console.log("curriculumOptions:", curriculumOptions);
+    // ✅ Fetch exam schedule when applicant is selected
+    useEffect(() => {
+        if (selectedPerson?.applicant_number) {
+            axios
+                .get(`http://localhost:5000/api/exam-schedule/${selectedPerson.applicant_number}`)
+                .then((res) => setExamSchedule(res.data))
+                .catch((err) => {
+                    console.error("Error fetching exam schedule:", err);
+                    setExamSchedule(null);
+                });
+        }
+    }, [selectedPerson]);
 
-    {
-        curriculumOptions.find(
-            (item) =>
-                item?.curriculum_id?.toString() === (person?.program ?? "").toString()
-        )?.program_description || (person?.program ?? "")
-
-    }
-
-    curriculumOptions.find(
-        (item) => item?.curriculum_id?.toString() === (person?.program ?? "").toString()
-    )
-
-
+    const printDiv = () => {
+        const divToPrint = divToPrintRef.current;
+        if (!divToPrint) return;
+        const newWin = window.open("", "Print-Window");
+        newWin.document.open();
+        newWin.document.write(`
+      <html>
+        <head><title>Print</title></head>
+        <body onload="window.print(); setTimeout(() => window.close(), 100);">
+          ${divToPrint.innerHTML}
+        </body>
+      </html>
+    `);
+        newWin.document.close();
+    };
     const [showPrintView, setShowPrintView] = useState(false);
 
     const handlePrintClick = async () => {
@@ -279,74 +210,6 @@ const ExaminationProfile = () => {
             setShowPrintView(false); // hide it again after printing
         }, 200);
     };
-    const [applicantNumber, setApplicantNumber] = useState("");
-    const [examData, setExamData] = useState([
-        { TestArea: "English", RawScore: "", Percentage: "", User: "", DateCreated: "" },
-        { TestArea: "Science", RawScore: "", Percentage: "", User: "", DateCreated: "" },
-        { TestArea: "Filipino", RawScore: "", Percentage: "", User: "", DateCreated: "" },
-        { TestArea: "Math", RawScore: "", Percentage: "", User: "", DateCreated: "" },
-        { TestArea: "Abstract", RawScore: "", Percentage: "", User: "", DateCreated: "" },
-    ]);
-
-    useEffect(() => {
-        if (selectedPerson?.person_id) {
-            fetchPersonData(selectedPerson.person_id);
-
-            // 🔹 Make sure applicantNumber is set when person is selected
-            if (selectedPerson.applicant_number) {
-                setApplicantNumber(selectedPerson.applicant_number);
-            }
-        }
-    }, [selectedPerson]);
-
-
-    const [totalScore, setTotalScore] = useState(0);
-    const [totalPercentage, setTotalPercentage] = useState(0);
-
-    // 🔹 Load existing exam data from backend
-    useEffect(() => {
-        if (!selectedPerson?.person_id) return;
-
-        axios.get(`http://localhost:5000/api/exam/${selectedPerson.person_id}`)
-            .then(res => {
-                console.log("Exam data received:", res.data);
-                if (res.data && res.data.length > 0) {
-                    const updated = examData.map(row => {
-                        const match = res.data.find(e => e.subject === row.TestArea);
-                        return match ? {
-                            ...row,
-                            RawScore: match.raw_score,
-                            Percentage: match.percentage,
-                            User: match.user,
-                            // normalize date string for input[type="date"]
-                            DateCreated: match.date_created
-                                ? match.date_created.split("T")[0] // YYYY-MM-DD
-                                : "",
-                        } : row;
-                    });
-                    setExamData(updated);
-                }
-            })
-            .catch(err => console.error(err));
-    }, [selectedPerson]);
-
-
-
-    const [examSchedule, setExamSchedule] = useState(null);
-
-    useEffect(() => {
-        if (selectedPerson?.applicant_number) {
-            axios.get(`http://localhost:5000/api/exam-schedule/${selectedPerson.applicant_number}`)
-                .then(res => setExamSchedule(res.data))
-                .catch(err => {
-                    console.error("Error fetching exam schedule:", err);
-                    setExamSchedule(null);
-                });
-        }
-    }, [selectedPerson]);
-
-
-
 
     return (
         <Box sx={{ height: 'calc(100vh - 120px)', overflowY: 'auto', paddingRight: 1, backgroundColor: 'transparent' }}>
@@ -375,7 +238,7 @@ const ExaminationProfile = () => {
                             fontSize: '36px',
                         }}
                     >
-                        APPLICANT PROFILE
+                      EXAMINATION PROFILE
                     </Typography>
 
                     <TextField
@@ -394,43 +257,49 @@ const ExaminationProfile = () => {
                 <br />
 
 
-
-                <Box display="flex" sx={{ border: "2px solid maroon", borderRadius: "4px", overflow: "hidden" }}>
-                    {tabs.map((tab, index) => {
-                        const isActive = location.pathname === tab.to;
-
-                        return (
-                            <Link
-                                key={index}
-                                to={tab.to}
-                                style={{ textDecoration: "none", flex: 1 }}
-                            >
-                                <Box
-                                    sx={{
-                                        backgroundColor: isActive ? "#6D2323" : "#E8C999",  // ✅ active vs default
-                                        padding: "16px",
-                                        color: isActive ? "#ffffff" : "#000000",            // ✅ text color contrast
-                                        textAlign: "center",
-                                        height: "75px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        cursor: "pointer",
-                                        borderRight: index !== tabs.length - 1 ? "2px solid white" : "none",
-                                        transition: "all 0.3s ease",
-                                        "&:hover": {
-                                            backgroundColor: isActive ? "#6D2323" : "#f9f9f9",
-                                            color: isActive ? "#ffffff" : "#6D2323",
-                                        },
-                                    }}
-                                >
-                                    <Typography sx={{ color: "inherit", fontWeight: "bold", wordBreak: "break-word" }}>
-                                        {tab.label}
-                                    </Typography>
-                                </Box>
-                            </Link>
-                        );
-                    })}
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexWrap: "nowrap", // ❌ prevent wrapping
+                        width: "100%",
+                        mt: 3,
+                        gap: 2,
+                    }}
+                >
+                    {tabs.map((tab, index) => (
+                        <Card
+                            key={index}
+                            onClick={() => handleStepClick(index, tab.to)}
+                            sx={{
+                                flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
+                                height: 120,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                borderRadius: 2,
+                                border: "2px solid #6D2323",
+                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                                color: activeStep === index ? "#fff" : "#000",
+                                boxShadow:
+                                    activeStep === index
+                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                        : "0px 2px 6px rgba(0,0,0,0.15)",
+                                transition: "0.3s ease",
+                                "&:hover": {
+                                    backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+                                },
+                            }}
+                        >
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
+                                <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
+                                    {tab.label}
+                                </Typography>
+                            </Box>
+                        </Card>
+                    ))}
                 </Box>
 
 
@@ -595,13 +464,13 @@ const ExaminationProfile = () => {
                                     <tr>
 
                                         <td colSpan={40} style={{ height: "0.5in", textAlign: "center" }}>
-                                            <table width="100%" style={{ borderCollapse: "collapse" }}>
+                                            <table width="100%" style={{ borderCollapse: "collapse", marginTop: "-30px" }}>
                                                 <tbody>
                                                     <tr>
 
 
                                                         <td style={{ width: "20%", textAlign: "center" }}>
-                                                            <img src={EaristLogo} alt="Earist Logo" style={{ marginLeft: "10px", width: "140px", height: "140px" }} />
+                                                            <img src={EaristLogo} alt="Earist Logo" style={{ marginLeft: "10px", width: "140px", height: "140px", }} />
                                                         </td>
 
                                                         {/* Center Column - School Information */}
@@ -877,7 +746,7 @@ const ExaminationProfile = () => {
 
                                     <tr style={{ fontFamily: "Times New Roman", fontSize: "15px" }}>
                                         <td colSpan={20}>
-                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-65px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-85px" }}>
                                                 <label style={{ fontWeight: "bold", whiteSpace: "nowrap", marginRight: "10px" }}>
                                                     Bldg. :
                                                 </label>
@@ -905,7 +774,7 @@ const ExaminationProfile = () => {
                                                     justifyContent: "space-between", // space text & QR
                                                 }}
                                             >
-                                                <div style={{ display: "flex", alignItems: "center", marginTop: "-105px" }}>
+                                                <div style={{ display: "flex", alignItems: "center", marginTop: "-145px" }}>
                                                     <label
                                                         style={{
                                                             fontWeight: "bold",
@@ -930,15 +799,42 @@ const ExaminationProfile = () => {
                                                     </span>
                                                 </div>
 
-                                                {/* ✅ QR Code placed beside Room No. */}
                                                 {selectedPerson?.applicant_number && (
-                                                    <QRCodeSVG
-                                                        value={`http://localhost:5173/examination_profile/${selectedPerson.applicant_number}`}
-                                                        size={160} // adjust size
-                                                        level={"H"}
-                                                        includeMargin={true}
-                                                    />
+                                                    <div
+                                                        style={{
+                                                            width: "4.5cm",
+                                                            height: "4.5cm",
+                                                            borderRadius: "4px",
+                                                            background: "#fff",
+                                                            display: "flex",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            position: "relative",
+                                                            overflow: "hidden",
+                                                            marginLeft: "10px"
+                                                        }}
+                                                    >
+                                                        <QRCodeSVG
+                                                            value={`http://localhost:5173/examination_profile/${selectedPerson.applicant_number}`}
+                                                            size={150}
+                                                            level="H"
+                                                        />
+                                                        <div
+                                                            style={{
+                                                                position: "absolute",
+                                                                fontSize: "12px",
+                                                                fontWeight: "bold",
+                                                                color: "maroon",
+                                                                background: "white",
+                                                                padding: "2px 4px",
+                                                                borderRadius: "2px",
+                                                            }}
+                                                        >
+                                                            {selectedPerson.applicant_number}
+                                                        </div>
+                                                    </div>
                                                 )}
+
 
                                             </div>
                                         </td>
@@ -947,7 +843,7 @@ const ExaminationProfile = () => {
 
                                     <tr style={{ fontFamily: "Times New Roman", fontSize: "15px" }}>
                                         <td colSpan={20}>
-                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-110px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-148px" }}>
                                                 <label style={{ fontWeight: "bold", whiteSpace: "nowrap", marginRight: "10px" }}>Scheduled by:</label>
                                                 <span style={{ flexGrow: 1, borderBottom: "1px solid black", height: "1.2em", fontFamily: "Arial", textAlign: "left" }}>
                                                     {examSchedule?.proctor || ""}
@@ -958,7 +854,7 @@ const ExaminationProfile = () => {
 
                                     <tr style={{ fontFamily: "Times New Roman", fontSize: "15px" }}>
                                         <td colSpan={20}>
-                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-90px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-125px" }}>
                                                 <label
                                                     style={{
                                                         fontWeight: "bold",

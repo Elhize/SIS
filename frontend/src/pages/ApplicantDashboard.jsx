@@ -676,6 +676,9 @@ const ApplicantDashboard = (props) => {
                     gap: 2,
                     p: 2,
                     marginLeft: "35px",
+                    transition: "transform 0.2s ease",
+                    boxShadow: 3,
+                    "&:hover": { transform: "scale(1.03)" },
 
                     borderRadius: "10px",
                     backgroundColor: "#fffaf5",
@@ -888,6 +891,9 @@ const ApplicantDashboard = (props) => {
                 p: 2,
                 width: "425px",
                 height: "375px",
+                transition: "transform 0.2s ease",
+                boxShadow: 3,
+                "&:hover": { transform: "scale(1.03)" },
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "flex-start",
@@ -998,6 +1004,7 @@ const ApplicantDashboard = (props) => {
               justifyContent: "center",
               alignItems: "center",
               mb: 2,
+              
             }}
           >
             <Typography sx={{ fontSize: "32px", fontWeight: "bold", color: "maroon" }}>
@@ -1018,6 +1025,7 @@ const ApplicantDashboard = (props) => {
                 borderColor: "#6D2323",   // maroon line
                 borderTopWidth: 3,
                 borderRadius: 8,
+                
               },
             }}
           >
@@ -1046,6 +1054,7 @@ const ApplicantDashboard = (props) => {
                           backgroundColor: isActive || isCompleted ? "#6D2323" : "#E8C999",
                           border: "2px solid #6D2323",
                           display: "flex",
+                          
                           alignItems: "center",
                           justifyContent: "center",
                           margin: "0 auto",
@@ -1081,7 +1090,8 @@ const ApplicantDashboard = (props) => {
                 item
                 xs={2} // each step gets equal space (12/6 = 2)
                 key={index}
-                sx={{ display: "flex", justifyContent: "center" }}
+                
+                sx={{ display: "flex", justifyContent: "center",  }}
               >
                 <Box
                   sx={{
@@ -1093,6 +1103,9 @@ const ApplicantDashboard = (props) => {
                     p: 2,
                     overflowY: "auto",
                     fontSize: "13px",
+                          transition: "transform 0.2s ease",
+              boxShadow: 3,
+              "&:hover": { transform: "scale(1.03)" },
                     color: "maroon",
                     fontWeight: "bold",
                     lineHeight: 1.6,

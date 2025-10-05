@@ -19,27 +19,32 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PersonIcon from "@mui/icons-material/Person";
-import DescriptionIcon from "@mui/icons-material/Description";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import SchoolIcon from "@mui/icons-material/School";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
 import ExamPermit from "../applicant/ExamPermit";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
+
+
 
 const AdminDashboard1 = () => {
   const stepsData = [
-    { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-    { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-    { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-    { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-    { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-    { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-    { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+    { label: "Admission Process for Registrar", to: "/applicant_list_admin", icon: <SchoolIcon fontSize="large" /> },
+    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+
   ];
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
+
 
   const navigate = useNavigate();
   const [explicitSelection, setExplicitSelection] = useState(false);
@@ -57,8 +62,6 @@ const AdminDashboard1 = () => {
   };
 
 
-  const [currentStep, setCurrentStep] = useState(1);
-  const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
 
   const handleNavigateStep = (index, to) => {
     setCurrentStep(index);
@@ -759,11 +762,11 @@ const AdminDashboard1 = () => {
   return (
     <Box sx={{ height: "calc(100vh - 150px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
 
-{showPrintView && (
-  <div ref={divToPrintRef} style={{ display: "block" }}>
-    <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
-  </div>
-)}
+      {showPrintView && (
+        <div ref={divToPrintRef} style={{ display: "block" }}>
+          <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
+        </div>
+      )}
 
 
       {/* Top header: DOCUMENTS SUBMITTED + Search */}
@@ -903,17 +906,9 @@ const AdminDashboard1 = () => {
       </TableContainer>
 
 
-      <Box sx={{ display: "flex", width: "100%" }}>
+        <Box sx={{ display: "flex", width: "100%" }}>
         {/* Left side: Notice */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            mt: 2,
-          }}
-        >
+        <Box sx={{ width: "100%", padding: "10px" }}>
           <Box
             sx={{
               display: "flex",
@@ -924,7 +919,7 @@ const AdminDashboard1 = () => {
               backgroundColor: "#fffaf5",
               border: "1px solid #6D2323",
               boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.05)",
-              whiteSpace: "nowrap", // Prevent text wrapping
+              whiteSpace: "nowrap", // Keep all in one row
             }}
           >
             {/* Icon */}
@@ -935,15 +930,15 @@ const AdminDashboard1 = () => {
                 justifyContent: "center",
                 backgroundColor: "#6D2323",
                 borderRadius: "8px",
-                width: 50,
-                height: 50,
+                width: 40,
+                height: 40,
                 flexShrink: 0,
               }}
             >
-              <ErrorIcon sx={{ color: "white", fontSize: 40 }} />
+              <ErrorIcon sx={{ color: "white", fontSize: 28 }} />
             </Box>
 
-            {/* Text */}
+            {/* Notice Text */}
             <Typography
               sx={{
                 fontSize: "15px",
@@ -952,18 +947,17 @@ const AdminDashboard1 = () => {
               }}
             >
               <strong style={{ color: "maroon" }}>Notice:</strong> &nbsp;
-
               <strong>1.</strong> Kindly type <strong>'NA'</strong> in boxes where there are no possible answers to the information being requested. &nbsp; | &nbsp;
               <strong>2.</strong> To use the letter <strong>'Ñ'</strong>, press <kbd>ALT</kbd> + <kbd>165</kbd>; for <strong>'ñ'</strong>, press <kbd>ALT</kbd> + <kbd>164</kbd>. &nbsp; | &nbsp;
-              <strong>3.</strong> List of all printable files
+              <strong>3.</strong> This is the list of all printable files.
             </Typography>
           </Box>
         </Box>
-
       </Box>
 
 
-     {/* Cards Section */}
+
+      {/* Cards Section */}
       <Box
         sx={{
           display: "flex",

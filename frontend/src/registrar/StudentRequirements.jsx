@@ -22,19 +22,19 @@ import {
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Search from '@mui/icons-material/Search';
-import PersonIcon from "@mui/icons-material/Person";
-import DescriptionIcon from "@mui/icons-material/Description";
-import SchoolIcon from "@mui/icons-material/School";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { io } from "socket.io-client";
 import { Snackbar, Alert } from "@mui/material";
+import SchoolIcon from "@mui/icons-material/School";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
+
 
 
 const socket = io("http://localhost:5000");
@@ -49,15 +49,20 @@ const requiredDocs = [
   { label: 'Certificate Belonging to Graduating Class', key: 'CertificateOfGraduatingClass' }
 ];
 
-const tabs = [
-  { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-  { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-  { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-  { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-  { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-  { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-  { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+ const tabs = [
+    { 
+        label: <>Admission Process for <br /> Registrar</>, 
+        to: "/applicant_list_admin", 
+        icon: <SchoolIcon fontSize="large" /> 
+    },
+    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
 ];
+
 
 const remarksOptions = [
   "75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE",
@@ -374,7 +379,11 @@ const StudentRequirements = () => {
   const fetchDocumentStatus = async (applicant_number) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/document_status/${applicant_number}`);
-      setDocumentStatus(response.data.document_status); // <-- pick the field
+      setDocumentStatus(response.data.document_status);
+      setPerson((prev) => ({
+        ...prev,
+        evaluator: response.data.evaluator || null
+      }));
     } catch (err) {
       console.error("Error fetching document status:", err);
     }
@@ -490,14 +499,23 @@ const StudentRequirements = () => {
     setDocumentStatus(newStatus);
 
     try {
-      await axios.put(`http://localhost:5000/api/document_status/${person.applicant_number}`, {
-        document_status: newStatus,
-      });
+      await axios.put(
+        `http://localhost:5000/api/document_status/${person.applicant_number}`,
+        {
+          document_status: newStatus,
+          user_id: localStorage.getItem("person_id"),
+        }
+      );
+
+      // ✅ Refresh evaluator right after update
+      await fetchDocumentStatus(person.applicant_number);
+
       console.log("Document status updated successfully!");
     } catch (err) {
       console.error("Error updating document status:", err);
     }
   };
+
 
 
   const handleUploadSubmit = async () => {
@@ -559,43 +577,6 @@ const StudentRequirements = () => {
   };
 
 
-
-  const handleChange = async (e) => {
-    const { name, value } = e.target;
-    setPerson((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "document_status") {
-      const newValue = value || ""; // default if empty
-      setPerson((prev) => ({ ...prev, document_status: newValue }));
-
-      if (uploads.length === 0) return;
-
-      try {
-        await Promise.all(
-          uploads
-            .filter(u => !u.file_path?.includes("VaccineCard")) // 🚫 skip vaccine docs
-            .map((upload) =>
-              axios.put(`http://localhost:5000/uploads/document-status/${upload.upload_id}`, {
-                document_status: newValue,
-                user_id: userID,
-              })
-            )
-        );
-
-        // 🔹 Emit socket event using a ref (not redefined every render)
-        if (socketRef.current) {
-          socketRef.current.emit("document_status_updated");
-        }
-
-        if (selectedPerson?.applicant_number) {
-          await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
-        }
-      } catch (err) {
-        console.error("❌ Failed to update document statuses:", err);
-      }
-    }
-  };
-
   useEffect(() => {
     socket.on("notification", (data) => {
       console.log("📢 Notification:", data);
@@ -621,32 +602,6 @@ const StudentRequirements = () => {
       textTransform: 'none',
     };
 
-    // local save handler (rename to avoid shadowing top-level handler)
-    const handleSaveRowRemarks = async (id) => {
-      const newRemark = (remarksMap[id] ?? "").trim();
-      if (!newRemark || newRemark === "__NEW__" || newRemark === "New Remarks") {
-        setEditingRemarkId(null);
-        setNewRemarkMode((prev) => ({ ...prev, [id]: false }));
-        return;
-      }
-
-      try {
-        await axios.put(`http://localhost:5000/uploads/remarks/${id}`, {
-          remarks: newRemark,
-          status: uploads.find((u) => u.upload_id === id)?.status || "0",
-          user_id: userID,
-        });
-
-        if (selectedPerson?.applicant_number) {
-          await fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
-        }
-      } catch (err) {
-        console.error("Failed to save remarks:", err);
-      } finally {
-        setEditingRemarkId(null);
-        setNewRemarkMode((prev) => ({ ...prev, [id]: false }));
-      }
-    };
 
 
 
@@ -874,6 +829,8 @@ const StudentRequirements = () => {
                   Preview
                 </Button>
 
+
+
                 <Button
                   onClick={() => handleConfirmDelete(uploaded)}
                   sx={{
@@ -989,66 +946,44 @@ const StudentRequirements = () => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
+            flexWrap: "nowrap", // ❌ prevent wrapping
             width: "100%",
-            mt: 2,
-            flexWrap: "wrap", // so it wraps on smaller screens
+            mt: 3,
+            gap: 2,
           }}
         >
           {tabs.map((tab, index) => (
-            <React.Fragment key={index}>
-              {/* Step Card */}
-              <Card
-                onClick={() => handleStepClick(index, tab.to)}
-                sx={{
-                  flex: 1,
-                  maxWidth: `${100 / tabs.length}%`, // evenly fit in one row
-                  height: 100,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  borderRadius: 2,
-                  border: "2px solid #6D2323",
-
-                  backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                  color: activeStep === index ? "#fff" : "#000",
-                  boxShadow:
-                    activeStep === index
-                      ? "0px 4px 10px rgba(0,0,0,0.3)"
-                      : "0px 2px 6px rgba(0,0,0,0.15)",
-                  transition: "0.3s ease",
-                  "&:hover": {
-                    backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
-                  },
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Box sx={{ fontSize: 32, mb: 0.5 }}>{tab.icon}</Box>
-                  <Typography
-                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
-                  >
-                    {tab.label}
-                  </Typography>
-                </Box>
-              </Card>
-
-              {/* Spacer instead of line */}
-              {index < tabs.length - 1 && (
-                <Box
-                  sx={{
-                    flex: 0.1,
-                    mx: 1, // keeps spacing between cards
-                  }}
-                />
-              )}
-            </React.Fragment>
+            <Card
+              key={index}
+              onClick={() => handleStepClick(index, tab.to)}
+              sx={{
+                flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
+                height: 120,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                borderRadius: 2,
+                border: "2px solid #6D2323",
+                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                color: activeStep === index ? "#fff" : "#000",
+                boxShadow:
+                  activeStep === index
+                    ? "0px 4px 10px rgba(0,0,0,0.3)"
+                    : "0px 2px 6px rgba(0,0,0,0.15)",
+                transition: "0.3s ease",
+                "&:hover": {
+                  backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+                },
+              }}
+            >
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
+                <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
+                  {tab.label}
+                </Typography>
+              </Box>
+            </Card>
           ))}
         </Box>
 
@@ -1233,17 +1168,18 @@ const StudentRequirements = () => {
                   <MenuItem value="Documents Verified & ECAT">Documents Verified & ECAT</MenuItem>
                 </TextField>
 
-                {uploads[0]?.evaluator_email && (
+                {person?.evaluator?.evaluator_email && (
                   <Typography variant="caption" sx={{ marginLeft: 1 }}>
                     Status Changed By:{" "}
-                    {uploads[0].evaluator_email.replace(/@gmail\.com$/i, "")} (
-                    {uploads[0].evaluator_lname || ""}, {uploads[0].evaluator_fname || ""}{" "}
-                    {uploads[0].evaluator_mname || ""}
+                    {person.evaluator.evaluator_email.replace(/@gmail\.com$/i, "")} (
+                    {person.evaluator.evaluator_lname || ""}, {person.evaluator.evaluator_fname || ""}{" "}
+                    {person.evaluator.evaluator_mname || ""}
                     )
                     <br />
-                    Updated At: {new Date(uploads[0].created_at).toLocaleString()}
+                    Updated At: {new Date(person.evaluator.created_at).toLocaleString()}
                   </Typography>
                 )}
+
               </Box>
 
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Button, Box, TextField, Container, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, Typography, FormControl, FormHelperText, InputLabel, Select, MenuItem, Checkbox, FormControlLabel } from "@mui/material";
+import { Button, Box, TextField, Container, Card, Modal, TableContainer, Paper, Table, TableHead, TableRow, TableCell, Typography, FormControl, FormHelperText, InputLabel, Select, MenuItem, Checkbox, FormControlLabel } from "@mui/material";
 import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
@@ -13,16 +13,53 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import DescriptionIcon from "@mui/icons-material/Description";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
 
-const StudentDashboard2 = () => {
+import ExamPermit from "../applicant/ExamPermit";
+
+const RegistrarDashboard2 = () => {
+    const stepsData = [
+        { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
+        { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+        { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
+        { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+        { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
+        { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
 
 
+    ];
+
+    const [currentStep, setCurrentStep] = useState(1);
+    const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
+
+    const fetchByPersonId = async (personID) => {
+        try {
+            const res = await axios.get(`http://localhost:5000/api/person_with_applicant/${personID}`);
+            setPerson(res.data);
+            setSelectedPerson(res.data);
+            if (res.data?.applicant_number) {
+            }
+        } catch (err) {
+            console.error("❌ person_with_applicant failed:", err);
+        }
+    };
+
+    const handleNavigateStep = (index, to) => {
+        setCurrentStep(index);
+
+        const pid = sessionStorage.getItem("admin_edit_person_id");
+        if (pid) {
+            navigate(`${to}?person_id=${pid}`);
+        } else {
+            navigate(to);
+        }
+    };
 
     const navigate = useNavigate();
     const [explicitSelection, setExplicitSelection] = useState(false);
@@ -38,35 +75,18 @@ const StudentDashboard2 = () => {
         guardian_middle_name: "", guardian_ext: "", guardian_nickname: "", guardian_address: "", guardian_contact: "", guardian_email: "", annual_income: "",
     });
     const [selectedPerson, setSelectedPerson] = useState(null);
-    const [studentNumber, setStudentNumber] = useState("");
 
+
+    // do not alter
+    const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const queryPersonId = queryParams.get("person_id");
-
-    const queryStudentNumber = sessionStorage.getItem("student_number");
-
-    useEffect(() => {
-        if (!queryStudentNumber) return;
-        const fetchPersonId = async () => {
-            try {
-                const res = await axios.get(`http://localhost:5000/api/person_id/${queryStudentNumber}`);
-                setUserID(res.data.person_id);
-                setStudentNumber(queryStudentNumber);
-                setPerson(res.data);
-                setSelectedPerson(res.data);
-            } catch (err) {
-                console.error("❌ Failed to fetch person_id:", err);
-            }
-        };
-        fetchPersonId();
-    }, [queryStudentNumber]);
-
 
     useEffect(() => {
         const storedUser = localStorage.getItem("email");
         const storedRole = localStorage.getItem("role");
         const loggedInPersonId = localStorage.getItem("person_id");
-        const searchedPersonId = sessionStorage.getItem("student_edit_person_id");
+        const searchedPersonId = sessionStorage.getItem("admin_edit_person_id");
 
         if (!storedUser || !storedRole || !loggedInPersonId) {
             window.location.href = "/login";
@@ -77,22 +97,21 @@ const StudentDashboard2 = () => {
         setUserRole(storedRole);
 
         // Roles that can access
-        const allowedRoles = ["student", "registrar"];
+        const allowedRoles = ["registrar", "applicant", "superadmin"];
         if (allowedRoles.includes(storedRole)) {
-            // ✅ Prefer URL param if student is editing, otherwise logged-in student
+            // ✅ Always take URL param first
             const targetId = queryPersonId || searchedPersonId || loggedInPersonId;
 
-            // Make sure student_number is in sessionStorage for later steps
-            if (studentNumber) {
-                sessionStorage.setItem("student_number", studentNumber);
-            }
+            // Save it so other pages (ECAT, forms) can use it
+            sessionStorage.setItem("admin_edit_person_id", targetId);
 
             setUserID(targetId);
+            fetchPersonData(targetId);
             return;
         }
 
         window.location.href = "/login";
-    }, [queryPersonId, studentNumber]);
+    }, [queryPersonId]);
 
     useEffect(() => {
         let consumedFlag = false;
@@ -106,9 +125,9 @@ const StudentDashboard2 = () => {
             }
 
             // fallback only if it's a fresh selection from Applicant List
-            const source = sessionStorage.getItem("student_edit_person_id_source");
-            const tsStr = sessionStorage.getItem("student_edit_person_id_ts");
-            const id = sessionStorage.getItem("student_edit_person_id");
+            const source = sessionStorage.getItem("admin_edit_person_id_source");
+            const tsStr = sessionStorage.getItem("admin_edit_person_id_ts");
+            const id = sessionStorage.getItem("admin_edit_person_id");
             const ts = tsStr ? parseInt(tsStr, 10) : 0;
             const isFresh = source === "applicant_list" && Date.now() - ts < 5 * 60 * 1000;
 
@@ -120,87 +139,54 @@ const StudentDashboard2 = () => {
         };
 
         tryLoad().finally(() => {
+            // consume the freshness so it won't auto-load again later
             if (consumedFlag) {
-                sessionStorage.removeItem("student_edit_person_id_source");
-                sessionStorage.removeItem("student_edit_person_id_ts");
+                sessionStorage.removeItem("admin_edit_person_id_source");
+                sessionStorage.removeItem("admin_edit_person_id_ts");
             }
         });
     }, [queryPersonId]);
 
-    // Fetch person by ID (when navigating with ?person_id=... or sessionStorage)
-    useEffect(() => {
-        const fetchPersonById = async () => {
-            if (!userID) return;
 
-            try {
-                const res = await axios.get(`http://localhost:5000/api/person_with_applicant/${userID}`);
-                if (res.data) {
-                    setPerson(res.data);
-                    setSelectedPerson(res.data);
-                } else {
-                    console.warn("⚠️ No person found for ID:", userID);
-                }
-            } catch (err) {
-                console.error("❌ Failed to fetch person by ID:", err);
-            }
-        };
 
-        fetchPersonById();
-    }, [userID]);
 
-    const steps = [
-        { label: "Personal Information", icon: <PersonIcon />, path: `/student_dashboard1` },
-        { label: "Family Background", icon: <FamilyRestroomIcon />, path: `/student_dashboard2` },
-        { label: "Educational Attainment", icon: <SchoolIcon />, path: `/student_dashboard3` },
-        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: `/student_dashboard4` },
-        { label: "Other Information", icon: <InfoIcon />, path: `/student_dashboard5` },
-    ];
+    const steps = person.person_id
+        ? [
+            { label: "Personal Information", icon: <PersonIcon />, path: `/registrar_dashboard1?person_id=${userID}` },
+            { label: "Family Background", icon: <FamilyRestroomIcon />, path: `/registrar_dashboard2?person_id=${userID}` },
+            { label: "Educational Attainment", icon: <SchoolIcon />, path: `/registrar_dashboard3?person_id=${userID}` },
+            { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: `/registrar_dashboard4?person_id=${userID}` },
+            { label: "Other Information", icon: <InfoIcon />, path: `/registrar_dashboard5?person_id=${userID}` },
+        ]
+        : [];
+
 
 
     const [activeStep, setActiveStep] = useState(1);
-    const [clickedSteps, setClickedSteps] = useState(Array(steps.length).fill(false));
-    const [currentStep, setCurrentStep] = useState(0);
 
-    const handleStepClick = (index, to) => {
-        setActiveStep(index);
-        navigate(to);
-    };
-
-
-
-
-
-    // Do not alter
-    const handleUpdate = async (updatedData) => {
-        if (!person || !person.person_id) return;
-
+    const fetchPersonData = async (id) => {
         try {
-            await axios.put(
-                `http://localhost:5000/api/enrollment_person/${person.person_id}`, // ✅ enrollment DB
-                updatedData
+            const res = await axios.get(`http://localhost:5000/api/person/${id}`);
+
+            // Sanitize null values and set state
+            const safePerson = Object.fromEntries(
+                Object.entries(res.data).map(([key, val]) => [key, val ?? ""])
             );
-            console.log("✅ Auto-saved successfully");
+
+            setPerson(safePerson);
+
+            // ✅ Set dropdown based on existing deceased values
+            if (res.data.solo_parent === 1) {
+                if (res.data.father_deceased === 1) {
+                    setSoloParentChoice("Mother");
+                } else if (res.data.mother_deceased === 1) {
+                    setSoloParentChoice("Father");
+                }
+            }
         } catch (error) {
-            console.error("❌ Auto-save failed:", error);
+            console.error("Failed to fetch person data:", error);
         }
     };
-
-
-    const [persons, setPersons] = useState([]);
-    useEffect(() => {
-        const fetchPersons = async () => {
-            try {
-                const res = await axios.get("http://localhost:5000/api/enrollment_upload_documents");
-                setPersons(res.data);
-            } catch (err) {
-                console.error("❌ Failed to fetch persons list", err);
-            }
-        };
-
-        fetchPersons();
-    }, []);
-
-
 
 
     const [isFatherDeceased, setIsFatherDeceased] = useState(false);
@@ -299,28 +285,132 @@ const StudentDashboard2 = () => {
 
 
     const [soloParentChoice, setSoloParentChoice] = useState("");
+    const [clickedSteps, setClickedSteps] = useState(Array(steps.length).fill(false));
 
+    const handleStepClick = (index) => {
+        setActiveStep(index);
+        const newClickedSteps = [...clickedSteps];
+        newClickedSteps[index] = true;
+        setClickedSteps(newClickedSteps);
+    };
+
+
+    const divToPrintRef = useRef();
+    const [showPrintView, setShowPrintView] = useState(false);
+
+    const printDiv = () => {
+        const divToPrint = divToPrintRef.current;
+        if (divToPrint) {
+            const newWin = window.open("", "Print-Window");
+            newWin.document.open();
+            newWin.document.write(`
+        <html>
+          <head>
+            <title>Examination Permit</title>
+            <style>
+              @page { size: A4; margin: 0; }
+              body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                margin-left: "
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+              }
+              .print-container {
+                width: 8.5in;
+                min-height: 11in;
+                margin: auto;
+                background: white;
+              }
+              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            </style>
+          </head>
+          <body onload="window.print(); setTimeout(() => window.close(), 100);">
+            <div class="print-container">${divToPrint.innerHTML}</div>
+          </body>
+        </html>
+      `);
+            newWin.document.close();
+        }
+    };
+
+
+    const [examPermitError, setExamPermitError] = useState("");
+    const [examPermitModalOpen, setExamPermitModalOpen] = useState(false);
+
+    const handleCloseExamPermitModal = () => {
+        setExamPermitModalOpen(false);
+        setExamPermitError("");
+    };
+
+    const handleExamPermitClick = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/api/verified-exam-applicants");
+            const verified = res.data.some(a => a.person_id === parseInt(userID));
+
+            if (!verified) {
+                setExamPermitError("❌ You cannot print the Exam Permit until all required documents are verified.");
+                setExamPermitModalOpen(true);
+                return;
+            }
+
+            // ✅ Render permit and print
+            setShowPrintView(true);
+            setTimeout(() => {
+                printDiv();
+                setShowPrintView(false);
+            }, 500);
+        } catch (err) {
+            console.error("Error verifying exam permit eligibility:", err);
+            setExamPermitError("⚠️ Unable to check document verification status right now.");
+            setExamPermitModalOpen(true);
+        }
+    };
 
 
     const links = [
-        { to: `/student_ecat_application_form`, label: "ECAT Application Form" },
-        { to: `/student_form_process`, label: "Admission Form Process" },
-        { to: `/student_personal_data_form`, label: "Personal Data Form" },
-        { to: `/student_office_of_the_registrar`, label: "Application For EARIST College Admission" },
-        { to: `/student_admission_services`, label: "Admission Services" },
-
+        { to: `/admin_ecat_application_form`, label: "ECAT Application Form" },
+        { to: `/admission_form_process`, label: "Admission Form Process" },
+        { to: `/admin_personal_data_form`, label: "Personal Data Form" },
+        { to: `/admin_office_of_the_registrar`, label: "Application For EARIST College Admission" },
+        { to: `/admission_services`, label: "Application/Student Satisfactory Survey" },
+        { label: "Examination Permit", onClick: handleExamPermitClick }, // ✅
     ];
+
+
+
+    const [canPrintPermit, setCanPrintPermit] = useState(false);
+
+    useEffect(() => {
+        if (!userID) return;
+        axios.get("http://localhost:5000/api/verified-exam-applicants")
+            .then(res => {
+                const verified = res.data.some(a => a.person_id === parseInt(userID));
+                setCanPrintPermit(verified);
+            });
+    }, [userID]);
 
     // dot not alter
     return (
         <Box sx={{ height: "calc(100vh - 140px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
+
+            {showPrintView && (
+                <div ref={divToPrintRef} style={{ display: "block" }}>
+                    <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
+                </div>
+            )}
+
+
+            {/* Top header: DOCUMENTS SUBMITTED + Search */}
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexWrap: 'wrap',
-                    mt: 2,
+                    mt: 3,
                     mb: 2,
                     px: 2,
                 }}
@@ -333,17 +423,110 @@ const StudentDashboard2 = () => {
                         fontSize: '36px',
                     }}
                 >
-                    STUDENT PROFILE
+                    FAMILY BACKGROUND
                 </Typography>
-
-
-
-
             </Box>
             <hr style={{ border: "1px solid #ccc", width: "100%" }} />
+            <br />
+
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    mt: 2,
+                }}
+            >
+                {stepsData.map((step, index) => (
+                    <React.Fragment key={index}>
+                        {/* Step Card */}
+                        <Card
+                            onClick={() => handleNavigateStep(index, step.to)}
+                            sx={{
+                                flex: 1,
+                                maxWidth: `${100 / stepsData.length}%`, // evenly fit 100%
+                                height: 100,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                borderRadius: 2,
+                                border: "2px solid #6D2323",
+
+                                backgroundColor: currentStep === index ? "#6D2323" : "#E8C999",
+                                color: currentStep === index ? "#fff" : "#000",
+                                boxShadow:
+                                    currentStep === index
+                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                        : "0px 2px 6px rgba(0,0,0,0.15)",
+                                transition: "0.3s ease",
+                                "&:hover": {
+                                    backgroundColor: currentStep === index ? "#5a1c1c" : "#f5d98f",
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{step.icon}</Box>
+                                <Typography
+                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
+                                >
+                                    {step.label}
+                                </Typography>
+                            </Box>
+                        </Card>
+
+                        {/* Spacer instead of line */}
+                        {index < stepsData.length - 1 && (
+                            <Box
+                                sx={{
+                                    flex: 0.1,
+                                    mx: 1, // margin to keep spacing
+                                }}
+                            />
+                        )}
+                    </React.Fragment>
+                ))}
+            </Box>
 
             <br />
 
+
+
+            <TableContainer component={Paper} sx={{ width: '100%', mb: 1 }}>
+                <Table>
+                    <TableHead sx={{ backgroundColor: '#6D2323' }}>
+                        <TableRow>
+                            {/* Left cell: Applicant ID */}
+                            <TableCell sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}>
+                                Applicant ID:&nbsp;
+                                <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
+                                    {person?.applicant_number || "N/A"}
+
+                                </span>
+                            </TableCell>
+
+                            {/* Right cell: Applicant Name */}
+                            <TableCell
+                                align="right"
+                                sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}
+                            >
+                                Applicant Name:&nbsp;
+                                <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
+                                    {person?.last_name?.toUpperCase()}, {person?.first_name?.toUpperCase()}{" "}
+                                    {person?.middle_name?.toUpperCase()} {person?.extension?.toUpperCase() || ""}
+                                </span>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                </Table>
+            </TableContainer>
 
 
             <Box sx={{ display: "flex", width: "100%" }}>
@@ -473,6 +656,7 @@ const StudentDashboard2 = () => {
             </Box>
 
 
+
             <Container>
 
 
@@ -483,60 +667,67 @@ const StudentDashboard2 = () => {
                 </Container>
                 <br />
 
-                <Box sx={{ display: "flex", justifyContent: "center", width: "100%", px: 4 }}>
-                    {steps.map((step, index) => (
-                        <React.Fragment key={index}>
-                            <Link to={step.path} style={{ textDecoration: "none" }}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => handleStepClick(index, step.path)}
-
-                                >
+                {person.person_id && (
+                    <Box sx={{ display: "flex", justifyContent: "center", width: "100%", px: 4 }}>
+                        {steps.map((step, index) => (
+                            <React.Fragment key={index}>
+                                {/* Wrap the step with Link for routing */}
+                                <Link to={step.path} style={{ textDecoration: "none" }}>
                                     <Box
                                         sx={{
-                                            width: 50,
-                                            height: 50,
-                                            borderRadius: "50%",
-                                            backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                                            color: activeStep === index ? "#fff" : "#000",
                                             display: "flex",
+                                            flexDirection: "column",
                                             alignItems: "center",
-                                            justifyContent: "center",
+                                            cursor: "pointer",
                                         }}
+                                        onClick={() => handleStepClick(index)}
                                     >
-                                        {step.icon}
+                                        {/* Step Icon */}
+                                        <Box
+                                            sx={{
+                                                width: 50,
+                                                height: 50,
+                                                borderRadius: "50%",
+                                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                                                color: activeStep === index ? "#fff" : "#000",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            {step.icon}
+                                        </Box>
+
+                                        {/* Step Label */}
+                                        <Typography
+                                            sx={{
+                                                mt: 1,
+                                                color: activeStep === index ? "#6D2323" : "#000",
+                                                fontWeight: activeStep === index ? "bold" : "normal",
+                                                fontSize: 14,
+                                            }}
+                                        >
+                                            {step.label}
+                                        </Typography>
                                     </Box>
-                                    <Typography
+                                </Link>
+
+                                {/* Connector Line */}
+                                {index < steps.length - 1 && (
+                                    <Box
                                         sx={{
-                                            mt: 1,
-                                            color: activeStep === index ? "#6D2323" : "#000",
-                                            fontWeight: activeStep === index ? "bold" : "normal",
-                                            fontSize: 14,
+                                            height: "2px",
+                                            backgroundColor: "#6D2323",
+                                            flex: 1,
+                                            alignSelf: "center",
+                                            mx: 2,
                                         }}
-                                    >
-                                        {step.label}
-                                    </Typography>
-                                </Box>
-                            </Link>
-                            {index < steps.length - 1 && (
-                                <Box
-                                    sx={{
-                                        height: "2px",
-                                        backgroundColor: "#6D2323",
-                                        flex: 1,
-                                        alignSelf: "center",
-                                        mx: 2,
-                                    }}
-                                />
-                            )}
-                        </React.Fragment>
-                    ))}
-                </Box>
+                                    />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </Box>
+                )}
 
                 <br />
 
@@ -601,7 +792,7 @@ const StudentDashboard2 = () => {
                                     <InputLabel id="parent-select-label">- Parent- </InputLabel>
                                     <Select
                                         labelId="parent-select-label"
-                                        disabled
+                                        readOnly
                                         value={soloParentChoice}
                                         onChange={(e) => {
                                             const choice = e.target.value;
@@ -670,10 +861,10 @@ const StudentDashboard2 = () => {
                                         <Box sx={{ flex: 1 }}>
                                             <Typography variant="subtitle2" mb={1}>Father Family Name</Typography>
                                             <TextField
-                                                readOnly
                                                 fullWidth
                                                 size="small"
                                                 required
+                                                readOnly
 
                                                 placeholder="Enter Father Last Name"
                                                 name="father_family_name"
@@ -704,6 +895,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="father_middle_name"
                                                 placeholder="Enter Father Middle Name"
                                                 value={person.father_middle_name}
@@ -746,6 +938,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="father_nickname"
                                                 placeholder="Enter Father Nickname"
                                                 value={person.father_nickname}
@@ -836,6 +1029,7 @@ const StudentDashboard2 = () => {
                                                     size="small"
                                                     name="father_course"
                                                     readOnly
+
                                                     placeholder="Enter Father Course"
                                                     value={person.father_course}
 
@@ -866,6 +1060,7 @@ const StudentDashboard2 = () => {
                                                     fullWidth
                                                     size="small"
                                                     readOnly
+
                                                     name="father_school_address"
                                                     placeholder="Enter Father School Address"
                                                     value={person.father_school_address}
@@ -892,6 +1087,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="father_contact"
                                                 placeholder="Enter Father Contact"
                                                 value={person.father_contact}
@@ -921,6 +1117,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="father_employer"
                                                 placeholder="Enter Father Employer"
                                                 value={person.father_employer}
@@ -954,6 +1151,7 @@ const StudentDashboard2 = () => {
                                             size="small"
                                             required
                                             readOnly
+
                                             name="father_email"
                                             placeholder="Enter your Father Email Address (e.g., username@gmail.com)"
                                             value={person.father_email}
@@ -1042,6 +1240,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="mother_middle_name"
                                                 placeholder="Enter your Mother Middle Name"
                                                 value={person.mother_middle_name}
@@ -1176,6 +1375,7 @@ const StudentDashboard2 = () => {
                                                     size="small"
                                                     name="mother_course"
                                                     readOnly
+
                                                     placeholder="Enter your Mother Course"
                                                     value={person.mother_course}
 
@@ -1191,6 +1391,7 @@ const StudentDashboard2 = () => {
                                                     size="small"
                                                     name="mother_year_graduated"
                                                     readOnly
+
                                                     placeholder="Enter your Mother Year Graduated"
                                                     value={person.mother_year_graduated}
 
@@ -1206,6 +1407,7 @@ const StudentDashboard2 = () => {
                                                     size="small"
                                                     name="mother_school_address"
                                                     readOnly
+
                                                     placeholder="Enter your Mother School Address"
                                                     value={person.mother_school_address}
 
@@ -1229,6 +1431,7 @@ const StudentDashboard2 = () => {
                                                 fullWidth
                                                 size="small"
                                                 readOnly
+
                                                 required
                                                 name="mother_contact"
                                                 placeholder="Enter your Mother Contact"
@@ -1244,6 +1447,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="mother_occupation"
                                                 placeholder="Enter your Mother Occupation"
                                                 value={person.mother_occupation}
@@ -1258,6 +1462,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="mother_employer"
                                                 placeholder="Enter your Mother Employer"
                                                 value={person.mother_employer}
@@ -1274,6 +1479,7 @@ const StudentDashboard2 = () => {
                                                 size="small"
                                                 required
                                                 readOnly
+
                                                 name="mother_income"
                                                 placeholder="Enter your Mother Income"
                                                 value={person.mother_income}
@@ -1291,6 +1497,7 @@ const StudentDashboard2 = () => {
                                             size="small"
                                             required
                                             readOnly
+
                                             name="mother_email"
                                             placeholder="Enter your Mother Email Address (e.g., username@gmail.com)"
                                             value={person.mother_email}
@@ -1348,6 +1555,7 @@ const StudentDashboard2 = () => {
                                     fullWidth
                                     size="small"
                                     readOnly
+
                                     required
                                     name="guardian_family_name"
                                     placeholder="Enter your Guardian Family Name"
@@ -1384,6 +1592,7 @@ const StudentDashboard2 = () => {
                                     size="small"
                                     required
                                     readOnly
+
                                     name="guardian_middle_name"
                                     placeholder="Enter your Guardian Middle Name"
                                     value={person.guardian_middle_name}
@@ -1452,6 +1661,7 @@ const StudentDashboard2 = () => {
                                 size="small"
                                 required
                                 readOnly
+
                                 name="guardian_address"
                                 placeholder="Enter your Guardian Address"
                                 value={person.guardian_address}
@@ -1486,6 +1696,7 @@ const StudentDashboard2 = () => {
                                     required
                                     name="guardian_email"
                                     readOnly
+
                                     placeholder="Enter your Guardian Email Address (e.g., username@gmail.com)"
                                     value={person.guardian_email}
 
@@ -1525,13 +1736,53 @@ const StudentDashboard2 = () => {
                             </FormControl>
                         </Box>
 
+                        <Modal
+                            open={examPermitModalOpen}
+                            onClose={handleCloseExamPermitModal}
+                            aria-labelledby="exam-permit-error-title"
+                            aria-describedby="exam-permit-error-description"
+                        >
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                    width: 400,
+                                    bgcolor: "background.paper",
+                                    border: "2px solid #6D2323",
+                                    boxShadow: 24,
+                                    p: 4,
+                                    borderRadius: 2,
+                                    textAlign: "center",
+                                }}
+                            >
+                                <ErrorIcon sx={{ color: "#6D2323", fontSize: 50, mb: 2 }} />
+                                <Typography id="exam-permit-error-title" variant="h6" component="h2" color="maroon">
+                                    Exam Permit Notice
+                                </Typography>
+                                <Typography id="exam-permit-error-description" sx={{ mt: 2 }}>
+                                    {examPermitError}
+                                </Typography>
+                                <Button
+                                    onClick={handleCloseExamPermitModal}
+                                    variant="contained"
+                                    sx={{ mt: 3, backgroundColor: "#6D2323", "&:hover": { backgroundColor: "#8B0000" } }}
+                                >
+                                    Close
+                                </Button>
+                            </Box>
+                        </Modal>
+
+
+
 
                         <Box display="flex" justifyContent="space-between" mt={4}>
                             {/* Previous Page Button */}
                             <Button
                                 variant="contained"
                                 component={Link}
-                                to="/student_dashboard1"
+                                to="/registrar_dashboard1"
                                 startIcon={
                                     <ArrowBackIcon
                                         sx={{
@@ -1559,28 +1810,35 @@ const StudentDashboard2 = () => {
                                 variant="contained"
                                 onClick={(e) => {
                                     handleUpdate();
+
                                     if (isFormValid()) {
-                                        navigate("/student_dashboard3");
+                                        navigate("/registrar_dashboard3");
                                     } else {
                                         alert("Please complete all required fields before proceeding.");
                                     }
                                 }}
-                                endIcon={<ArrowForwardIcon sx={{ color: '#fff', transition: 'color 0.3s' }} />}
+                                endIcon={
+                                    <ArrowForwardIcon
+                                        sx={{
+                                            color: '#fff',
+                                            transition: 'color 0.3s',
+                                        }}
+                                    />
+                                }
                                 sx={{
                                     backgroundColor: '#6D2323',
                                     color: '#fff',
-                                    zIndex: 10,                // ✅ force clickable
-                                    position: "relative",      // ✅ prevent overlay issues
                                     '&:hover': {
                                         backgroundColor: '#E8C999',
                                         color: '#000',
-                                        '& .MuiSvgIcon-root': { color: '#000' },
+                                        '& .MuiSvgIcon-root': {
+                                            color: '#000',
+                                        },
                                     },
                                 }}
                             >
                                 Next Step
                             </Button>
-
                         </Box>
 
 
@@ -1592,4 +1850,4 @@ const StudentDashboard2 = () => {
 };
 
 
-export default StudentDashboard2;
+export default RegistrarDashboard2;

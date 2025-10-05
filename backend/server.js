@@ -42,6 +42,8 @@ app.use(cors({
 app.use(bodyparser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 const uploadPath = path.join(__dirname, "uploads");
 
@@ -494,7 +496,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     );
 
     for (const file of existingFiles) {
-      const fullFilePath = path.join(__dirname, file.file_path);
+      const fullFilePath = path.join(__dirname, "uploads", file.file_path);
+
       try {
         await fs.promises.unlink(fullFilePath);
       } catch (err) {
@@ -663,7 +666,8 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     );
 
     for (const file of existingFiles) {
-      const oldPath = path.join(__dirname, file.file_path);
+      const oldPath = path.join(__dirname, "uploads", file.file_path);
+
       try {
         await fs.promises.unlink(oldPath);
       } catch (err) {
@@ -677,10 +681,12 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
     await db.query(
       `INSERT INTO requirement_uploads 
-         (requirements_id, person_id, file_path, original_name, status, remarks) 
-       VALUES (?, ?, ?, ?, 0, ?)`,
-      [requirements_id, person_id, path.join("uploads", filename), req.file.originalname, remarks || null]
+     (requirements_id, person_id, file_path, original_name, status, remarks) 
+   VALUES (?, ?, ?, ?, 0, ?)`,
+      [requirements_id, person_id, filename, req.file.originalname, remarks || null]
     );
+
+
 
     res.status(201).json({ message: "✅ Upload successful" });
   } catch (err) {
@@ -688,19 +694,23 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     res.status(500).json({ error: "Failed to save upload", details: err.message });
   }
 });
-
 // ✅ ADMIN DELETE
 app.delete("/admin/uploads/:uploadId", async (req, res) => {
   const { uploadId } = req.params;
 
   try {
-    // 1️⃣ Get applicant info
+    // 1️⃣ Get upload row (file + person_id)
     const [uploadRows] = await db.query(
-      "SELECT person_id FROM requirement_uploads WHERE upload_id = ?",
+      "SELECT person_id, file_path FROM requirement_uploads WHERE upload_id = ?",
       [uploadId]
     );
-    const personId = uploadRows[0]?.person_id;
+    if (!uploadRows.length) {
+      return res.status(404).json({ error: "Upload not found." });
+    }
 
+    const { person_id: personId, file_path: filePath } = uploadRows[0];
+
+    // 2️⃣ Applicant info
     const [[appInfo]] = await db.query(`
       SELECT ant.applicant_number, pt.last_name, pt.first_name, pt.middle_name
       FROM applicant_numbering_table ant
@@ -711,11 +721,29 @@ app.delete("/admin/uploads/:uploadId", async (req, res) => {
     const applicant_number = appInfo?.applicant_number || "Unknown";
     const fullName = `${appInfo?.last_name || ""}, ${appInfo?.first_name || ""} ${appInfo?.middle_name?.charAt(0) || ""}.`;
 
-    // 2️⃣ Actor (admin performing the action)
+    // 3️⃣ Actor (admin performing the action)
     const user_person_id = req.headers["x-person-id"];
     const { actorEmail, actorName } = await getActorInfo(user_person_id);
 
-    // 3️⃣ Log notification
+    // 4️⃣ Delete physical file
+    if (filePath) {
+      const fullPath = path.join(__dirname, "uploads", filePath);
+      try {
+        await fs.promises.unlink(fullPath);
+        console.log("🗑️ File deleted:", fullPath);
+      } catch (err) {
+        if (err.code === "ENOENT") {
+          console.warn("⚠️ File already missing:", fullPath);
+        } else {
+          console.error("File delete error:", err);
+        }
+      }
+    }
+
+    // 5️⃣ Delete DB record
+    await db.query("DELETE FROM requirement_uploads WHERE upload_id = ?", [uploadId]);
+
+    // 6️⃣ Log notification
     const message = `🗑️ Deleted document (Applicant #${applicant_number} - ${fullName})`;
     await db.query(
       "INSERT INTO notifications (type, message, applicant_number, actor_email, actor_name, timestamp) VALUES (?, ?, ?, ?, ?, NOW())",
@@ -731,8 +759,6 @@ app.delete("/admin/uploads/:uploadId", async (req, res) => {
       timestamp: new Date().toISOString(),
     });
 
-    // 4️⃣ Delete DB record
-    await db.query("DELETE FROM requirement_uploads WHERE upload_id = ?", [uploadId]);
     res.status(200).json({ message: "✅ Upload deleted successfully." });
   } catch (error) {
     console.error("Delete error:", error);
@@ -793,7 +819,8 @@ app.delete("/uploads/:id", async (req, res) => {
       return res.status(403).json({ error: "Unauthorized or file not found" });
     }
 
-    const filePath = path.join(__dirname, results[0].file_path);
+    const filePath = path.join(__dirname, "uploads", results[0].file_path);
+
 
     fs.unlink(filePath, (err) => {
       if (err) console.error("File delete error:", err);
@@ -1146,28 +1173,26 @@ app.put("/uploads/document-status/:upload_id", async (req, res) => {
 // Update person.document_status directly
 // ✅ Update vaccine docs only
 app.put("/uploads/vaccine-status/:upload_id", async (req, res) => {
-  const { upload_id } = req.params;
   const { status, remarks, document_status, user_id } = req.body;
+  const { upload_id } = req.params;
 
   try {
-    const [result] = await db.query(
+    await db.query(
       `UPDATE requirement_uploads 
-       SET status = ?, remarks = ?, document_status = ?, last_updated_by = ?
-       WHERE upload_id = ?
-       AND file_path LIKE '%VaccineCard%'`,
-      [status, remarks || null, document_status || null, user_id, upload_id]
+       SET status = ?, 
+           remarks = ?, 
+           document_status = COALESCE(?, document_status), 
+           last_updated_by = ?
+       WHERE upload_id = ? AND file_path LIKE '%VaccineCard%'`,
+      [status, remarks || null, document_status, user_id, upload_id]
     );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Vaccine document not found" });
-    }
-
-    res.json({ message: "✅ Vaccine document updated successfully" });
-  } catch (err) {
-    console.error("Error updating vaccine doc:", err);
-    res.status(500).json({ error: "Failed to update vaccine document" });
+    res.json({ success: true, message: "Vaccine status updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Error updating vaccine status" });
   }
 });
+
 
 
 // ✅ Fetch all applicant uploads (admin use)
@@ -1953,8 +1978,6 @@ app.get("/api/applicants-with-number", async (req, res) => {
 });
 
 // Get full person info + applicant_number
-// ✅ Person with applicant number + latest document_status
-// ✅ Person with applicant number + aggregated document_status
 app.get("/api/person_with_applicant/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -1962,22 +1985,45 @@ app.get("/api/person_with_applicant/:id", async (req, res) => {
     const [[person]] = await db.query(`
       SELECT 
         pt.*,
-        ant.applicant_number,
-        (
-          SELECT 
-            CASE
-              WHEN SUM(ru.document_status = 'Documents Verified & ECAT') > 0 THEN 'Documents Verified & ECAT'
-              WHEN SUM(ru.document_status = 'Disapproved') > 0 THEN 'Disapproved'
-              WHEN SUM(ru.document_status = 'Program Closed') > 0 THEN 'Program Closed'
-              ELSE 'On process'
-            END
-          FROM requirement_uploads ru
-          WHERE ru.person_id = pt.person_id
-        ) AS document_status
+        ant.applicant_number
       FROM person_table pt
       JOIN applicant_numbering_table ant ON pt.person_id = ant.person_id
-      WHERE pt.person_id = ?
-    `, [id]);
+      WHERE pt.person_id = ? OR ant.applicant_number = ?
+      LIMIT 1
+    `, [id, id]);
+
+    if (!person) {
+      return res.status(404).json({ message: "Person not found" });
+    }
+
+    // get latest document status + evaluator
+    const [rows] = await db.query(`
+      SELECT 
+        ru.document_status    AS upload_document_status,
+        rt.id                 AS requirement_id,
+        ua.email              AS evaluator_email,
+        ua.role               AS evaluator_role,
+        pr.fname              AS evaluator_fname,
+        pr.mname              AS evaluator_mname,
+        pr.lname              AS evaluator_lname,
+        ru.created_at,
+        ru.last_updated_by
+      FROM requirement_uploads AS ru
+      LEFT JOIN requirements_table AS rt ON ru.requirements_id = rt.id
+      LEFT JOIN enrollment.user_accounts ua ON ru.last_updated_by = ua.person_id
+      LEFT JOIN enrollment.prof_table pr   ON ua.person_id = pr.person_id
+      WHERE ru.person_id = ?
+      ORDER BY ru.created_at DESC
+      LIMIT 1
+    `, [person.person_id]);
+
+    if (rows.length > 0) {
+      person.document_status = rows[0].upload_document_status || "On process";
+      person.evaluator = rows[0];
+    } else {
+      person.document_status = "On process";
+      person.evaluator = null;
+    }
 
     res.json(person);
 
@@ -1986,6 +2032,7 @@ app.get("/api/person_with_applicant/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch person" });
   }
 });
+
 
 
 
@@ -2180,6 +2227,7 @@ app.post("/api/person/import", upload.single("file"), async (req, res) => {
 
       // 1️⃣ Build person data
       const newPerson = {
+        student_number: row[0] || "",
         profile_img: row[1] || "",
         campus: row[2] || "",
         academicProgram: row[3] || "",
@@ -11015,17 +11063,34 @@ app.get("/api/person-by-applicant/:applicant_number", async (req, res) => {
   }
 });
 
+
 app.get("/api/document_status/:applicant_number", async (req, res) => {
   const { applicant_number } = req.params;
 
   try {
     const [rows] = await db.query(
-      `SELECT ru.document_status, rt.id 
+      `SELECT 
+         ru.document_status    AS upload_document_status,  -- ✅ alias para walang conflict
+         rt.id                 AS requirement_id,
+         ua.email              AS evaluator_email,
+         ua.role               AS evaluator_role,
+         pr.fname              AS evaluator_fname,
+         pr.mname              AS evaluator_mname,
+         pr.lname              AS evaluator_lname,
+         ru.created_at,
+         ru.last_updated_by
        FROM applicant_numbering_table AS ant
-       LEFT JOIN requirement_uploads AS ru ON ant.person_id = ru.person_id
-       LEFT JOIN requirements_table AS rt ON ru.requirements_id = rt.id
+       LEFT JOIN requirement_uploads AS ru 
+         ON ant.person_id = ru.person_id
+       LEFT JOIN requirements_table AS rt 
+         ON ru.requirements_id = rt.id
+       LEFT JOIN enrollment.user_accounts ua 
+         ON ru.last_updated_by = ua.person_id
+       LEFT JOIN enrollment.prof_table pr 
+         ON ua.person_id = pr.person_id
        WHERE ant.applicant_number = ? 
-         AND rt.id IN (1,2,3,4);`,
+         AND rt.id IN (1,2,3,4)
+       ORDER BY ru.created_at DESC`,
       [applicant_number]
     );
 
@@ -11033,37 +11098,37 @@ app.get("/api/document_status/:applicant_number", async (req, res) => {
       return res.json({ document_status: "On process" }); // default
     }
 
-    const statuses = rows.map(r => r.document_status);
+    const statuses = rows.map(r => r.upload_document_status); // ✅ use alias
+    const latest   = rows[0];
 
-    // Check if ALL are the same
     if (statuses.every(s => s === "On process")) {
-      return res.json({ document_status: "On process" });
+      return res.json({ document_status: "On process", evaluator: latest });
     }
     if (statuses.every(s => s === "Disapproved")) {
-      return res.json({ document_status: "Disapproved" });
+      return res.json({ document_status: "Disapproved", evaluator: latest });
     }
     if (statuses.every(s => s === "Program Closed")) {
-      return res.json({ document_status: "Program Closed" });
+      return res.json({ document_status: "Program Closed", evaluator: latest });
     }
     if (statuses.every(s => s === "Documents Verified & ECAT")) {
-      return res.json({ document_status: "Documents Verified & ECAT" });
+      return res.json({ document_status: "Documents Verified & ECAT", evaluator: latest });
     }
 
-    // Default
-    return res.json({ document_status: "On process" });
+    return res.json({ document_status: "On process", evaluator: latest });
   } catch (err) {
     console.error("Error fetching document status:", err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
-// Update document_status for applicant's requirements (IDs 1,2,3,4)
+
+
+
 app.put("/api/document_status/:applicant_number", async (req, res) => {
   const { applicant_number } = req.params;
-  const { document_status } = req.body;
+  const { document_status, user_id } = req.body;
 
   try {
-    // First, get the person_id
     const [personResult] = await db.query(
       "SELECT person_id FROM applicant_numbering_table WHERE applicant_number = ?",
       [applicant_number]
@@ -11075,13 +11140,13 @@ app.put("/api/document_status/:applicant_number", async (req, res) => {
 
     const person_id = personResult[0].person_id;
 
-    // Update all requirement_uploads with IDs 1,2,3,4
+    // ✅ update both document_status and last_updated_by
     await db.query(
       `UPDATE requirement_uploads 
-       SET document_status = ? 
+       SET document_status = ?, last_updated_by = ? 
        WHERE person_id = ? 
          AND requirements_id IN (1,2,3,4)`,
-      [document_status, person_id]
+      [document_status, user_id, person_id]
     );
 
     res.json({ message: "Document status updated successfully" });
@@ -11090,6 +11155,7 @@ app.put("/api/document_status/:applicant_number", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 // Check if applicant's 4 required documents are verified
 app.get("/api/document_status/check/:applicant_number", async (req, res) => {

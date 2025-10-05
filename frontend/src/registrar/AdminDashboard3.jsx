@@ -13,23 +13,24 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import DescriptionIcon from "@mui/icons-material/Description";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
 import ExamPermit from "../applicant/ExamPermit";
 
 const AdminDashboard3 = () => {
   const stepsData = [
-    { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-    { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-    { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-    { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-    { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-    { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-    { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+    { label: "Admission Process for Registrar", to: "/applicant_list_admin", icon: <SchoolIcon fontSize="large" /> },
+    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+
   ];
   const [currentStep, setCurrentStep] = useState(1);
   const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
@@ -240,7 +241,7 @@ const AdminDashboard3 = () => {
   };
 
 
- const divToPrintRef = useRef();
+  const divToPrintRef = useRef();
   const [showPrintView, setShowPrintView] = useState(false);
 
   const printDiv = () => {
@@ -342,11 +343,11 @@ const AdminDashboard3 = () => {
   return (
     <Box sx={{ height: "calc(100vh - 150px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
 
-{showPrintView && (
-  <div ref={divToPrintRef} style={{ display: "block" }}>
-    <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
-  </div>
-)}
+      {showPrintView && (
+        <div ref={divToPrintRef} style={{ display: "block" }}>
+          <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
+        </div>
+      )}
 
 
       <Box
@@ -526,79 +527,79 @@ const AdminDashboard3 = () => {
       </Box>
 
       {/* Cards Section */}
-            <Box
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+          pb: 1,
+          justifyContent: "center", // Centers all cards horizontally
+        }}
+      >
+        {links.map((lnk, i) => (
+          <motion.div
+            key={i}
+            style={{ flex: "0 0 calc(30% - 16px)" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1, duration: 0.4 }}
+          >
+            <Card
               sx={{
+                minHeight: 60,
+                borderRadius: 2,
+                border: "2px solid #6D2323",
+                backgroundColor: "#fff",
                 display: "flex",
-                flexWrap: "wrap",
-                gap: 2,
-                mt: 2,
-                pb: 1,
-                justifyContent: "center", // Centers all cards horizontally
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                p: 1.5,
+                cursor: "pointer",
+                transition: "all 0.3s ease-in-out",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  backgroundColor: "#6D2323", // ✅ background becomes maroon
+                  "& .card-text": {
+                    color: "#fff", // ✅ text becomes white
+                  },
+                  "& .card-icon": {
+                    color: "#fff", // ✅ icon becomes white
+                  },
+                },
+              }}
+              onClick={() => {
+                if (lnk.onClick) {
+                  lnk.onClick(); // run handler
+                } else if (lnk.to) {
+                  navigate(lnk.to); // navigate if it has a `to`
+                }
               }}
             >
-              {links.map((lnk, i) => (
-                <motion.div
-                  key={i}
-                  style={{ flex: "0 0 calc(30% - 16px)" }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                >
-                  <Card
-                    sx={{
-                      minHeight: 60,
-                      borderRadius: 2,
-                      border: "2px solid #6D2323",
-                      backgroundColor: "#fff",
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      textAlign: "center",
-                      p: 1.5,
-                      cursor: "pointer",
-                      transition: "all 0.3s ease-in-out",
-                      "&:hover": {
-                        transform: "scale(1.05)",
-                        backgroundColor: "#6D2323", // ✅ background becomes maroon
-                        "& .card-text": {
-                          color: "#fff", // ✅ text becomes white
-                        },
-                        "& .card-icon": {
-                          color: "#fff", // ✅ icon becomes white
-                        },
-                      },
-                    }}
-                    onClick={() => {
-                      if (lnk.onClick) {
-                        lnk.onClick(); // run handler
-                      } else if (lnk.to) {
-                        navigate(lnk.to); // navigate if it has a `to`
-                      }
-                    }}
-                  >
-                    {/* Icon */}
-                    <PictureAsPdfIcon
-                      className="card-icon"
-                      sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
-                    />
-      
-                    {/* Label */}
-                    <Typography
-                      className="card-text"
-                      sx={{
-                        color: "#6D2323",
-                        fontFamily: "Arial",
-                        fontWeight: "bold",
-                        fontSize: "0.85rem",
-                      }}
-                    >
-                      {lnk.label}
-                    </Typography>
-                  </Card>
-                </motion.div>
-              ))}
-            </Box>
+              {/* Icon */}
+              <PictureAsPdfIcon
+                className="card-icon"
+                sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
+              />
+
+              {/* Label */}
+              <Typography
+                className="card-text"
+                sx={{
+                  color: "#6D2323",
+                  fontFamily: "Arial",
+                  fontWeight: "bold",
+                  fontSize: "0.85rem",
+                }}
+              >
+                {lnk.label}
+              </Typography>
+            </Card>
+          </motion.div>
+        ))}
+      </Box>
 
 
 
@@ -1084,8 +1085,8 @@ const AdminDashboard3 = () => {
               )}
             </FormControl>
 
-            
-      <Modal
+
+            <Modal
               open={examPermitModalOpen}
               onClose={handleCloseExamPermitModal}
               aria-labelledby="exam-permit-error-title"

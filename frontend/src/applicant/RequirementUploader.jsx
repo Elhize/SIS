@@ -263,7 +263,7 @@ const RequirementUploader = () => {
             <Button
               variant="contained"
               color="primary"
-              href={`http://localhost:5000/uploads/${uploaded.file_path}`} // ✅ add /uploads/
+              href={`http://localhost:5000/uploads/${uploaded.file_path}`}
               target="_blank"
               startIcon={<VisibilityIcon />}
               sx={{

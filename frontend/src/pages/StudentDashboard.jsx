@@ -414,6 +414,9 @@ const StudentDashboard = () => {
                 p: 2,
                 height: "375px",
                 display: "flex",
+                transition: "transform 0.2s ease",
+                boxShadow: 3,
+                "&:hover": { transform: "scale(1.03)" },
                 flexDirection: "column",
                 justifyContent: "flex-start",
                 alignItems: "center",
@@ -514,7 +517,9 @@ const StudentDashboard = () => {
                 border: "2px solid maroon",
                 borderRadius: 3,
                 boxShadow: 3,
-
+                transition: "transform 0.2s ease",
+                boxShadow: 3,
+                "&:hover": { transform: "scale(1.03)" },
                 p: 2,
                 height: "375px",
               }}
@@ -528,6 +533,7 @@ const StudentDashboard = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "center",
+
                     alignItems: "center",
                     mb: 2,
                   }}

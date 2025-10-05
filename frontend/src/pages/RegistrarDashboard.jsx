@@ -424,6 +424,9 @@ const Dashboard = () => {
               height: 325,
               marginTop: "-70px",
               display: "flex",
+              transition: "transform 0.2s ease",
+              boxShadow: 3,
+              "&:hover": { transform: "scale(1.03)" },
               flexDirection: "column",
               justifyContent: "flex-start",
               alignItems: "center",
@@ -525,6 +528,9 @@ const Dashboard = () => {
                 width: 480,
                 height: 290,
                 border: "2px solid maroon",
+                transition: "transform 0.2s ease",
+                boxShadow: 3,
+                "&:hover": { transform: "scale(1.03)" },
                 boxShadow: 3,
               }}
             >

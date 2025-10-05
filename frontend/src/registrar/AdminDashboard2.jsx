@@ -13,23 +13,25 @@ import ErrorIcon from '@mui/icons-material/Error';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import DescriptionIcon from "@mui/icons-material/Description";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
+
 import ExamPermit from "../applicant/ExamPermit";
 
 const AdminDashboard2 = () => {
   const stepsData = [
-    { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-    { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-    { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-    { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-    { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-    { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-    { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+    { label: "Admission Process for Registrar", to: "/applicant_list_admin", icon: <SchoolIcon fontSize="large" /> },
+    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+
   ];
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -294,7 +296,7 @@ const AdminDashboard2 = () => {
   };
 
 
-const divToPrintRef = useRef();
+  const divToPrintRef = useRef();
   const [showPrintView, setShowPrintView] = useState(false);
 
   const printDiv = () => {
@@ -395,11 +397,11 @@ const divToPrintRef = useRef();
   return (
     <Box sx={{ height: "calc(100vh - 140px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
 
-{showPrintView && (
-  <div ref={divToPrintRef} style={{ display: "block" }}>
-    <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
-  </div>
-)}
+      {showPrintView && (
+        <div ref={divToPrintRef} style={{ display: "block" }}>
+          <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
+        </div>
+      )}
 
 
       {/* Top header: DOCUMENTS SUBMITTED + Search */}
@@ -579,7 +581,7 @@ const divToPrintRef = useRef();
 
 
 
-{/* Cards Section */}
+      {/* Cards Section */}
       <Box
         sx={{
           display: "flex",
@@ -764,7 +766,7 @@ const divToPrintRef = useRef();
                 <Checkbox
                   name="solo_parent"
                   checked={person.solo_parent === 1}
-                disabled
+                  disabled
 
                   onChange={(e) => {
                     const checked = e.target.checked;
@@ -830,7 +832,7 @@ const divToPrintRef = useRef();
               <FormControlLabel
                 control={
                   <Checkbox
-                  disabled
+                    disabled
                     name="father_deceased"
                     value={person.father_deceased} // 👈 Added value
                     checked={person.father_deceased === 1}
@@ -956,7 +958,7 @@ const divToPrintRef = useRef();
                     {/* Father's Education Not Applicable Checkbox */}
                     <Checkbox
                       name="father_education"
-                    disabled
+                      disabled
                       checked={person.father_education === 1}
                       onChange={(e) => {
                         const isChecked = e.target.checked;
@@ -1306,7 +1308,7 @@ const divToPrintRef = useRef();
                     {/* Mother's Education Not Applicable Checkbox */}
                     <Checkbox
                       name="mother_education"
-                     disabled
+                      disabled
                       checked={person.mother_education === 1}
                       onChange={(e) => {
                         const isChecked = e.target.checked;
@@ -1735,7 +1737,7 @@ const divToPrintRef = useRef();
               </FormControl>
             </Box>
 
-                  <Modal
+            <Modal
               open={examPermitModalOpen}
               onClose={handleCloseExamPermitModal}
               aria-labelledby="exam-permit-error-title"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Button, Box, TextField, Container, Typography, Card, TableContainer, Paper, Table, TableHead, TableRow, TableCell, FormHelperText, FormControl, InputLabel, Select, MenuItem, Modal, FormControlLabel, Checkbox, IconButton } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -19,22 +19,40 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import PersonIcon from "@mui/icons-material/Person";
-import DescriptionIcon from "@mui/icons-material/Description";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import SchoolIcon from "@mui/icons-material/School";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import ExamPermit from "../applicant/ExamPermit";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
 
-const StudentDashboard1 = () => {
+
+
+const RegistrarDashboard1 = () => {
+    const stepsData = [
+        { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
+        { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+        { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
+        { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+        { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
+        { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
+
+
+    ];
+
+    const [currentStep, setCurrentStep] = useState(1);
+    const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
+
+
     const navigate = useNavigate();
+    const [explicitSelection, setExplicitSelection] = useState(false);
 
     const fetchByPersonId = async (personID) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/enrollment_person/${personID}`);
+            const res = await axios.get(`http://localhost:5000/api/person_with_applicant/${personID}`);
             setPerson(res.data);
             setSelectedPerson(res.data);
             if (res.data?.applicant_number) {
@@ -43,6 +61,21 @@ const StudentDashboard1 = () => {
             console.error("❌ person_with_applicant failed:", err);
         }
     };
+
+
+
+    const handleNavigateStep = (index, to) => {
+        setCurrentStep(index);
+
+        const pid = sessionStorage.getItem("admin_edit_person_id");
+        if (pid) {
+            navigate(`${to}?person_id=${pid}`);
+        } else {
+            navigate(to);
+        }
+    };
+
+
 
 
     const [userID, setUserID] = useState("");
@@ -100,36 +133,16 @@ const StudentDashboard1 = () => {
         permanentMunicipality: "",
         permanentDswdHouseholdNumber: "",
     });
-    const [studentNumber, setStudentNumber] = useState("");
+
 
     const queryParams = new URLSearchParams(location.search);
-    const queryPersonId = queryParams.get("person_id");
-
-    // Always pull student_number from sessionStorage
-    const queryStudentNumber = sessionStorage.getItem("student_number");
-
-    useEffect(() => {
-        if (!queryStudentNumber) return;
-        const fetchPersonId = async () => {
-            try {
-                const res = await axios.get(`http://localhost:5000/api/person_id/${queryStudentNumber}`);
-                setUserID(res.data.person_id);
-                setStudentNumber(queryStudentNumber);
-                setPerson(res.data);
-                setSelectedPerson(res.data);
-            } catch (err) {
-                console.error("❌ Failed to fetch person_id:", err);
-            }
-        };
-        fetchPersonId();
-    }, [queryStudentNumber]);
-
+    const queryPersonId = queryParams.get("person_id")?.trim() || "";
 
     useEffect(() => {
         const storedUser = localStorage.getItem("email");
         const storedRole = localStorage.getItem("role");
         const loggedInPersonId = localStorage.getItem("person_id");
-        const searchedPersonId = sessionStorage.getItem("student_edit_person_id");
+        const searchedPersonId = sessionStorage.getItem("admin_edit_person_id");
 
         if (!storedUser || !storedRole || !loggedInPersonId) {
             window.location.href = "/login";
@@ -140,22 +153,22 @@ const StudentDashboard1 = () => {
         setUserRole(storedRole);
 
         // Roles that can access
-        const allowedRoles = ["student", "registrar"];
+        const allowedRoles = ["registrar", "applicant", "superadmin"];
         if (allowedRoles.includes(storedRole)) {
-            // ✅ Prefer URL param if student is editing, otherwise logged-in student
+            // ✅ Always take URL param first
             const targetId = queryPersonId || searchedPersonId || loggedInPersonId;
 
-            // Make sure student_number is in sessionStorage for later steps
-            if (studentNumber) {
-                sessionStorage.setItem("student_number", studentNumber);
-            }
+            // Save it so other pages (ECAT, forms) can use it
+            sessionStorage.setItem("admin_edit_person_id", targetId);
 
             setUserID(targetId);
+
             return;
         }
 
         window.location.href = "/login";
-    }, [queryPersonId, studentNumber]);
+    }, [queryPersonId]);
+
 
     useEffect(() => {
         let consumedFlag = false;
@@ -169,9 +182,9 @@ const StudentDashboard1 = () => {
             }
 
             // fallback only if it's a fresh selection from Applicant List
-            const source = sessionStorage.getItem("student_edit_person_id_source");
-            const tsStr = sessionStorage.getItem("student_edit_person_id_ts");
-            const id = sessionStorage.getItem("student_edit_person_id");
+            const source = sessionStorage.getItem("admin_edit_person_id_source");
+            const tsStr = sessionStorage.getItem("admin_edit_person_id_ts");
+            const id = sessionStorage.getItem("admin_edit_person_id");
             const ts = tsStr ? parseInt(tsStr, 10) : 0;
             const isFresh = source === "applicant_list" && Date.now() - ts < 5 * 60 * 1000;
 
@@ -183,12 +196,14 @@ const StudentDashboard1 = () => {
         };
 
         tryLoad().finally(() => {
+            // consume the freshness so it won't auto-load again later
             if (consumedFlag) {
-                sessionStorage.removeItem("student_edit_person_id_source");
-                sessionStorage.removeItem("student_edit_person_id_ts");
+                sessionStorage.removeItem("admin_edit_person_id_source");
+                sessionStorage.removeItem("admin_edit_person_id_ts");
             }
         });
     }, [queryPersonId]);
+
 
 
     // Fetch person by ID (when navigating with ?person_id=... or sessionStorage)
@@ -215,10 +230,11 @@ const StudentDashboard1 = () => {
 
 
 
+
     useEffect(() => {
         const fetchPersons = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/enrollment_upload_documents");
+                const res = await axios.get("http://localhost:5000/api/upload_documents");
                 setPersons(res.data);
             } catch (err) {
                 console.error("❌ Failed to fetch persons list", err);
@@ -232,39 +248,49 @@ const StudentDashboard1 = () => {
 
 
 
-    const steps = [
-        { label: "Personal Information", icon: <PersonIcon />, path: `/student_dashboard1` },
-        { label: "Family Background", icon: <FamilyRestroomIcon />, path: `/student_dashboard2` },
-        { label: "Educational Attainment", icon: <SchoolIcon />, path: `/student_dashboard3` },
-        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: `/student_dashboard4` },
-        { label: "Other Information", icon: <InfoIcon />, path: `/student_dashboard5` },
-    ];
 
+    const steps = person.person_id
+        ? [
+            { label: "Personal Information", icon: <PersonIcon />, path: `/registrar_dashboard1?person_id=${userID}` },
+            { label: "Family Background", icon: <FamilyRestroomIcon />, path: `/registrar_dashboard2?person_id=${userID}` },
+            { label: "Educational Attainment", icon: <SchoolIcon />, path: `/registrar_dashboard3?person_id=${userID}` },
+            { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: `/registrar_dashboard4?person_id=${userID}` },
+            { label: "Other Information", icon: <InfoIcon />, path: `/registrar_dashboard5?person_id=${userID}` },
+        ]
+        : [];
 
 
     const [activeStep, setActiveStep] = useState(0);
     const [clickedSteps, setClickedSteps] = useState(Array(steps.length).fill(false));
-    const [currentStep, setCurrentStep] = useState(0);
 
     const handleStepClick = (index, to) => {
         setActiveStep(index);
-        navigate(to);
+
+        const pid = sessionStorage.getItem("admin_edit_person_id");
+        if (pid) {
+            navigate(`${to}?person_id=${pid}`);
+        } else {
+            navigate(to);
+        }
     };
+
+
+    // dot not alter
+
+
+
+
     // Do not alter
     const handleUpdate = async (updatedData) => {
         if (!person || !person.person_id) return;
 
         try {
-            await axios.put(
-                `http://localhost:5000/api/enrollment_person/${person.person_id}`, // ✅ use new API
-                updatedData
-            );
+            await axios.put(`http://localhost:5000/api/person/${person.person_id}`, updatedData);
             console.log("✅ Auto-saved successfully");
         } catch (error) {
             console.error("❌ Auto-save failed:", error);
         }
     };
-
 
     // Real-time save on every character typed
     const handleChange = (e) => {
@@ -286,32 +312,21 @@ const StudentDashboard1 = () => {
 
 
 
+
     const handleBlur = async () => {
         try {
             const personIdToUpdate = selectedPerson?.person_id || userID;
-
-            // clone without person_id
-            const { person_id, ...updatePayload } = person;
-
-            await axios.put(
-                `http://localhost:5000/api/enrollment_person/${personIdToUpdate}`,
-                updatePayload
-            );
-
+            await axios.put(`http://localhost:5000/api/person/${personIdToUpdate}`, person);
             console.log("Auto-saved on blur");
         } catch (err) {
             console.error("Auto-save failed", err);
         }
     };
 
-
     const autoSave = async () => {
         try {
             const personIdToUpdate = selectedPerson?.person_id || userID;
-            await axios.put(
-                `http://localhost:5000/api/enrollment_person/${personIdToUpdate}`,
-                person
-            );
+            await axios.put(`http://localhost:5000/api/person/${personIdToUpdate}`, person);
             console.log("Auto-saved.");
         } catch (err) {
             console.error("Auto-save failed.");
@@ -610,14 +625,7 @@ const StudentDashboard1 = () => {
         return isValid;
     };
 
-    const links = [
-        { to: `/student_ecat_application_form`, label: "ECAT Application Form" },
-        { to: `/student_form_process`, label: "Admission Form Process" },
-        { to: `/student_personal_data_form`, label: "Personal Data Form" },
-        { to: `/student_office_of_the_registrar`, label: "Application For EARIST College Admission" },
-        { to: `/student_admission_services`, label: "Admission Services" },
 
-    ];
 
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -636,7 +644,7 @@ const StudentDashboard1 = () => {
                     const details = await axios.get(`http://localhost:5000/api/person_with_applicant/${res.data.person_id}`);
                     setPerson(details.data);
 
-                    sessionStorage.setItem("student_edit_person_id", details.data.person_id);
+                    sessionStorage.setItem("admin_edit_person_id", details.data.person_id);
                     setUserID(details.data.person_id);
                     setSearchError("");
                 } else {
@@ -652,13 +660,117 @@ const StudentDashboard1 = () => {
         return () => clearTimeout(delayDebounce);
     }, [searchQuery]);
 
+    const divToPrintRef = useRef();
+    const [showPrintView, setShowPrintView] = useState(false);
+
+    const printDiv = () => {
+        const divToPrint = divToPrintRef.current;
+        if (divToPrint) {
+            const newWin = window.open("", "Print-Window");
+            newWin.document.open();
+            newWin.document.write(`
+        <html>
+          <head>
+            <title>Examination Permit</title>
+            <style>
+              @page { size: A4; margin: 0; }
+              body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                margin-left: "
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+              }
+              .print-container {
+                width: 8.5in;
+                min-height: 11in;
+                margin: auto;
+                background: white;
+              }
+              * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            </style>
+          </head>
+          <body onload="window.print(); setTimeout(() => window.close(), 100);">
+            <div class="print-container">${divToPrint.innerHTML}</div>
+          </body>
+        </html>
+      `);
+            newWin.document.close();
+        }
+    };
+
+
+    const [examPermitError, setExamPermitError] = useState("");
+    const [examPermitModalOpen, setExamPermitModalOpen] = useState(false);
+
+    const handleCloseExamPermitModal = () => {
+        setExamPermitModalOpen(false);
+        setExamPermitError("");
+    };
+
+    const handleExamPermitClick = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/api/verified-exam-applicants");
+            const verified = res.data.some(a => a.person_id === parseInt(userID));
+
+            if (!verified) {
+                setExamPermitError("❌ You cannot print the Exam Permit until all required documents are verified.");
+                setExamPermitModalOpen(true);
+                return;
+            }
+
+            // ✅ Render permit and print
+            setShowPrintView(true);
+            setTimeout(() => {
+                printDiv();
+                setShowPrintView(false);
+            }, 500);
+        } catch (err) {
+            console.error("Error verifying exam permit eligibility:", err);
+            setExamPermitError("⚠️ Unable to check document verification status right now.");
+            setExamPermitModalOpen(true);
+        }
+    };
+
+
+    const links = [
+        { to: `/admin_ecat_application_form`, label: "ECAT Application Form" },
+        { to: `/admission_form_process`, label: "Admission Form Process" },
+        { to: `/admin_personal_data_form`, label: "Personal Data Form" },
+        { to: `/admin_office_of_the_registrar`, label: "Application For EARIST College Admission" },
+        { to: `/admission_services`, label: "Application/Student Satisfactory Survey" },
+        { label: "Examination Permit", onClick: handleExamPermitClick }, // ✅
+    ];
+
+
+    const [canPrintPermit, setCanPrintPermit] = useState(false);
+
+    useEffect(() => {
+        if (!userID) return;
+        axios.get("http://localhost:5000/api/verified-exam-applicants")
+            .then(res => {
+                const verified = res.data.some(a => a.person_id === parseInt(userID));
+                setCanPrintPermit(verified);
+            });
+    }, [userID]);
+
+
 
 
     // dot not alter
     return (
         <Box sx={{ height: "calc(100vh - 150px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
 
+            {showPrintView && (
+                <div ref={divToPrintRef} style={{ display: "block" }}>
+                    <ExamPermit personId={userID} />   {/* ✅ pass the searched person_id */}
+                </div>
+            )}
 
+
+            {/* Top header: DOCUMENTS SUBMITTED + Search */}
             <Box
                 sx={{
                     display: 'flex',
@@ -666,7 +778,6 @@ const StudentDashboard1 = () => {
                     alignItems: 'center',
                     flexWrap: 'wrap',
                     mt: 2,
-
                     mb: 2,
                     px: 2,
                 }}
@@ -679,18 +790,121 @@ const StudentDashboard1 = () => {
                         fontSize: '36px',
                     }}
                 >
-                    STUDENT PROFILE
+                    APPLICANT FORM
                 </Typography>
 
+                <TextField
+                    size="small"
 
-
-
+                    placeholder="Search Applicant Name / Email / Applicant ID"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    InputProps={{ startAdornment: <Search sx={{ mr: 1 }} /> }}
+                    sx={{ width: { xs: '100%', sm: '425px' }, mt: { xs: 2, sm: 0 } }}
+                />
             </Box>
+            {searchError && <Typography color="error">{searchError}</Typography>}
             <hr style={{ border: "1px solid #ccc", width: "100%" }} />
+            <br />
+
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    mt: 2,
+                }}
+            >
+                {stepsData.map((step, index) => (
+                    <React.Fragment key={index}>
+                        {/* Step Card */}
+                        <Card
+                            onClick={() => handleNavigateStep(index, step.to)}
+                            sx={{
+                                flex: 1,
+                                maxWidth: `${100 / stepsData.length}%`, // evenly fit 100%
+                                height: 100,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                borderRadius: 2,
+                                border: "2px solid #6D2323",
+
+                                backgroundColor: currentStep === index ? "#6D2323" : "#E8C999",
+                                color: currentStep === index ? "#fff" : "#000",
+                                boxShadow:
+                                    currentStep === index
+                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                        : "0px 2px 6px rgba(0,0,0,0.15)",
+                                transition: "0.3s ease",
+                                "&:hover": {
+                                    backgroundColor: currentStep === index ? "#5a1c1c" : "#f5d98f",
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{step.icon}</Box>
+                                <Typography
+                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
+                                >
+                                    {step.label}
+                                </Typography>
+                            </Box>
+                        </Card>
+
+                        {/* Spacer instead of line */}
+                        {index < stepsData.length - 1 && (
+                            <Box
+                                sx={{
+                                    flex: 0.1,
+                                    mx: 1, // margin to keep spacing
+                                }}
+                            />
+                        )}
+                    </React.Fragment>
+                ))}
+            </Box>
 
             <br />
 
 
+
+            <TableContainer component={Paper} sx={{ width: '100%', mb: 1 }}>
+                <Table>
+                    <TableHead sx={{ backgroundColor: '#6D2323' }}>
+                        <TableRow>
+                            {/* Left cell: Applicant ID */}
+                            <TableCell sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}>
+                                Applicant ID:&nbsp;
+                                <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
+                                    {person?.applicant_number || "N/A"}
+
+                                </span>
+                            </TableCell>
+
+                            {/* Right cell: Applicant Name */}
+                            <TableCell
+                                align="right"
+                                sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}
+                            >
+                                Applicant Name:&nbsp;
+                                <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
+                                    {person?.last_name?.toUpperCase()}, {person?.first_name?.toUpperCase()}{" "}
+                                    {person?.middle_name?.toUpperCase()} {person?.extension?.toUpperCase() || ""}
+                                </span>
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                </Table>
+            </TableContainer>
 
 
             <Box sx={{ display: "flex", width: "100%" }}>
@@ -741,6 +955,8 @@ const StudentDashboard1 = () => {
                     </Box>
                 </Box>
             </Box>
+
+
 
             {/* Cards Section */}
             <Box
@@ -820,6 +1036,7 @@ const StudentDashboard1 = () => {
 
 
 
+
             <Container>
 
                 <Container>
@@ -829,59 +1046,67 @@ const StudentDashboard1 = () => {
 
                 <br />
 
-                <Box sx={{ display: "flex", justifyContent: "center", width: "100%", px: 4 }}>
-                    {steps.map((step, index) => (
-                        <React.Fragment key={index}>
-                            <Link to={step.path} style={{ textDecoration: "none" }}>
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={() => handleStepClick(index, step.path)}
-                                >
+                {person.person_id && (
+                    <Box sx={{ display: "flex", justifyContent: "center", width: "100%", px: 4 }}>
+                        {steps.map((step, index) => (
+                            <React.Fragment key={index}>
+                                {/* Wrap the step with Link for routing */}
+                                <Link to={step.path} style={{ textDecoration: "none" }}>
                                     <Box
                                         sx={{
-                                            width: 50,
-                                            height: 50,
-                                            borderRadius: "50%",
-                                            backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                                            color: activeStep === index ? "#fff" : "#000",
                                             display: "flex",
+                                            flexDirection: "column",
                                             alignItems: "center",
-                                            justifyContent: "center",
+                                            cursor: "pointer",
                                         }}
+                                        onClick={() => handleStepClick(index)}
                                     >
-                                        {step.icon}
+                                        {/* Step Icon */}
+                                        <Box
+                                            sx={{
+                                                width: 50,
+                                                height: 50,
+                                                borderRadius: "50%",
+                                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                                                color: activeStep === index ? "#fff" : "#000",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }}
+                                        >
+                                            {step.icon}
+                                        </Box>
+
+                                        {/* Step Label */}
+                                        <Typography
+                                            sx={{
+                                                mt: 1,
+                                                color: activeStep === index ? "#6D2323" : "#000",
+                                                fontWeight: activeStep === index ? "bold" : "normal",
+                                                fontSize: 14,
+                                            }}
+                                        >
+                                            {step.label}
+                                        </Typography>
                                     </Box>
-                                    <Typography
+                                </Link>
+
+                                {/* Connector Line */}
+                                {index < steps.length - 1 && (
+                                    <Box
                                         sx={{
-                                            mt: 1,
-                                            color: activeStep === index ? "#6D2323" : "#000",
-                                            fontWeight: activeStep === index ? "bold" : "normal",
-                                            fontSize: 14,
+                                            height: "2px",
+                                            backgroundColor: "#6D2323",
+                                            flex: 1,
+                                            alignSelf: "center",
+                                            mx: 2,
                                         }}
-                                    >
-                                        {step.label}
-                                    </Typography>
-                                </Box>
-                            </Link>
-                            {index < steps.length - 1 && (
-                                <Box
-                                    sx={{
-                                        height: "2px",
-                                        backgroundColor: "#6D2323",
-                                        flex: 1,
-                                        alignSelf: "center",
-                                        mx: 2,
-                                    }}
-                                />
-                            )}
-                        </React.Fragment>
-                    ))}
-                </Box>
+                                    />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </Box>
+                )}
 
                 <br />
 
@@ -948,7 +1173,6 @@ const StudentDashboard1 = () => {
                             <FormControl fullWidth size="small" required error={!!errors.academicProgram} className="mb-4">
                                 <InputLabel id="academic-program-label">Academic Program</InputLabel>
                                 <Select
-
                                     labelId="academic-program-label"
                                     id="academic-program-select"
                                     name="academicProgram"
@@ -1389,7 +1613,6 @@ const StudentDashboard1 = () => {
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        disabled
                                         name="lrn_na"
                                         checked={person.lrnNumber === "No LRN Number"}
                                         onChange={(e) => {
@@ -1451,9 +1674,7 @@ const StudentDashboard1 = () => {
                             {/* PWD Checkbox */}
                             <FormControlLabel
                                 control={
-
                                     <Checkbox
-                                        disabled
                                         checked={person.pwdMember === 1}
                                         onChange={handlePwdCheck}
                                         inputProps={{ "aria-label": "PWD Checkbox" }}
@@ -2576,6 +2797,48 @@ const StudentDashboard1 = () => {
                             </Box>
                         </Modal>
 
+                        <Modal
+                            open={examPermitModalOpen}
+                            onClose={handleCloseExamPermitModal}
+                            aria-labelledby="exam-permit-error-title"
+                            aria-describedby="exam-permit-error-description"
+                        >
+                            <Box
+                                sx={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    transform: "translate(-50%, -50%)",
+                                    width: 400,
+                                    bgcolor: "background.paper",
+                                    border: "2px solid #6D2323",
+                                    boxShadow: 24,
+                                    p: 4,
+                                    borderRadius: 2,
+                                    textAlign: "center",
+                                }}
+                            >
+                                <ErrorIcon sx={{ color: "#6D2323", fontSize: 50, mb: 2 }} />
+                                <Typography id="exam-permit-error-title" variant="h6" component="h2" color="maroon">
+                                    Exam Permit Notice
+                                </Typography>
+                                <Typography id="exam-permit-error-description" sx={{ mt: 2 }}>
+                                    {examPermitError}
+                                </Typography>
+                                <Button
+                                    onClick={handleCloseExamPermitModal}
+                                    variant="contained"
+                                    sx={{ mt: 3, backgroundColor: "#6D2323", "&:hover": { backgroundColor: "#8B0000" } }}
+                                >
+                                    Close
+                                </Button>
+                            </Box>
+                        </Modal>
+
+
+
+
+
                         <Box display="flex" justifyContent="right" mt={4}>
                             {/* Previous Page Button */}
                             <Button
@@ -2601,7 +2864,7 @@ const StudentDashboard1 = () => {
                                     handleUpdate();
 
                                     if (isFormValid()) {
-                                        navigate("/student_dashboard2");
+                                        navigate("/registrar_dashboard2");
                                     } else {
                                         alert("Please complete all required fields before proceeding.");
                                     }
@@ -2638,4 +2901,4 @@ const StudentDashboard1 = () => {
     );
 };
 
-export default StudentDashboard1;
+export default RegistrarDashboard1;

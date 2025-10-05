@@ -29,16 +29,16 @@ import { FcPrint } from "react-icons/fc";
 import EaristLogo from "../assets/EaristLogo.png";
 import { FaFileExcel } from "react-icons/fa";
 import * as XLSX from "xlsx";
-import PersonIcon from "@mui/icons-material/Person";
-import DescriptionIcon from "@mui/icons-material/Description";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import SchoolIcon from '@mui/icons-material/School';        // For Entrance Examination Scores
-import FactCheckIcon from '@mui/icons-material/FactCheck';  // For Qualifying Examination Scores
 import { io } from "socket.io-client";
 import LoadingOverlay from '../components/LoadingOverlay';
+import SchoolIcon from '@mui/icons-material/School';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import PeopleIcon from '@mui/icons-material/People';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+
 
 const socket = io("http://localhost:5000");
 
@@ -60,21 +60,22 @@ const QualifyingExamScore = () => {
     };
 
     const tabs = [
-        { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-        { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-        { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-        { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-        { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-        { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-        { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+        { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
+        { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+        { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
+        { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+        { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
+        { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
     ];
     const navigate = useNavigate();
-    const [activeStep, setActiveStep] = useState(4);
+    const [activeStep, setActiveStep] = useState(5);
     const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
+
 
     const handleStepClick = (index, to) => {
         setActiveStep(index);
-        navigate(to); // simple navigation, no query string
+        navigate(to); // this will actually change the page
     };
 
 
@@ -1062,7 +1063,7 @@ EARIST Registrar's Office
             : persons.filter(p => p.interview_status === 'Accepted');
 
         if (targets.length === 0) {
-            setLoading(false); 
+            setLoading(false);
             setSnack({ open: true, message: "No applicants to send email to.", severity: "warning" });
             return;
         }
@@ -1264,71 +1265,53 @@ EARIST Registrar's Office
 
             <hr style={{ border: "1px solid #ccc", width: "100%" }} />
             <div style={{ height: "20px" }}></div>
+
+
             <Box
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    flexWrap: "nowrap", // ❌ prevent wrapping
                     width: "100%",
-                    mt: 2,
+                    mt: 3,
+                    gap: 2,
                 }}
             >
                 {tabs.map((tab, index) => (
-                    <React.Fragment key={index}>
-                        {/* Step Card */}
-                        <Card
-                            onClick={() => handleStepClick(index, tab.to)}
-                            sx={{
-                                flex: 1,
-                                maxWidth: `${100 / tabs.length}%`, // evenly fit 100%
-                                height: 100,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                borderRadius: 2,
-                                border: "2px solid #6D2323",
-
-                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                                color: activeStep === index ? "#fff" : "#000",
-                                boxShadow:
-                                    activeStep === index
-                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
-                                        : "0px 2px 6px rgba(0,0,0,0.15)",
-                                transition: "0.3s ease",
-                                "&:hover": {
-                                    backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
-                                },
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{tab.icon}</Box>
-                                <Typography
-                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
-                                >
-                                    {tab.label}
-                                </Typography>
-                            </Box>
-                        </Card>
-
-                        {/* Spacer instead of line */}
-                        {index < tabs.length - 1 && (
-                            <Box
-                                sx={{
-                                    flex: 0.1,
-                                    mx: 1, // margin to keep spacing
-                                }}
-                            />
-                        )}
-                    </React.Fragment>
+                    <Card
+                        key={index}
+                        onClick={() => handleStepClick(index, tab.to)}
+                        sx={{
+                            flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
+                            height: 120,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            borderRadius: 2,
+                            border: "2px solid #6D2323",
+                            backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                            color: activeStep === index ? "#fff" : "#000",
+                            boxShadow:
+                                activeStep === index
+                                    ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                    : "0px 2px 6px rgba(0,0,0,0.15)",
+                            transition: "0.3s ease",
+                            "&:hover": {
+                                backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+                            },
+                        }}
+                    >
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
+                            <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
+                                {tab.label}
+                            </Typography>
+                        </Box>
+                    </Card>
                 ))}
             </Box>
+
 
             <div style={{ height: "20px" }}></div>
 
@@ -2260,7 +2243,7 @@ EARIST Registrar's Office
                     {snack.message}
                 </Alert>
             </Snackbar>
-            <LoadingOverlay open={loading} message="Sending emails, please wait..." />            
+            <LoadingOverlay open={loading} message="Sending emails, please wait..." />
         </Box >
     );
 };

@@ -52,6 +52,12 @@ import AdminDashboard2 from './registrar/AdminDashboard2';
 import AdminDashboard3 from './registrar/AdminDashboard3';
 import AdminDashboard4 from './registrar/AdminDashboard4';
 import AdminDashboard5 from './registrar/AdminDashboard5';
+import RegistrarDashboard1 from './registrar/RegistrarDashboard1';
+import RegistrarDashboard2 from './registrar/RegistrarDashboard2';
+import RegistrarDashboard3 from './registrar/RegistrarDashboard3';
+import RegistrarDashboard4 from './registrar/RegistrarDashboard4';
+import RegistrarDashboard5 from './registrar/RegistrarDashboard5';
+
 import ApplicantList from './registrar/ApplicantList';
 import ApplicantListAdmin from './registrar/ApplicantListAdmin';
 import StudentRequirements from './registrar/StudentRequirements';
@@ -93,7 +99,8 @@ import CourseTagging from './registrar/CourseTagging';
 import ChangeGradingPeriod from './registrar/ChangeYearGradPer';
 import ScheduleChecker from './registrar/ScheduleChecker';
 import RoomRegistration from './registrar/RoomRegistration';
-
+import RegistrarExamPermit from './registrar/RegistrarExamPermit';
+import MedicalApplicantList from './registrar/MedicalApplicantList';
 
 // APPLICANT FOLDER
 import Dashboard1 from './applicant/Dashboard1';
@@ -267,6 +274,7 @@ function App() {
               <Route path="/unauthorized" element={<Unauthorized />} />
 
               <Route path="/applicant_list" element={<ProtectedRoute><ApplicantList /></ProtectedRoute>} />
+              <Route path="/medical_applicant_list" element={<ProtectedRoute><MedicalApplicantList /></ProtectedRoute>} />
               <Route path="/applicant_list_admin" element={<ProtectedRoute><ApplicantListAdmin /></ProtectedRoute>} />
               <Route path="/super_admin_applicant_list" element={<ProtectedRoute><SuperAdminApplicantList /></ProtectedRoute>} />
               <Route path="/proctor_applicant_list" element={<ProtectedRoute><ProctorApplicantList /></ProtectedRoute>} />
@@ -291,6 +299,14 @@ function App() {
               <Route path="/student_dashboard3" element={<ProtectedRoute><StudentDashboard3 allowedRoles={'student'} /></ProtectedRoute>} />
               <Route path="/student_dashboard4" element={<ProtectedRoute><StudentDashboard4 allowedRoles={'student'} /></ProtectedRoute>} />
               <Route path="/student_dashboard5" element={<ProtectedRoute><StudentDashboard5 allowedRoles={'student'} /></ProtectedRoute>} />
+
+              <Route path="/registrar_dashboard1" element={<ProtectedRoute><RegistrarDashboard1 /></ProtectedRoute>} />
+              <Route path="/registrar_dashboard2" element={<ProtectedRoute><RegistrarDashboard2 /></ProtectedRoute>} />
+              <Route path="/registrar_dashboard3" element={<ProtectedRoute><RegistrarDashboard3 /></ProtectedRoute>} />
+              <Route path="/registrar_dashboard4" element={<ProtectedRoute><RegistrarDashboard4 /></ProtectedRoute>} />
+              <Route path="/registrar_dashboard5" element={<ProtectedRoute><RegistrarDashboard5 /></ProtectedRoute>} />
+
+
 
               <Route path="/super_admin_dashboard1" element={<ProtectedRoute><SuperAdminDashboard1 /></ProtectedRoute>} />
               <Route path="/super_admin_dashboard2" element={<ProtectedRoute><SuperAdminDashboard2 /></ProtectedRoute>} />
@@ -330,12 +346,19 @@ function App() {
               <Route path="/student_office_of_the_registrar" element={<ProtectedRoute allowedRoles={['student']}><StudentOfficeOfTheRegistrar /></ProtectedRoute>} />
               <Route path="/student_admission_services" element={<ProtectedRoute allowedRoles={['student']} ><StudentAdmissionServices /></ProtectedRoute>} />
               <Route path="/student_form_process" element={<ProtectedRoute allowedRoles={['student', 'registrar', 'applicant']}><StudentAdmissionFormProcess /></ProtectedRoute>} />
+
+              {/* Admission Examination Profile */}
               <Route path="/examination_profile" element={<ExaminationProfile />} />
               <Route path="/examination_profile/:applicantNumber" element={<ExaminationProfile />} />
+
+              {/*Public Examination Profile */}
               <Route path="/applicant_profile" element={<ApplicantProfile />} />
               <Route path="/applicant_profile/:applicantNumber" element={<ApplicantProfile />} />
-              <Route path="/registrar_examination_profile" element={<ProtectedRoute><RegistrarExaminationProfile /></ProtectedRoute>} />
 
+              {/* ADMIN - Admission Examination Profile */}
+              <Route path="/registrar_exam_permit" element={<ProtectedRoute><RegistrarExamPermit /></ProtectedRoute>} />
+              <Route path="/registrar_examination_profile" element={<ProtectedRoute><RegistrarExaminationProfile /></ProtectedRoute>} />
+              <Route path="/registrar_examination_profile/:personId" element={<ApplicantProfile />} />
 
               <Route path="/page_crud" element={<ProtectedRoute><PageCRUD /></ProtectedRoute>} />
               <Route path="/user_page_access" element={<ProtectedRoute><UserPageAccess /></ProtectedRoute>} />

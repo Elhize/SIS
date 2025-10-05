@@ -5,7 +5,6 @@ import ExamPermit from "../applicant/ExamPermit";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import QRScanner from "../components/QRScanner"; // make sure path is correct
-import API_BASE_URL from "../apiConfig";
 
 const ApplicantProfile = () => {
     const { applicantNumber } = useParams();

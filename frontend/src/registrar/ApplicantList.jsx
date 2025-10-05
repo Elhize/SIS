@@ -12,6 +12,7 @@ import {
     FormControl,
     Select,
     Card,
+
     TableCell,
     TextField,
     MenuItem,
@@ -32,16 +33,14 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { FcPrint } from "react-icons/fc";
 import EaristLogo from "../assets/EaristLogo.png";
 import { Link } from "react-router-dom";
-import PersonIcon from "@mui/icons-material/Person";
-import DescriptionIcon from "@mui/icons-material/Description";
-import QuizIcon from '@mui/icons-material/Quiz';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import SchoolIcon from '@mui/icons-material/School';        // For Entrance Examination Scores
-import FactCheckIcon from '@mui/icons-material/FactCheck';  // For Qualifying Examination Scores
+import SchoolIcon from "@mui/icons-material/School";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import PersonSearchIcon from "@mui/icons-material/PersonSearch";
+import PeopleIcon from "@mui/icons-material/People";
+
 
 
 
@@ -72,19 +71,22 @@ const ApplicantList = () => {
         navigate(`/admin_dashboard1?person_id=${person_id}`);
     };
 
-    const tabs1 = [
-        { label: "Applicant List", to: "/applicant_list", icon: <ListAltIcon /> },
-        { label: "Applicant Form", to: "/admin_dashboard1", icon: <PersonIcon /> },
-        { label: "Documents Submitted", to: "/student_requirements", icon: <DescriptionIcon /> },
-        { label: "Entrance Examination Scores", to: "/applicant_scoring", icon: <SchoolIcon /> },
-        { label: "Qualifying / Interview Examination Scores", to: "/qualifying_exam_scores", icon: <FactCheckIcon /> },
-        { label: "Medical Clearance", to: "/medical_clearance", icon: <LocalHospitalIcon /> },
-        { label: "Student Numbering", to: "/student_numbering", icon: <HowToRegIcon /> },
+    const tabs = [
+        { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
+        { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+        { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
+        { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+        { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
+        { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
     ];
+
+
+
 
     const navigate = useNavigate();
     const [activeStep, setActiveStep] = useState(0);
-    const [clickedSteps, setClickedSteps] = useState(Array(tabs1.length).fill(false));
+    const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
 
 
     const handleStepClick = (index, to) => {
@@ -835,65 +837,44 @@ const ApplicantList = () => {
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    flexWrap: "nowrap", // ❌ prevent wrapping
                     width: "100%",
-                    mt: 2,
+                    mt: 3,
+                    gap: 2,
                 }}
             >
-                {tabs1.map((tab, index) => (
-                    <React.Fragment key={index}>
-                        {/* Step Card */}
-                        <Card
-                            onClick={() => handleStepClick(index, tab.to)}
-                            sx={{
-                                flex: 1,
-                                maxWidth: `${100 / tabs1.length}%`, // evenly fit 100%
-                                height: 100,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                borderRadius: 2,
-                                border: "2px solid #6D2323",
-
-                                backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
-                                color: activeStep === index ? "#fff" : "#000",
-                                boxShadow:
-                                    activeStep === index
-                                        ? "0px 4px 10px rgba(0,0,0,0.3)"
-                                        : "0px 2px 6px rgba(0,0,0,0.15)",
-                                transition: "0.3s ease",
-                                "&:hover": {
-                                    backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
-                                },
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{tab.icon}</Box>
-                                <Typography
-                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
-                                >
-                                    {tab.label}
-                                </Typography>
-                            </Box>
-                        </Card>
-
-                        {/* Spacer instead of line */}
-                        {index < tabs1.length - 1 && (
-                            <Box
-                                sx={{
-                                    flex: 0.1,
-                                    mx: 1, // margin to keep spacing
-                                }}
-                            />
-                        )}
-                    </React.Fragment>
+                {tabs.map((tab, index) => (
+                    <Card
+                        key={index}
+                        onClick={() => handleStepClick(index, tab.to)}
+                        sx={{
+                            flex: `1 1 ${100 / tabs.length}%`, // evenly divide row
+                            height: 120,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            cursor: "pointer",
+                            borderRadius: 2,
+                            border: "2px solid #6D2323",
+                            backgroundColor: activeStep === index ? "#6D2323" : "#E8C999",
+                            color: activeStep === index ? "#fff" : "#000",
+                            boxShadow:
+                                activeStep === index
+                                    ? "0px 4px 10px rgba(0,0,0,0.3)"
+                                    : "0px 2px 6px rgba(0,0,0,0.15)",
+                            transition: "0.3s ease",
+                            "&:hover": {
+                                backgroundColor: activeStep === index ? "#5a1c1c" : "#f5d98f",
+                            },
+                        }}
+                    >
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <Box sx={{ fontSize: 40, mb: 1 }}>{tab.icon}</Box>
+                            <Typography sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}>
+                                {tab.label}
+                            </Typography>
+                        </Box>
+                    </Card>
                 ))}
             </Box>
 
@@ -1589,7 +1570,7 @@ const ApplicantList = () => {
                                     </Box>
                                 </TableCell>
 
- 
+
 
                                 {/*
                                                                <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
