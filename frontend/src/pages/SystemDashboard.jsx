@@ -1,146 +1,54 @@
-import { CollectionsBookmark, Description, EditNote } from "@mui/icons-material";
+import {
+  Assignment,        // Requirements
+  MeetingRoom,       // Room
+  Class,             // Section
+  Timeline,          // Semester
+  ChangeCircle,      // Change Grade Period
+  Update,            // Year Update
+  EventAvailable,    // School Year Activator
+  Layers,            // Year Level
+  CalendarToday,     // Year Panel
+  DateRange,         // School Year Panel
+  Email,             // Email Sender
+  Campaign           // Announcement
+} from "@mui/icons-material";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const SystemDashboardPanel = () => {
+  const menuItems = [
+    { title: "REQUIREMENTS PANEL", link: "/requirements_form", icon: <Assignment className="text-maroon-500 text-3xl" /> },
+    { title: "ROOM FORM", link: "/room_registration", icon: <MeetingRoom className="text-maroon-500 text-3xl" /> },
+    { title: "SECTION PANEL FORM", link: "/section_panel", icon: <Class className="text-maroon-500 text-3xl" /> },
+    { title: "SEMESTER PANEL FORM", link: "/semester_panel", icon: <Timeline className="text-maroon-500 text-3xl" /> },
+    { title: "CHANGE GRADING PERIOD", link: "/change_grade_period", icon: <ChangeCircle className="text-maroon-500 text-3xl" /> },
+    { title: "YEAR UPDATE PANEL", link: "/year_update_panel", icon: <Update className="text-maroon-500 text-3xl" /> },
+    { title: "SCHOOL YEAR ACTIVATOR PANEL", link: "/school_year_activator_panel", icon: <EventAvailable className="text-maroon-500 text-3xl" /> },
+    { title: "YEAR LEVEL PANEL FORM", link: "/year_level_panel", icon: <Layers className="text-maroon-500 text-3xl" /> },
+    { title: "YEAR PANEL FORM", link: "/year_panel", icon: <CalendarToday className="text-maroon-500 text-3xl" /> },
+    { title: "SCHOOL YEAR PANEL", link: "/school_year_panel", icon: <DateRange className="text-maroon-500 text-3xl" /> },
+    { title: "EMAIL SENDER", link: "/email_template_manager", icon: <Email className="text-maroon-500 text-3xl" /> },
+    { title: "ANNOUNCEMENT", link: "/announcement", icon: <Campaign className="text-maroon-500 text-3xl" /> },
+  ];
+
   return (
     <div className="p-2 px-10 w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {menuItems.map((item, idx) => (
+          <div className="relative" key={idx}>
+            <Link to={item.link}>
+              {/* Icon box */}
+              <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
+                {item.icon}
+              </div>
 
-        <div className="relative">
-          <Link to={'/requirements_form'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              REQUIREMENTS PANEL
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/room_registration'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <Description className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              ROOM FORM
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/section_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <EditNote className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              SECTION PANEL FORM
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/semester_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              SEMESTER PANEL FORM
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/change_grade_period'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              CHANGE GRADING PERIOD
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/year_update_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <Description className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              YEAR UPDATE PANEL
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/school_year_activator_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <EditNote className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              SCHOOL YEAR ACTIVATOR PANEL
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/year_level_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              YEAR LEVEL PANEL FORM
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/year_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <EditNote className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              YEAR PANEL FORM
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/school_year_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              SCHOOL YEAR PANEL
-            </button>
-          </Link>
-        </div>
-
-        
-        <div className="relative">
-          <Link to={'/email_template_manager'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              EMAIL SENDER
-            </button>
-          </Link>
-        </div>
-
-          
-        <div className="relative">
-          <Link to={'/announcement'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <CollectionsBookmark className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              ANNOUNCEMENT
-            </button>
-          </Link>
-        </div>
-
+              {/* Button (no hover) */}
+              <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
+                {item.title}
+              </button>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );

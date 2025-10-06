@@ -255,8 +255,8 @@ const StudentAdmissionServices = () => {
                                                 letterSpacing: '1px',
                                                 fontWeight: "normal"
                                             }}>
-                                                Nagtahan, Sampaloc, Manila 1008<br/>
-                                                Blk. 3 Lot 2, 5 Congressional Rd, General Mariano Alvarez
+                                                Nagtahan, Sampaloc, Manila 1008<br />
+                                                Poblacion 5, Congressional Road, General Mariano Alvarez
                                             </div>
 
                                             <br />

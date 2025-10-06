@@ -660,7 +660,7 @@ const CertificateOfRegistration = forwardRef(({ student_number }, divToPrintRef)
                       <td colSpan={16} style={{ fontSize: "62.5%" }}>
                         <input
                           type="text"
-                          value={data[0]?.college || 'Hello'}
+                          value={data[0]?.college || ''}
                           readOnly
                           style={{
                             fontFamily: "Arial, sans-serif",

@@ -6465,6 +6465,7 @@ app.get("/school_years", async (req, res) => {
     FROM active_school_year_table sy
     JOIN year_table yt ON sy.year_id = yt.year_id
     JOIN semester_table s ON sy.semester_id = s.semester_id
+    ORDER BY yt.year_description
 
   `;
 
@@ -9458,7 +9459,7 @@ app.get("/api/student_course/:id", async (req, res) => {
           AND tt.department_section_id = es.department_section_id
         LEFT JOIN prof_table AS pt ON tt.professor_id = pt.prof_id
         INNER JOIN active_school_year_table AS sy ON es.active_school_year_id = sy.id
-      WHERE pst.person_id = ? AND sy.astatus = 1
+      WHERE pst.person_id = ? AND sy.astatus = 1 AND es.fe_status = 0
     `, [id]);
 
     if (!rows.length) {
@@ -9471,7 +9472,6 @@ app.get("/api/student_course/:id", async (req, res) => {
     res.status(500).json({ message: "Database error" });
   }
 });
-
 //SAVE Student's Faculty Evaluation
 app.put("/api/student/faculty_evaluation", async (req, res) => {
   const { prof_id, course_id, curriculum_id, active_school_year_id, num1, num2, num3 } = req.body;
@@ -9484,6 +9484,13 @@ app.put("/api/student/faculty_evaluation", async (req, res) => {
       [num1, num2, num3, prof_id, course_id, curriculum_id, active_school_year_id]
     );
 
+    await db3.execute(
+      `UPDATE enrolled_subject 
+       SET fe_status = 1
+       WHERE course_id = ? AND curriculum_id = ? AND active_school_year_id = ?`,
+      [course_id, curriculum_id, active_school_year_id]
+    );
+    
     res.json({ message: "Evaluation saved successfully", rows });
   } catch (err) {
     console.error("Error saving evaluation:", err);
@@ -11323,6 +11330,79 @@ app.get("/api/program_evaluation/:student_number", async (req, res) => {
   } catch (error) {
     console.log("Database Error", error);
     res.status(500).send({ message: "Database/Server Error", error });
+  }
+});
+
+app.get("/api/program_evaluation/:student_number", async (req, res) => {
+  const {student_number} = req.params;
+
+  try{
+    const [rows] = await db3.query(`
+        SELECT DISTINCT 
+          pt.last_name, pt.first_name, pt.middle_name, pt.gender, pgt.program_code, pgt.major, yt.year_description, pgt.program_description, snt.student_number, dpt.dprtmnt_name FROM enrolled_subject AS es
+        LEFT JOIN student_numbering_table AS snt ON es.student_number = snt.student_number
+        LEFT JOIN person_table AS pt ON snt.person_id = pt.person_id
+        LEFT JOIN curriculum_table AS cct ON es.curriculum_id = cct.curriculum_id
+        LEFT JOIN program_table AS pgt ON cct.program_id = pgt.program_id
+        LEFT JOIN year_table AS yt ON cct.year_id = yt.year_id
+        LEFT JOIN dprtmnt_curriculum_table AS dct ON cct.curriculum_id = dct.curriculum_id
+        LEFT JOIN dprtmnt_table AS dpt ON dct.dprtmnt_id = dpt.dprtmnt_id
+        WHERE es.student_number = ?;
+      `, [student_number]);
+    
+    if(rows.length === 0) {
+      return res.status(404).send({message: "Student is not found"});
+    }
+
+    res.json(rows[0]);
+  }catch(error) {
+    console.log("Database Error", error);
+    res.status(500).send({message: "Database/Server Error", error});
+  }
+});
+
+app.get("/api/program_evaluation/details/:student_number", async (req, res) => {
+  const {student_number} = req.params;
+
+  try{
+    const [rows] = await db3.query(`
+        SELECT 
+          es.id as enrolled_id, 
+          es.final_grade, 
+          ct.course_code, 
+          st.description as section,
+          ct.course_description, 
+          ct.course_unit, 
+          ct.lab_unit, 
+          smt.semester_description, 
+          smt.semester_id,
+          sy.id as school_year, 
+          ct.course_id,
+          yt.year_description as current_year,
+          yt.year_id,
+          pgt.program_code,
+          es.en_remarks,
+          yt.year_description + 1 as next_year
+        FROM enrolled_subject AS es
+          LEFT JOIN course_table AS ct ON es.course_id = ct.course_id
+          LEFT JOIN active_school_year_table AS sy ON es.active_school_year_id = sy.id
+          LEFT JOIN dprtmnt_section_table AS dst ON es.department_section_id = dst.id
+          LEFT JOIN section_table AS st ON dst.section_id = st.id
+          LEFT JOIN curriculum_table AS cct ON dst.curriculum_id = cct.curriculum_id
+          LEFT JOIN program_table AS pgt ON cct.program_id = pgt.program_id
+          LEFT JOIN semester_table AS smt ON sy.semester_id = smt.semester_id
+          LEFT JOIN year_table AS yt ON sy.year_id = yt.year_id
+        WHERE es.student_number= ?;
+    `, [student_number]);
+
+    if(rows.length === 0) {
+      return res.status(404).send({message: "Student Data is not found"});
+    }
+
+    res.json(rows);
+  }catch(err){
+    res.status(500).send({message: "Student Data is not found"});
+    console.log("Database / Server Error", err)
   }
 });
 

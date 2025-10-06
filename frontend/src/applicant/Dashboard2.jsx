@@ -431,80 +431,80 @@ const Dashboard2 = (props) => {
         </Box>
       </Box>
 
-{/* Cards Section */}
-<Box
-  sx={{
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 2,
-    mt: 2,
-    pb: 1,
-    justifyContent: "center", // Centers all cards horizontally
-  }}
->
-  {links.map((lnk, i) => (
-    <motion.div
-      key={i}
-      style={{ flex: "0 0 calc(30% - 16px)" }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: i * 0.1, duration: 0.4 }}
-    >
-      <Card
+      {/* Cards Section */}
+      <Box
         sx={{
-          minHeight: 60,
-          borderRadius: 2,
-          border: "2px solid #6D2323",
-          backgroundColor: "#fff",
           display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          p: 1.5,
-          cursor: "pointer",
-          transition: "all 0.3s ease-in-out",
-          "&:hover": {
-            transform: "scale(1.05)",
-            backgroundColor: "#6D2323", // ✅ background becomes maroon
-            "& .card-text": {
-              color: "#fff", // ✅ text becomes white
-            },
-            "& .card-icon": {
-              color: "#fff", // ✅ icon becomes white
-            },
-          },
-        }}
-        onClick={() => {
-          if (lnk.onClick) {
-            lnk.onClick(); // run handler
-          } else if (lnk.to) {
-            navigate(lnk.to); // navigate if it has a `to`
-          }
+          flexWrap: "wrap",
+          gap: 2,
+          mt: 2,
+          pb: 1,
+          justifyContent: "center", // Centers all cards horizontally
         }}
       >
-        {/* Icon */}
-        <PictureAsPdfIcon
-          className="card-icon"
-          sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
-        />
+        {links.map((lnk, i) => (
+          <motion.div
+            key={i}
+            style={{ flex: "0 0 calc(30% - 16px)" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1, duration: 0.4 }}
+          >
+            <Card
+              sx={{
+                minHeight: 60,
+                borderRadius: 2,
+                border: "2px solid #6D2323",
+                backgroundColor: "#fff",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                p: 1.5,
+                cursor: "pointer",
+                transition: "all 0.3s ease-in-out",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  backgroundColor: "#6D2323", // ✅ background becomes maroon
+                  "& .card-text": {
+                    color: "#fff", // ✅ text becomes white
+                  },
+                  "& .card-icon": {
+                    color: "#fff", // ✅ icon becomes white
+                  },
+                },
+              }}
+              onClick={() => {
+                if (lnk.onClick) {
+                  lnk.onClick(); // run handler
+                } else if (lnk.to) {
+                  navigate(lnk.to); // navigate if it has a `to`
+                }
+              }}
+            >
+              {/* Icon */}
+              <PictureAsPdfIcon
+                className="card-icon"
+                sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
+              />
 
-        {/* Label */}
-        <Typography
-          className="card-text"
-          sx={{
-            color: "#6D2323",
-            fontFamily: "Arial",
-            fontWeight: "bold",
-            fontSize: "0.85rem",
-          }}
-        >
-          {lnk.label}
-        </Typography>
-      </Card>
-    </motion.div>
-  ))}
-</Box>
+              {/* Label */}
+              <Typography
+                className="card-text"
+                sx={{
+                  color: "#6D2323",
+                  fontFamily: "Arial",
+                  fontWeight: "bold",
+                  fontSize: "0.85rem",
+                }}
+              >
+                {lnk.label}
+              </Typography>
+            </Card>
+          </motion.div>
+        ))}
+      </Box>
 
 
       <Container>

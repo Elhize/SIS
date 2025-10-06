@@ -109,23 +109,23 @@ const AdmissionServices = () => {
         }
     };
 
- // 🔒 Disable right-click
-  document.addEventListener('contextmenu', (e) => e.preventDefault());
+    // 🔒 Disable right-click
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-  // 🔒 Block DevTools shortcuts + Ctrl+P silently
-  document.addEventListener('keydown', (e) => {
-    const isBlockedKey =
-      e.key === 'F12' || // DevTools
-      e.key === 'F11' || // Fullscreen
-      (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j')) || // Ctrl+Shift+I/J
-      (e.ctrlKey && e.key.toLowerCase() === 'u') || // Ctrl+U (View Source)
-      (e.ctrlKey && e.key.toLowerCase() === 'p');   // Ctrl+P (Print)
+    // 🔒 Block DevTools shortcuts + Ctrl+P silently
+    document.addEventListener('keydown', (e) => {
+        const isBlockedKey =
+            e.key === 'F12' || // DevTools
+            e.key === 'F11' || // Fullscreen
+            (e.ctrlKey && e.shiftKey && (e.key.toLowerCase() === 'i' || e.key.toLowerCase() === 'j')) || // Ctrl+Shift+I/J
+            (e.ctrlKey && e.key.toLowerCase() === 'u') || // Ctrl+U (View Source)
+            (e.ctrlKey && e.key.toLowerCase() === 'p');   // Ctrl+P (Print)
 
-    if (isBlockedKey) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  });
+        if (isBlockedKey) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
 
 
 
@@ -255,8 +255,8 @@ const AdmissionServices = () => {
                                                 letterSpacing: '1px',
                                                 fontWeight: "normal"
                                             }}>
-                                                Nagtahan, Sampaloc, Manila 1008<br/>
-                                                Blk. 3 Lot 2, 5 Congressional Rd, General Mariano Alvarez
+                                                Nagtahan, Sampaloc, Manila 1008<br />
+                                                Poblacion 5, Congressional Road, General Mariano Alvarez
                                             </div>
 
                                             <br />

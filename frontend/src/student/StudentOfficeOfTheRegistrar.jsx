@@ -65,11 +65,11 @@ const StudentOfficeOfTheRegistrar = () => {
     }, [person]);
 
 
+
     const campusAddresses = {
         0: "Nagtahan St. Sampaloc, Manila",
-        1: "Blk. 3 Lot 2, 5 Congressional Rd, General Mariano Alvarez",
+        1: "Poblacion 5, Congressional Road, General Mariano Alvarez,",
     };
-
 
     const campusAddress = campusAddresses[person?.campus] || "";
     // ✅ Fetch person data from backend

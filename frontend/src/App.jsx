@@ -39,6 +39,7 @@ import FacultyMasterList from './faculty/FacultyMasterlist';
 import FacultyStudentClassList from './faculty/FacultyStudentClassList';
 import FacultySchedule from './faculty/FacultySchedule';
 import FacultyStudentList from './faculty/FacultyStudentList';
+import ProgramEvaluation from './faculty/ProgramEvaluation';
 import FacultyResetPassword from './faculty/FacultyResetPassword';
 
 
@@ -151,6 +152,7 @@ import SuperAdminRegistrarPassword from './superadmin/SuperAdminRegistrarResetPa
 import Notifications from './superadmin/Notifications';
 import ApplicantProfile from './registrar/ApplicantProfile';
 import ApplicantProfilePermit from './applicant/applicantProfilePermit';
+import ReportOfGrade from './registrar/ReportOfGrade';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -264,6 +266,7 @@ function App() {
               <Route path="/faculty_masterlist" element={<ProtectedRoute><FacultyMasterList /></ProtectedRoute>} />
               <Route path="/subject_masterlist/:subject_id/:department_section_id/:school_year_id" element={<ProtectedRoute><FacultyStudentClassList /></ProtectedRoute>} />
               <Route path="/faculty_schedule" element={<ProtectedRoute><FacultySchedule /></ProtectedRoute>} />
+               <Route path="/program_evaluation" element={<ProtectedRoute><ProgramEvaluation /></ProtectedRoute>} />
               <Route path="/class_list/:course_id/:department_section_id/:school_year_id" element={<ProtectedRoute><FacultyStudentList /></ProtectedRoute>} />
 
               <Route path="/student_dashboard" element={<ProtectedRoute allowedRoles={'student'}><StudentDashboard /></ProtectedRoute>} />
@@ -361,6 +364,7 @@ function App() {
               <Route path="/registrar_examination_profile/:personId" element={<ApplicantProfile />} />
 
               <Route path="/page_crud" element={<ProtectedRoute><PageCRUD /></ProtectedRoute>} />
+              <Route path="/report_of_grades" element={<ProtectedRoute><ReportOfGrade /></ProtectedRoute>} />
               <Route path="/user_page_access" element={<ProtectedRoute><UserPageAccess /></ProtectedRoute>} />
 
             </Routes>

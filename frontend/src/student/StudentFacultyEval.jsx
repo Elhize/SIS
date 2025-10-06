@@ -101,6 +101,8 @@ const FacultyEvaluation = () => {
       );
       alert(res.data.message);
       setIsReadOnly(true);
+      fetchCourseData(userID);
+      setSelectedCourse("");
     } catch (err) {
       console.error("Error saving evaluation:", err);
       alert("Failed to save evaluation.");

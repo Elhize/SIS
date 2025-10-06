@@ -232,11 +232,11 @@ const FacultyMasterList = () => {
 
 
       </Box>
-      <hr style={{ border: "1px solid #ccc", width: "90%" }} />
+      <hr style={{ border: "1px solid #ccc", width: "95%" }} />
 
       <br />
 
-      <TableContainer component={Paper} sx={{ width: '90%', }}>
+      <TableContainer component={Paper} sx={{ width: '95%', }}>
         <Table size="small">
           <TableHead sx={{ backgroundColor: '#6D2323', color: "white" }}>
             <TableRow>
@@ -419,8 +419,8 @@ const FacultyMasterList = () => {
           </TableHead>
         </Table>
       </TableContainer>
-      <TableContainer component={Paper} sx={{ width: '90%', border: "2px solid maroon", p: 2 }}>
-        <Box sx={{ display: "flex", alignItems: "center", margin: "1rem 0", padding: "0 1rem", }} gap={20}>
+      <TableContainer component={Paper} sx={{ width: '95%', border: "2px solid maroon", p: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", margin: "1rem 0", padding: "0 1rem", }} gap={5}>
           <Box display="flex" flexDirection="column">
             <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 500, marginRight: "1rem" }}>
               <Typography fontSize={13} sx={{ minWidth: "100px" }}>Course: </Typography>
@@ -447,8 +447,8 @@ const FacultyMasterList = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Box display="flex" gap={2} sx={{ marginTop: "1rem" }}>
-              <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 600, marginRight: "1rem" }}>
+            <Box display="flex" gap={2} sx={{ marginTop: "1rem", marginRight:"50px" }}>
+              <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 550, }}>
                 <Typography fontSize={13} sx={{ minWidth: "100px" }}>Section</Typography>
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Section</InputLabel>
@@ -456,7 +456,7 @@ const FacultyMasterList = () => {
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
 
-                    style={{ width: "500px" }}
+                    style={{ width: "300px" }}
                     value={selectedSection}
                     label="Course"
                     onChange={handleSelectSectionChange}
@@ -474,7 +474,7 @@ const FacultyMasterList = () => {
                   </Select>
                 </FormControl>
               </Box>
-              <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 400, marginRight: "1rem" }}>
+              <Box display="flex" alignItems="center" gap={1} sx={{ minWidth: 200, marginRight: "1rem" }}>
                 <Typography fontSize={13} sx={{ minWidth: "100px" }}>Student Status:</Typography>
                 <FormControl fullWidth>
                   <Select
@@ -545,7 +545,7 @@ const FacultyMasterList = () => {
           </Box>
         </Box>
       </TableContainer>
-      <TableContainer component={Paper} sx={{ width: "90%", marginTop: "2rem" }}>
+      <TableContainer component={Paper} sx={{ width: "95%", marginTop: "2rem" }}>
         <Table size="small">
           <TableHead sx={{ backgroundColor: "#6D2323" }}>
             <TableRow>

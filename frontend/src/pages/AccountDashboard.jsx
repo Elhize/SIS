@@ -1,115 +1,82 @@
-import { ListAlt, PersonAdd, LockReset } from "@mui/icons-material";
+import {
+  ListAlt,
+  PersonAdd,
+  LockReset,
+  People,
+  AssignmentInd,
+  TableChart,
+  Security,
+  School,
+  SupervisorAccount,
+  AdminPanelSettings,
+} from "@mui/icons-material";
 import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 const AccountDashboard = () => {
+  const menuItems = [
+    {
+      label: "ACCOUNT PROFESSOR",
+      icon: <PersonAdd className="text-maroon-500 text-2xl" />,
+      path: "/register_prof",
+    },
+    {
+      label: "STUDENT INFO UPDATE FORM",
+      icon: <AssignmentInd className="text-maroon-500 text-2xl" />,
+      path: "/department_section_panel",
+    },
+    {
+      label: "USER PAGE ACCESS",
+      icon: <Security className="text-maroon-500 text-2xl" />,
+      path: "/user_page_access",
+    },
+    {
+      label: "PAGE TABLE",
+      icon: <TableChart className="text-maroon-500 text-2xl" />,
+      path: "/page_crud",
+    },
+    {
+      label: "RESET PASSWORD",
+      icon: <LockReset className="text-maroon-500 text-2xl" />,
+      path: "/registrar_reset_password",
+    },
+    {
+      label: "APPLICANT RESET PASSWORD",
+      icon: <People className="text-maroon-500 text-2xl" />,
+      path: "/superadmin_applicant_reset_password",
+    },
+    {
+      label: "STUDENT RESET PASSWORD",
+      icon: <School className="text-maroon-500 text-2xl" />,
+      path: "/superadmin_student_reset_password",
+    },
+    {
+      label: "FACULTY RESET PASSWORD",
+      icon: <SupervisorAccount className="text-maroon-500 text-2xl" />,
+      path: "/superadmin_faculty_reset_password",
+    },
+    {
+      label: "REGISTRAR RESET PASSWORD",
+      icon: <AdminPanelSettings className="text-maroon-500 text-2xl" />,
+      path: "/superadmin_registrar_reset_password",
+    },
+  ];
+
   return (
     <div className="p-2 px-10 w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-        <div className="relative">
-          <Link to={'/register_prof'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <PersonAdd className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              ACCOUNT PROFESSOR
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/department_section_panel'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <ListAlt className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              STUDENT INFO UPDATE FORM
-            </button>
-          </Link>
-        </div>
-
-
-        <div className="relative">
-          <Link to={'/user_page_access'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <ListAlt className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              USER PAGE ACCESS
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/page_crud'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <ListAlt className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              PAGE TABLE
-            </button>
-          </Link>
-        </div>
-
-
-        <div className="relative">
-          <Link to={'/registrar_reset_password'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <LockReset className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              RESET PASSWORD
-            </button>
-          </Link>
-        </div>
-
-
-
-        <div className="relative">
-          <Link to={'/superadmin_applicant_reset_password'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <LockReset className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              APPLICANT RESET PASSWORD
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/superadmin_student_reset_password'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <LockReset className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              STUDENT RESET PASSWORD
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/superadmin_faculty_reset_password'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <LockReset className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              FACULTY RESET PASSWORD
-            </button>
-          </Link>
-        </div>
-
-        <div className="relative">
-          <Link to={'/superadmin_registrar_reset_password'}>
-            <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
-              <LockReset className="text-maroon-500 text-2xl" />
-            </div>
-            <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
-              REGISTRAR RESET PASSWORD
-            </button>
-          </Link>
-        </div>
-
+        {menuItems.map((item, index) => (
+          <div className="relative" key={index}>
+            <Link to={item.path}>
+              <div className="bg-white p-4 border-4 rounded-lg border-maroon-500 absolute left-16 top-12 w-enough">
+                {item.icon}
+              </div>
+              <button className="bg-white text-maroon-500 border-4 rounded-lg border-maroon-500 p-4 w-80 h-32 font-medium mt-20 ml-8 flex items-end justify-center">
+                {item.label}
+              </button>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );

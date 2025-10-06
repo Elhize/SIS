@@ -105,6 +105,42 @@ const ExamPermit = ({ personId }) => {
             .catch((err) => console.error(err));
     }, [personId]);
 
+    useEffect(() => {
+        if (!person?.applicant_number) return;  // wait until applicant number is loaded
+
+        const fetchScores = async () => {
+            try {
+                const { data } = await axios.get("http://localhost:5000/api-applicant-scoring");
+
+                const applicantScores = data.find(d => d.applicant_number === person.applicant_number);
+
+                if (applicantScores) {
+                    setExamScores({
+                        english: applicantScores.english ?? "N/A",
+                        science: applicantScores.science ?? "N/A",
+                        filipino: applicantScores.filipino ?? "N/A",
+                        math: applicantScores.math ?? "N/A",
+                        abstract: applicantScores.abstract ?? "N/A",
+                        final: applicantScores.final_rating ?? "N/A",  // ✅ match your backend
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching scores:", err);
+            }
+        };
+
+        fetchScores();
+    }, [person?.applicant_number]);   // ✅ run when applicant_number is set
+
+
+    const [examScores, setExamScores] = useState({
+        english: null,
+        science: null,
+        filipino: null,
+        math: null,
+        abstract: null,
+        final: null
+    });
 
     if (!person) return <div>Loading Exam Permit...</div>;
 
@@ -194,7 +230,7 @@ const ExamPermit = ({ personId }) => {
                             </div>
                             <div>Nagtahan St. Sampaloc, Manila</div>
                             <div style={{ marginTop: "20px" }}>
-                                <b style={{ fontSize: "24px" }}>APPLICATION PERMIT</b>
+                                <b style={{ fontSize: "26px" }}>APPLICATION PERMIT</b>
                             </div>
                         </td>
                         <td style={{ width: "20%", textAlign: "center" }}>
@@ -366,7 +402,7 @@ const ExamPermit = ({ personId }) => {
                             </td>
                             <td colSpan={20}>
                                 <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-                                    <label style={{ fontWeight: "bold", marginRight: "10px", marginBottom: "-20px" }}>
+                                    <label style={{ fontWeight: "bold", marginRight: "10px", marginBottom: "-30px" }}>
                                         Major:
                                     </label>
                                     <span
@@ -375,7 +411,7 @@ const ExamPermit = ({ personId }) => {
                                             borderBottom: "1px solid black",
                                             minWidth: "200px",
                                             fontFamily: "Arial",
-                                            marginBottom: "-15px"
+                                            marginBottom: "-45px"
                                         }}
                                     >
                                         {curriculumOptions.find(
@@ -515,33 +551,13 @@ const ExamPermit = ({ personId }) => {
 
                         </tr>
 
-                        {/* Scheduled By */}
-                        <tr>
-                            <td colSpan={40}>
-                                <div style={{ display: "flex", alignItems: "center", width: "50%", marginTop: "-125px" }}>
-                                    <label style={{ fontWeight: "bold", marginRight: "10px" }}>
-                                        Scheduled by:
-                                    </label>
-                                    <span
-                                        style={{
-                                            flexGrow: 1,
-                                            borderBottom: "1px solid black",
-                                            fontFamily: "Arial",
-                                        }}
-                                    >
-                                        {examSchedule?.proctor}
-                                    </span>
-                                </div>
-                            </td>
-
-                        </tr>
 
 
 
                         {/* Date */}
                         <tr>
                             <td colSpan={40}>
-                                <div style={{ display: "flex", alignItems: "center", width: "50%", marginTop: "-150px" }}>
+                                <div style={{ display: "flex", alignItems: "center", width: "50%", marginTop: "-145px" }}>
                                     <label style={{ fontWeight: "bold", marginRight: "10px" }}>
                                         Date:
                                     </label>
@@ -564,25 +580,81 @@ const ExamPermit = ({ personId }) => {
 
 
                         </tr>
+                        {/* Scheduled By */}
                         <tr>
-                            <td colSpan={40} style={{ width: "60%", textAlign: "center", lineHeight: "1.4" }}>
-
-                                <div style={{ marginTop: "10px" }}>
-                                    <b style={{ fontSize: "24px", fontFamily: "Arial",  }}>COLLEGE APPROVAL</b>
+                            <td colSpan={40}>
+                                <div style={{ display: "flex", alignItems: "center", width: "50%", marginTop: "-125px" }}>
+                                    <label style={{ fontWeight: "bold", marginRight: "10px" }}>
+                                        Scheduled by:
+                                    </label>
+                                    <span
+                                        style={{
+                                            flexGrow: 1,
+                                            borderBottom: "1px solid black",
+                                            fontFamily: "Arial",
+                                        }}
+                                    >
+                                        {examSchedule?.proctor}
+                                    </span>
                                 </div>
                             </td>
 
                         </tr>
 
-                              <tr>
-                            <td colSpan={40} style={{ width: "60%", textAlign: "center", lineHeight: "1.4" }}>
-
-                                <div style={{ marginTop: "30px" }}>
-                                    <b style={{ fontSize: "24px", fontFamily: "Arial",  }}>CLINIC APPROVAL</b>
+                        <tr>
+                            <td colSpan={40}>
+                                <div style={{ marginTop: "-50px", textAlign: "center" }}>
+                                    <b style={{ fontSize: "24px", fontFamily: "Arial" }}>ENTRANCE EXAMINATION SCORES</b>
                                 </div>
                             </td>
-
                         </tr>
+
+
+                        {examScores && (
+                            <tr>
+                                <td colSpan={40}>
+                                    <table
+                                        style={{
+                                            borderCollapse: "collapse",
+                                            width: "100%",
+                                            tableLayout: "fixed", // equal width
+                                            textAlign: "center",
+                                            fontFamily: "Arial",
+                                            fontSize: "14px",
+                                            marginTop: "10px",
+                                        }}
+                                    >
+                                        <tbody>
+                                            <tr style={{ height: "40px" }}>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    📖 English <br /> <b>{examScores.english}</b>
+                                                </td>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    🔬 Science <br /> <b>{examScores.science}</b>
+                                                </td>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    🇵🇭 Filipino <br /> <b>{examScores.filipino}</b>
+                                                </td>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    ➗ Math <br /> <b>{examScores.math}</b>
+                                                </td>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    🧩 Abstract <br /> <b>{examScores.abstract}</b>
+                                                </td>
+                                                <td style={{ border: "1px solid black", padding: "6px", fontWeight: "bold" }}>
+                                                    🏆 Final Rating <br /> <b>{examScores.final}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        )}
+
+
+                     
+
+
                     </tbody>
                 </table>
 
@@ -597,7 +669,7 @@ const ExamPermit = ({ personId }) => {
                         textAlign: "center",
                         tableLayout: "fixed",
                         border: "1px solid black",
-                        marginTop: "50px"
+                        marginTop: "10px"
                     }}
                 >
                     <tbody>

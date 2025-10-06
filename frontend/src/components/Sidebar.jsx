@@ -24,7 +24,10 @@ import EventNoteIcon from "@mui/icons-material/EventNote";
 import GradeIcon from "@mui/icons-material/Grade";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import PersonIcon from "@mui/icons-material/Person";
-
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import WorkIcon from "@mui/icons-material/Work";
+import SchoolIcon from "@mui/icons-material/School";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 
 const SideBar = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
@@ -357,25 +360,23 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_dashboard">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded button-hover ${location.pathname === "/faculty_dashboard"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
-                <Dashboard />
-                <span className="pl-4 p-2 px-0 pointer-events-none">
-                  Dashboard
-                </span>
+                <DashboardIcon />
+                <span className="pl-4 p-2 px-0 pointer-events-none">Dashboard</span>
               </li>
             </Link>
 
             <Link to="/grading_sheet">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/grading_sheet"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
-                <Business />
+                <AssignmentTurnedInIcon />
                 <span className="pl-4 p-2 px-0 pointer-events-none">
                   Grading Management
                 </span>
@@ -385,50 +386,60 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_masterlist">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_masterlist"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
-                <Business />
-                <span className="pl-4 p-2 px-0 pointer-events-none">
-                  Class List
-                </span>
+                <ListAltIcon />
+                <span className="pl-4 p-2 px-0 pointer-events-none">Class List</span>
               </li>
             </Link>
 
             <Link to="/faculty_workload">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_workload"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
-                <Business />
-                <span className="pl-4 p-2 px-0 pointer-events-none">
-                  Workload
-                </span>
+                <WorkIcon />
+                <span className="pl-4 p-2 px-0 pointer-events-none">Workload</span>
               </li>
             </Link>
 
             <Link to="/faculty_evaluation">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_evaluation"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
-                <Business />
+                <SchoolIcon />
                 <span className="pl-4 p-2 px-0 pointer-events-none">
                   Faculty Evaluation
                 </span>
               </li>
             </Link>
-            
+
+            <Link to="/program_evaluation">
+              <li
+                className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/program_evaluation"
+                    ? "bg-maroon-500 text-white"
+                    : ""
+                  }`}
+              >
+                <AssessmentIcon />
+                <span className="pl-4 p-2 px-0 pointer-events-none">
+                  Program Evaluation
+                </span>
+              </li>
+            </Link>
+
             <Link to="/faculty_reset_password">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_reset_password"
-                  ? "bg-maroon-500 text-white"
-                  : ""
+                    ? "bg-maroon-500 text-white"
+                    : ""
                   }`}
               >
                 <LockResetIcon />
@@ -500,8 +511,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/student_dashboard1">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${/^\/student_dashboard[1-5]$/.test(location.pathname)
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <PersonIcon />
