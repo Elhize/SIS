@@ -138,6 +138,7 @@ const ApplicantList = () => {
         program: "",
         created_at: "",
         middle_code: "",
+        created_at: ""
     });
     const [allApplicants, setAllApplicants] = useState([]);
 
@@ -309,24 +310,32 @@ const ApplicantList = () => {
             );
         })
         .sort((a, b) => {
-            let fieldA, fieldB;
-            if (sortBy === "name") {
-                fieldA = `${a.last_name} ${a.first_name} ${a.middle_name || ''}`.toLowerCase();
-                fieldB = `${b.last_name} ${b.first_name} ${b.middle_name || ''}`.toLowerCase();
-            } else if (sortBy === "id") {
-                fieldA = a.applicant_number || "";
-                fieldB = b.applicant_number || "";
-            } else if (sortBy === "email") {
-                fieldA = a.emailAddress?.toLowerCase() || "";
-                fieldB = b.emailAddress?.toLowerCase() || "";
-            } else {
-                return 0;
-            }
-            if (fieldA < fieldB) return sortOrder === "asc" ? -1 : 1;
-            if (fieldA > fieldB) return sortOrder === "asc" ? 1 : -1;
-            return 0;
-        });
+            // Compute Final Rating for each applicant
+            const aFinal =
+                (Number(a.english || 0) +
+                    Number(a.science || 0) +
+                    Number(a.filipino || 0) +
+                    Number(a.math || 0) +
+                    Number(a.abstract || 0)) / 5;
 
+            const bFinal =
+                (Number(b.english || 0) +
+                    Number(b.science || 0) +
+                    Number(b.filipino || 0) +
+                    Number(b.math || 0) +
+                    Number(b.abstract || 0)) / 5;
+
+            // Step 1: Sort by highest Final Rating
+            if (bFinal !== aFinal) {
+                return bFinal - aFinal; // descending
+            }
+
+            // Step 2: If Final Rating is equal, sort by earliest created_at (first come first served)
+            const dateA = new Date(a.created_at);
+            const dateB = new Date(b.created_at);
+
+            return dateA - dateB; // ascending
+        });
 
 
     const [itemsPerPage, setItemsPerPage] = useState(100);
@@ -1231,7 +1240,7 @@ const ApplicantList = () => {
                 <Table size="small">
                     <TableHead sx={{ backgroundColor: "#6D2323" }}>
                         <TableRow>
-                            <TableCell sx={{ color: "white", textAlign: "center", width: "2%", py: 0.5, fontSize: "12px", border: "2px solid maroon"}}>
+                            <TableCell sx={{ color: "white", textAlign: "center", width: "2%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 #
                             </TableCell>
 
@@ -1261,8 +1270,12 @@ const ApplicantList = () => {
                             <TableCell sx={{ color: "white", textAlign: "center", width: "6%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Abstract
                             </TableCell>
+
                             <TableCell sx={{ color: "white", textAlign: "center", width: "6%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Final Rating
+                            </TableCell>
+                            <TableCell sx={{ color: "white", textAlign: "center", width: "5%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
+                                Date Applied
                             </TableCell>
 
                             <TableCell sx={{ color: "white", textAlign: "center", width: "12%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
@@ -1413,6 +1426,8 @@ const ApplicantList = () => {
                                     </TableCell>
 
                                     {/* ✅ Computed Final Rating (read-only) */}
+
+                                    {/* ✅ Computed Final Rating (read-only) */}
                                     <TableCell
                                         sx={{
                                             color: "black",
@@ -1425,6 +1440,17 @@ const ApplicantList = () => {
                                         {computedFinalRating}
                                     </TableCell>
 
+                                    <TableCell
+                                        sx={{
+                                            color: "black",
+                                            textAlign: "center",
+                                            border: "2px solid maroon",
+                                            py: 0.5,
+                                            fontSize: "15px",
+                                        }}
+                                    >
+                                        {person.created_at}
+                                    </TableCell>
 
                                     {/* User */}
                                     <TableCell

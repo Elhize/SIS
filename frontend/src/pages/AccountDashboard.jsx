@@ -9,6 +9,7 @@ import {
   School,
   SupervisorAccount,
   AdminPanelSettings,
+  Info,
 } from "@mui/icons-material";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -19,6 +20,16 @@ const AccountDashboard = () => {
       label: "ACCOUNT PROFESSOR",
       icon: <PersonAdd className="text-maroon-500 text-2xl" />,
       path: "/register_prof",
+    },
+    {
+      label: "APPLICANT INFORMATION",
+      link: "/super_admin_applicant_dashboard1",
+      icon: <Info className="text-maroon-500 text-2xl" />,
+    },
+    {
+      label: "STUDENT INFORMATION",
+      link: "/super_admin_student_dashboard1",
+      icon: <Info className="text-maroon-500 text-2xl" />,
     },
     {
       label: "STUDENT INFO UPDATE FORM",

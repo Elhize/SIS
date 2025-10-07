@@ -23,7 +23,7 @@ import { FaFileExcel } from "react-icons/fa";
 import ExamPermit from "../applicant/ExamPermit";
 
 
-const SuperAdminDashboard1 = () => {
+const SuperAdminApplicantDashboard1 = () => {
     const navigate = useNavigate();
     const [userID, setUserID] = useState("");
     const [user, setUser] = useState("");
@@ -166,11 +166,11 @@ const SuperAdminDashboard1 = () => {
     const [clickedSteps, setClickedSteps] = useState([]);
 
     const steps = [
-        { label: "Personal Information", icon: <PersonIcon />, path: "/super_admin_dashboard1" },
-        { label: "Family Background", icon: <FamilyRestroomIcon />, path: "/super_admin_dashboard2" },
-        { label: "Educational Attainment", icon: <SchoolIcon />, path: "/super_admin_dashboard3" },
-        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: "/super_admin_dashboard4" },
-        { label: "Other Information", icon: <InfoIcon />, path: "/super_admin_dashboard5" },
+        { label: "Personal Information", icon: <PersonIcon />, path: "/super_admin_applicant_dashboard1" },
+        { label: "Family Background", icon: <FamilyRestroomIcon />, path: "/super_admin_applicant_dashboard2" },
+        { label: "Educational Attainment", icon: <SchoolIcon />, path: "/super_admin_applicant_dashboard3" },
+        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: "/super_admin_applicant_dashboard4" },
+        { label: "Other Information", icon: <InfoIcon />, path: "/super_admin_applicant_dashboard5" },
     ];
 
     const handleStepClick = (index) => {
@@ -724,63 +724,10 @@ const SuperAdminDashboard1 = () => {
                         fontSize: "36px",
                     }}
                 >
-                    APPLICANT FORM
+                 APPLICANT - PERSONAL INFORMATION
                 </Typography>
 
-                {/* ✅ Right side: Search + Excel Import side by side */}
-                <Box display="flex" alignItems="center" gap={2}>
-                    <TextField
-                        size="small"
-                        placeholder="Search Applicant Name / Email / Applicant ID"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        InputProps={{ startAdornment: <Search sx={{ mr: 1 }} /> }}
-                        sx={{ width: { xs: "100%", sm: "425px" } }}
-                    />
-
-                    {/* Excel Import Section */}
-                    <Box display="flex" alignItems="center" gap={1}>
-                        <input
-                            type="file"
-                            accept=".xlsx,.xls"
-                            onChange={handleExcelChange}
-                            style={{ display: "none" }}
-                            id="excel-upload"
-                        />
-
-                        <button
-                            onClick={() => document.getElementById("excel-upload").click()}
-                            style={{
-                                padding: "5px 20px",
-                                border: "2px solid green",
-                                backgroundColor: "#f0fdf4",
-                                color: "green",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                                fontWeight: "bold",
-                                height: "50px",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                userSelect: "none",
-                                width: "200px",
-                            }}
-                            type="button"
-                        >
-                            <FaFileExcel size={20} />
-                            Choose Excel
-                        </button>
-
-                        <Button
-                            onClick={handleImportExcel}
-                            variant="contained"
-                            sx={{ backgroundColor: "maroon", color: "white", height: "50px", width: "200px", }}
-                        >
-                            Import
-                        </Button>
-                    </Box>
-                </Box>
+             
             </Box>
 
             {searchError && <Typography color="error">{searchError}</Typography>}
@@ -2708,7 +2655,7 @@ const SuperAdminDashboard1 = () => {
                                 variant="contained"
                                 onClick={() => {
                                     handleUpdate();
-                                    navigate("/super_admin_dashboard2");
+                                    navigate("/super_admin_applicant_dashboard2");
                                 }}
                                 endIcon={
                                     <ArrowForwardIcon
@@ -2741,4 +2688,4 @@ const SuperAdminDashboard1 = () => {
     );
 };
 
-export default SuperAdminDashboard1;
+export default SuperAdminApplicantDashboard1;

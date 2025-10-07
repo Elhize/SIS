@@ -305,22 +305,32 @@ const SideBar = ({ setIsAuthenticated }) => {
 
             {/* Applicant Form */}
             <Link
-              to={`/dashboard/${JSON.parse(localStorage.getItem("dashboardKeys"))?.step1 || ""
-                }`}
+              onClick={() => {
+                let keys = JSON.parse(localStorage.getItem("dashboardKeys"));
+                if (!keys) {
+                  const generateKey = () => Math.random().toString(36).substring(2, 10);
+                  keys = {
+                    step1: generateKey(),
+                    step2: generateKey(),
+                    step3: generateKey(),
+                    step4: generateKey(),
+                    step5: generateKey(),
+                  };
+                  localStorage.setItem("dashboardKeys", JSON.stringify(keys));
+                }
+                window.location.href = `/dashboard/${keys.step1}`;
+              }}
             >
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover 
-          ${location.pathname.startsWith("/dashboard/")
-                    ? "bg-maroon-500 text-white"
-                    : ""
-                  }`}
+      ${location.pathname.startsWith("/dashboard/") ? "bg-maroon-500 text-white" : ""}
+    `}
               >
                 <AssignmentIndIcon />
-                <span className="pl-4 p-2 px-0 pointer-events-none">
-                  Applicant Form
-                </span>
+                <span className="pl-4 p-2 px-0 pointer-events-none">Applicant Form</span>
               </li>
             </Link>
+
 
             {/* Upload Requirements */}
             <Link to="/requirements_uploader">
@@ -360,8 +370,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_dashboard">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded button-hover ${location.pathname === "/faculty_dashboard"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <DashboardIcon />
@@ -372,8 +382,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/grading_sheet">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/grading_sheet"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <AssignmentTurnedInIcon />
@@ -386,8 +396,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_masterlist">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_masterlist"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <ListAltIcon />
@@ -398,8 +408,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_workload">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_workload"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <WorkIcon />
@@ -410,8 +420,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_evaluation">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_evaluation"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <SchoolIcon />
@@ -424,8 +434,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/program_evaluation">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/program_evaluation"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <AssessmentIcon />
@@ -438,8 +448,8 @@ const SideBar = ({ setIsAuthenticated }) => {
             <Link to="/faculty_reset_password">
               <li
                 className={`w-full flex items-center border border-maroon-500 px-2 rounded m-2 mx-0 button-hover ${location.pathname === "/faculty_reset_password"
-                    ? "bg-maroon-500 text-white"
-                    : ""
+                  ? "bg-maroon-500 text-white"
+                  : ""
                   }`}
               >
                 <LockResetIcon />

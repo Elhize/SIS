@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 05, 2025 at 10:45 AM
+-- Generation Time: Oct 07, 2025 at 09:03 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -278,7 +278,8 @@ CREATE TABLE `announcements` (
 INSERT INTO `announcements` (`id`, `title`, `content`, `valid_days`, `created_at`, `target_role`, `creator_role`, `creator_id`, `file_path`) VALUES
 (3, 'Enrollment', 'Eto pwede na\r\n', 7, '2025-09-23 06:20:52', 'applicant', 'faculty', 1, '3_announcement.png'),
 (4, 'Hello', 'May PASOK GUYS', 7, '2025-09-23 08:32:46', 'applicant', 'faculty', 1, NULL),
-(5, 'Hello Good day Student ', 'Your Classes will start at August 26, 2025', 7, '2025-09-27 18:14:34', 'student', 'faculty', 1, '5_announcement.png');
+(5, 'Hello Good day Student ', 'Your Classes will start at August 26, 2025', 7, '2025-09-27 18:14:34', 'student', 'faculty', 1, '5_announcement.png'),
+(6, 'Enrollment Period', 'We just accept applicants Jul 01 - Aug 25`', 7, '2025-10-06 03:14:10', 'applicant', 'faculty', 1, '6_announcement.png');
 
 -- --------------------------------------------------------
 
@@ -516,7 +517,8 @@ INSERT INTO `applicant_numbering_table` (`applicant_number`, `person_id`, `qr_co
 ('2025100217', 326, '2025100217_qrcode.png'),
 ('2025100218', 327, '2025100218_qrcode.png'),
 ('2025100219', 328, '2025100219_qrcode.png'),
-('2025100220', 329, '2025100220_qrcode.png');
+('2025100220', 329, '2025100220_qrcode.png'),
+('2025100221', 330, '2025100221_qrcode.png');
 
 -- --------------------------------------------------------
 
@@ -586,7 +588,7 @@ CREATE TABLE `exam_applicants` (
 --
 
 INSERT INTO `exam_applicants` (`id`, `schedule_id`, `applicant_id`, `email_sent`) VALUES
-(1, 23, '2025100001', 1),
+(1, NULL, '2025100001', 0),
 (2, NULL, '2025100002', 0),
 (3, NULL, '2025100003', 0),
 (4, NULL, '2025100004', 0),
@@ -785,15 +787,16 @@ INSERT INTO `exam_applicants` (`id`, `schedule_id`, `applicant_id`, `email_sent`
 (198, NULL, '2025100198', 0),
 (199, NULL, '2025100199', 0),
 (200, NULL, '2025100200', 0),
-(319, 22, '2025100201', 1),
-(320, 22, '2025100204', 1),
-(322, 22, '2025100205', 1),
-(323, 22, '2025100061', 1),
+(319, 23, '2025100201', 1),
+(320, 21, '2025100204', 1),
+(322, NULL, '2025100205', 0),
+(323, NULL, '2025100061', 0),
 (324, NULL, '2025100206', 0),
-(325, 23, '2025100214', 1),
-(326, 22, '2025100218', 1),
-(327, 22, '2025100203', 1),
-(329, 22, '2025100220', 1);
+(325, NULL, '2025100214', 0),
+(326, NULL, '2025100218', 0),
+(327, NULL, '2025100203', 0),
+(329, NULL, '2025100220', 0),
+(330, 23, '2025100221', 1);
 
 -- --------------------------------------------------------
 
@@ -1051,7 +1054,8 @@ INSERT INTO `interview_applicants` (`id`, `schedule_id`, `applicant_id`, `email_
 (213, NULL, '2025100217', 0, 'Waiting List', 0, '2025-10-02 08:43:35'),
 (214, NULL, '2025100218', 0, 'Waiting List', 0, '2025-10-02 08:46:01'),
 (215, NULL, '2025100219', 0, 'Waiting List', 0, '2025-10-02 08:58:33'),
-(216, NULL, '2025100220', 0, 'Waiting List', 0, '2025-10-03 07:43:00');
+(216, NULL, '2025100220', 0, 'Waiting List', 0, '2025-10-03 07:43:00'),
+(217, NULL, '2025100221', 0, 'Waiting List', 0, '2025-10-07 06:53:10');
 
 -- --------------------------------------------------------
 
@@ -1626,7 +1630,20 @@ INSERT INTO `notifications` (`id`, `type`, `message`, `applicant_number`, `actor
 (555, 'email', '📧 Exam schedule email sent for Applicant #2025100220 (Schedule #22)', '2025100220', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-03 23:24:36'),
 (556, 'email', '📧 Exam schedule email sent for Applicant #2025100218 (Schedule #22)', '2025100218', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-03 23:24:37'),
 (557, 'email', '📧 Exam schedule email sent for Applicant #2025100214 (Schedule #23)', '2025100214', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-04 21:27:48'),
-(558, 'email', '📧 Exam schedule email sent for Applicant #2025100001 (Schedule #23)', '2025100001', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-04 21:27:48');
+(558, 'email', '📧 Exam schedule email sent for Applicant #2025100001 (Schedule #23)', '2025100001', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-04 21:27:48'),
+(559, 'update', '✏️ Updated document status (Applicant #2025100061 - De La Cruz, Lloyd Cedrick P.)', '2025100061', NULL, NULL, '2025-10-06 10:27:09'),
+(560, 'email', '📧 Exam schedule email sent for Applicant #2025100201 (Schedule #23)', '2025100201', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:14:06'),
+(561, 'update', '✏️ Updated document status (Applicant #2025100001 - Montaño, Mark Anthony P.)', '2025100001', NULL, NULL, '2025-10-07 14:16:08'),
+(562, 'update', '✏️ Updated document status (Applicant #2025100001 - Montaño, Mark Anthony P.)', '2025100001', NULL, NULL, '2025-10-07 14:16:09'),
+(563, 'update', '✏️ Updated document status (Applicant #2025100001 - Montaño, Mark Anthony P.)', '2025100001', NULL, NULL, '2025-10-07 14:16:09'),
+(564, 'email', '📧 Exam schedule email sent for Applicant #2025100204 (Schedule #21)', '2025100204', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:18:05'),
+(565, 'submit', '✅ Applicant #2025100221 - Pedro, Penduco J. submitted their form.', '2025100221', NULL, NULL, '2025-10-07 14:56:26'),
+(566, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:36'),
+(567, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:36'),
+(568, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:37'),
+(569, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:37'),
+(570, 'email', '📧 Exam schedule email sent for Applicant #2025100221 (Schedule #23)', '2025100221', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:58:41'),
+(571, 'email', '📧 Exam schedule email sent for Applicant #2025100201 (Schedule #23)', '2025100201', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:58:41');
 
 -- --------------------------------------------------------
 
@@ -1654,7 +1671,7 @@ CREATE TABLE `person_status_table` (
 --
 
 INSERT INTO `person_status_table` (`id`, `person_id`, `applicant_id`, `exam_status`, `interview_status`, `requirements`, `residency`, `student_registration_status`, `exam_result`, `hs_ave`, `qualifying_result`, `interview_result`) VALUES
-(1, 1, 2025100001, 1, NULL, 0, NULL, NULL, 99, NULL, 97, 100),
+(1, 1, 2025100001, NULL, NULL, NULL, NULL, NULL, 99, NULL, 97, 100),
 (2, 2, 2025100002, NULL, NULL, NULL, NULL, NULL, 90, NULL, 91, 89),
 (3, 3, 2025100003, NULL, NULL, NULL, NULL, NULL, 87, NULL, 90, 83),
 (4, 4, 2025100004, NULL, NULL, NULL, NULL, NULL, 92, NULL, 94, 90),
@@ -1714,7 +1731,7 @@ INSERT INTO `person_status_table` (`id`, `person_id`, `applicant_id`, `exam_stat
 (58, 58, 2025100058, NULL, NULL, NULL, NULL, NULL, 91, NULL, 86, 95),
 (59, 59, 2025100059, NULL, NULL, NULL, NULL, NULL, 92, NULL, 91, 92),
 (60, 60, 2025100060, NULL, NULL, NULL, NULL, NULL, 95, NULL, 95, 94),
-(61, 61, 2025100061, 1, NULL, NULL, NULL, NULL, 90, NULL, 91, 89),
+(61, 61, 2025100061, NULL, NULL, NULL, NULL, NULL, 90, NULL, 91, 89),
 (62, 62, 2025100062, NULL, NULL, NULL, NULL, NULL, 85, NULL, 83, 87),
 (63, 63, 2025100063, NULL, NULL, NULL, NULL, NULL, 92, NULL, 91, 93),
 (64, 64, 2025100064, NULL, NULL, NULL, NULL, NULL, 89, NULL, 81, 96),
@@ -1856,9 +1873,9 @@ INSERT INTO `person_status_table` (`id`, `person_id`, `applicant_id`, `exam_stat
 (200, 200, 2025100200, NULL, NULL, NULL, NULL, NULL, 89, NULL, 94, 84),
 (1402, 307, 2025100201, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (1603, 308, 2025100202, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(1604, 309, 2025100203, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(1604, 309, 2025100203, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (1605, 310, 2025100204, 1, NULL, 1, NULL, NULL, NULL, NULL, NULL, NULL),
-(1606, 312, 2025100205, 1, NULL, NULL, NULL, 0, NULL, 0, NULL, NULL),
+(1606, 312, 2025100205, NULL, NULL, NULL, NULL, 0, NULL, 0, NULL, NULL),
 (1607, 313, 2025100206, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
 (1608, 314, 2025100207, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
 (1609, 315, 2025100208, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
@@ -1866,13 +1883,14 @@ INSERT INTO `person_status_table` (`id`, `person_id`, `applicant_id`, `exam_stat
 (1612, 317, 2025100210, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
 (1613, 318, 2025100211, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
 (1614, 319, 2025100212, NULL, NULL, 0, 0, 0, 0, 0, 0, 0),
-(1615, 322, 2025100213, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(1616, 323, 2025100214, 1, 0, 0, 0, 0, 100, 0, 100, 100),
-(1617, 325, 2025100216, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(1618, 326, 2025100217, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(1619, 327, 2025100218, 1, 0, 0, 0, 0, 0, 0, 0, 0),
-(1620, 328, 2025100219, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(1621, 329, 2025100220, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+(1615, 322, 2025100213, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1616, 323, 2025100214, NULL, 0, 0, 0, 0, 100, 0, 100, 100),
+(1617, 325, 2025100216, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1618, 326, 2025100217, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1619, 327, 2025100218, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1620, 328, 2025100219, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1621, 329, 2025100220, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
+(1622, 330, 2025100221, 1, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -2036,7 +2054,7 @@ CREATE TABLE `person_table` (
 --
 
 INSERT INTO `person_table` (`person_id`, `profile_img`, `campus`, `academicProgram`, `classifiedAs`, `applyingAs`, `program`, `program2`, `program3`, `yearLevel`, `last_name`, `first_name`, `middle_name`, `extension`, `nickname`, `height`, `weight`, `lrnNumber`, `nolrnNumber`, `gender`, `pwdMember`, `pwdType`, `pwdId`, `birthOfDate`, `age`, `birthPlace`, `languageDialectSpoken`, `citizenship`, `religion`, `civilStatus`, `tribeEthnicGroup`, `cellphoneNumber`, `emailAddress`, `presentStreet`, `presentBarangay`, `presentZipCode`, `presentRegion`, `presentProvince`, `presentMunicipality`, `presentDswdHouseholdNumber`, `sameAsPresentAddress`, `permanentStreet`, `permanentBarangay`, `permanentZipCode`, `permanentRegion`, `permanentProvince`, `permanentMunicipality`, `permanentDswdHouseholdNumber`, `solo_parent`, `father_deceased`, `father_family_name`, `father_given_name`, `father_middle_name`, `father_ext`, `father_nickname`, `father_education`, `father_education_level`, `father_last_school`, `father_course`, `father_year_graduated`, `father_school_address`, `father_contact`, `father_occupation`, `father_employer`, `father_income`, `father_email`, `mother_deceased`, `mother_family_name`, `mother_given_name`, `mother_middle_name`, `mother_ext`, `mother_nickname`, `mother_education`, `mother_education_level`, `mother_last_school`, `mother_course`, `mother_year_graduated`, `mother_school_address`, `mother_contact`, `mother_occupation`, `mother_employer`, `mother_income`, `mother_email`, `guardian`, `guardian_family_name`, `guardian_given_name`, `guardian_middle_name`, `guardian_ext`, `guardian_nickname`, `guardian_address`, `guardian_contact`, `guardian_email`, `annual_income`, `schoolLevel`, `schoolLastAttended`, `schoolAddress`, `courseProgram`, `honor`, `generalAverage`, `yearGraduated`, `schoolLevel1`, `schoolLastAttended1`, `schoolAddress1`, `courseProgram1`, `honor1`, `generalAverage1`, `yearGraduated1`, `strand`, `cough`, `colds`, `fever`, `asthma`, `faintingSpells`, `heartDisease`, `tuberculosis`, `frequentHeadaches`, `hernia`, `chronicCough`, `headNeckInjury`, `hiv`, `highBloodPressure`, `diabetesMellitus`, `allergies`, `cancer`, `smokingCigarette`, `alcoholDrinking`, `hospitalized`, `hospitalizationDetails`, `medications`, `hadCovid`, `covidDate`, `vaccine1Brand`, `vaccine1Date`, `vaccine2Brand`, `vaccine2Date`, `booster1Brand`, `booster1Date`, `booster2Brand`, `booster2Date`, `chestXray`, `cbc`, `urinalysis`, `otherworkups`, `symptomsToday`, `remarks`, `termsOfAgreement`, `created_at`, `current_step`) VALUES
-(1, '2025100001_1by1_2025.jpg', 0, 'Techvoc', 'Freshman (First Year)', 'Senior High School Graduate', '14', '11', '14', 'First Year', 'Montaño', 'Mark Anthony', 'Placido', '', 'Johnny', '5\'11', '65kg', 'No LRN Number', 0, 0, 0, '', '', '2003-06-20', 21, 'Manila, Philippines', 'Tagalog, English', 'FILIPINO', 'Born Again', 'Single', 'Agta', '09171234567999999', 'markmontano999@gmail.com', '19 G Dona Yayang Street ', 'Libis', '1000', 'National Capital Region (NCR)', 'Metro Manila, Second District', 'Quezon City', 'DSWD123456', 0, '19 G Dona Yayang Street ', 'Libis', '1000', 'National Capital Region (NCR)', 'Metro Manila, Second District', 'Quezon City', 'DSWD123456', 0, 0, 'Doe Sr.', 'Jonathan', 'Smiths', 'III', 'Jon', 1, '', '', '', '', '', '09181234567', 'Engineer', 'ABC Corp', '50000', 'jon.doe@abc.com', 0, 'Jane', 'Mary', 'Anne', '', 'Janey', 1, '', '', '', '', '', '09221234567', 'Accountant', 'XYZ Corp', '100000', 'jane.doe@xyz.com', 'StepFather', 'Parker', 'Ben', 'Jose', 'IV', 'Benny', '789 Recto Av', '09192233445', 'hrfthsdgas@gmail.com', '135,000 to 250,000', 'Senior High School', 'CGEAHS', 'Pasig City', 'STEM', 'With Honors', 92.50, 2022, 'Senior High School', 'CGEAHS', 'Rizal High School', 'Rizal High School', '0', 66.00, 0, 'Information and Communications Technology (ICT)', 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 'Wala ngani', 'Vitamins C', 1, '2022-02-11', 'Pfizer', '2022-03-14', 'Pfizer', '2022-04-13', 'Moderna', '2022-07-14', 'Pfizer', '2023-01-14', 'Normal', 'Normal', 'Normal', 'Normal', 0, 'Fit to enroll', 1, '2025-09-08', 1),
+(1, '2025100001_1by1_2025.jpg', 1, 'Techvoc', 'Freshman (First Year)', 'Master Degree Graduate', '1', '11', '14', 'First Year', 'Montaño', 'Mark Anthony', 'Placido', '', 'Johnny', '5\'11', '65kg', 'No LRN Number', 0, 0, 0, '', '', '2003-06-20', 21, 'Manila, Philippines', 'Tagalog, English', 'FILIPINO', 'Born Again', 'Single', 'Agta', '09171234567999999', 'markmontano999@gmail.com', '19 G Dona Yayang Street ', 'Libis', '1000', 'National Capital Region (NCR)', 'Metro Manila, Second District', 'Quezon City', 'DSWD123456', 0, '19 G Dona Yayang Street ', 'Libis', '1000', 'National Capital Region (NCR)', 'Metro Manila, Second District', 'Quezon City', 'DSWD123456', 0, 0, 'Doe Sr.', 'Jonathan', 'Smiths', 'III', 'Jon', 1, '', '', '', '', '', '09181234567', 'Engineer', 'ABC Corp', '50000', 'jon.doe@abc.com', 0, 'Jane', 'Mary', 'Anne', '', 'Janey', 1, '', '', '', '', '', '09221234567', 'Accountant', 'XYZ Corp', '100000', 'jane.doe@xyz.com', 'StepFather', 'Parker', 'Ben', 'Jose', 'IV', 'Benny', '789 Recto Av', '09192233445', '', '135,000 to 250,000', 'Senior High School', 'CGEAHS', 'Pasig City', 'STEM', 'With Honors', 92.50, 2022, 'Senior High School', 'CGEAHS', 'Rizal High School', 'Rizal High School', '0', 66.00, 0, 'Information and Communications Technology (ICT)', 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 'Wala ngani', 'Vitamins C', 1, '2022-02-11', 'Pfizer', '2022-03-14', 'Pfizer', '2022-04-13', 'Moderna', '2022-07-14', 'Pfizer', '2023-01-14', 'Normal', 'Normal', 'Normal', 'Normal', 1, 'Fit to enroll', 1, '2024-11-08', 1),
 (2, '3_1by1_2025.jpg', 1, 'Techvoc', 'Freshman (First Year)', 'Senior High School Graduate', '38', '4', '3', 'Second  Year', 'Emily', 'Johnson', 'Grace', '', 'MARK', '5\'11', '65', '123456789012', 0, 0, 0, '', '', '2003-06-26', 21, 'Manila, Philippines', 'Tagalog, English', 'ALGERIAN', 'Iglesia Ni Cristo', 'Single', 'Cebuano', '09953242510', 'emily.johnson2@example.com', '19 G Dona yayang Street Libis', 'Pag-asa', '4100', 'National Capital Region (NCR)', 'Metro Manila, Second District', 'City Of Mandaluyong', 'DSWD123456', 0, '19 G Dona yayang Street Libis', 'Malipayon', '4100', 'Region X (Northern Mindanao)', 'Bukidnon', 'Pangantucan', 'DSWD123456', 0, 0, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 0, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'fgdsgfasftrasf', '', '', '', 0.00, 0, '', '', '', '', '', 83.00, 0, '', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 0, '2024-12-10', 1),
 (60, NULL, 0, NULL, NULL, NULL, '31', NULL, NULL, NULL, 'Bell', 'Evelyn', 'Faith', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'evelyn.bell60@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 63.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-08-09', 1),
 (59, NULL, 0, NULL, NULL, NULL, '5', NULL, NULL, NULL, 'Morgan', 'Levi', 'Anne', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'levi.morgan59@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 99.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2023-04-12', 1),
@@ -2097,7 +2115,7 @@ INSERT INTO `person_table` (`person_id`, `profile_img`, `campus`, `academicProgr
 (4, NULL, 1, '', NULL, NULL, '36', NULL, NULL, NULL, 'Brown', 'Sarah', 'Kate', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'sarah.brown4@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-01-13', 1),
 (5, NULL, 1, NULL, NULL, NULL, '15', NULL, NULL, NULL, 'Jones', 'David', 'James', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'david.jones5@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 39.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-27', 1),
 (6, NULL, 1, NULL, NULL, NULL, '38', NULL, NULL, NULL, 'Garcia', 'Jessica', 'Belle', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'jessica.garcia6@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 10.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-09-29', 1),
-(61, '2025100061_1by1_2025.png', 0, 'Undergraduate', 'Freshman (First Year)', 'Transferee', '15', '14', '13', 'First Year', 'De La Cruz', 'Lloyd Cedrick', 'Pacheco', '', 'Ced', '5\'5', '75', '136456090247', 0, 0, 0, '', '', '2004-04-04', 21, 'Manila, Philippines', 'Tagalog, English', 'FILIPINO', 'Islam', 'Single', 'Tagbanua', '09511906528', 'delacruz.lc.bsinfotech@gmail.com', '880 L. Sta. Rita St. Tondo Manila', 'Barangay 11', '1012', 'National Capital Region (NCR)', 'Metro Manila, First District', 'Tondo I / Ii', 'n/a', 0, '880 L. Sta. Rita St. Tondo Manila', 'Barangay 11', '1012', 'National Capital Region (NCR)', 'Metro Manila, First District', 'Tondo I / Ii', 'n/a', 0, 0, 'De La Cruz', 'Lloyd', 'Lacanlale', '', 'Talloyd', 0, 'High School Graduate', 'UP Diliman', 'Engineering', '1990', '19 G Dona yayang Street Libis', '09181234567', 'Engineer', 'ABC Corp', '50000', 'montano.ma.bsinfotech@gmail.com', 0, 'Montano', 'Mark Anthony', 'Anne', 'Jr.', 'Janey', 1, '', '', '', '', '', '09221234567', 'Accountant', 'XYZ Corp', '45000', 'montano.ma.bsinfotech@gmail.com', 'Mother', 'Montano', 'Mark Anthony', 'Jose', 'Jr.', 'Benny', '19 G Dona yayang Street Libis', '09953242510', 'montano.ma.bsinfotech@gmail.com', '1,000,000 and above', 'High School/Junior High School', 'Rizal High School', 'Pasig City', 'STEM', 'With Honors', 95.00, 2016, 'Senior High School', 'NTC', 'Mendiola', 'BSIT', 'With high honor', 95.00, 2022, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'bayugisik', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '06/09/2025', 1),
+(61, '2025100061_1by1_2025.png', 1, 'Undergraduate', 'Freshman (First Year)', 'Transferee', '15', '14', '13', 'First Year', 'De La Cruz', 'Lloyd Cedrick', 'Pacheco', '', 'Ced', '5\'5', '75', '136456090247', 0, 0, 0, '', '', '2004-04-04', 21, 'Manila, Philippines', 'Tagalog, English', 'FILIPINO', 'Islam', 'Single', 'Tagbanua', '09511906528', 'delacruz.lc.bsinfotech@gmail.com', '880 L. Sta. Rita St. Tondo Manila', 'Barangay 11', '1012', 'National Capital Region (NCR)', 'Metro Manila, First District', 'Tondo I / Ii', 'n/a', 0, '880 L. Sta. Rita St. Tondo Manila', 'Barangay 11', '1012', 'National Capital Region (NCR)', 'Metro Manila, First District', 'Tondo I / Ii', 'n/a', 0, 0, 'De La Cruz', 'Lloyd', 'Lacanlale', '', 'Talloyd', 0, 'High School Graduate', 'UP Diliman', 'Engineering', '1990', '19 G Dona yayang Street Libis', '09181234567', 'Engineer', 'ABC Corp', '50000', 'montano.ma.bsinfotech@gmail.com', 0, 'Montano', 'Mark Anthony', 'Anne', 'Jr.', 'Janey', 1, '', '', '', '', '', '09221234567', 'Accountant', 'XYZ Corp', '45000', 'montano.ma.bsinfotech@gmail.com', 'Mother', 'Montano', 'Mark Anthony', 'Jose', 'Jr.', 'Benny', '19 G Dona yayang Street Libis', '09953242510', 'montano.ma.bsinfotech@gmail.com', '1,000,000 and above', 'High School/Junior High School', 'Rizal High School', 'Pasig City', 'STEM', 'With Honors', 95.00, 2016, 'Senior High School', 'NTC', 'Mendiola', 'BSIT', 'With high honor', 95.00, 2022, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 'bayugisik', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '06/09/2025', 1),
 (62, NULL, 0, NULL, NULL, NULL, '47', '50', '55', NULL, 'Mendoza', 'Sofia', 'Aquino', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'person62@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 76.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2021-11-02', 1),
 (63, NULL, 0, NULL, NULL, NULL, '12', '5', '44', NULL, 'Lopez', 'Maria', 'Aquino', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'person63@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 32.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-11-07', 1),
 (64, NULL, 0, NULL, NULL, NULL, '41', '18', '18', NULL, 'Domingo', 'Sofia', 'Ramos', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'person64@example.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 28.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2024-08-02', 1),
@@ -2259,7 +2277,8 @@ INSERT INTO `person_table` (`person_id`, `profile_img`, `campus`, `academicProgr
 (326, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1),
 (327, '2025100218_1by1_2025.png', 0, 'Undergraduate', 'Freshman (First Year)', 'Senior High School Graduate', '15', '14', '16', 'First Year', 'Montaño123', 'Mark Anthony12', 'Placido12', '', 'Mark', '131', '12', '12345678', 0, 0, 0, '', '', '2025-10-02', 25, 'gvdsg', 'fsdf', 'BERMUDAN', 'Christian', 'Single', 'Balangao', '4567890', 'adasdsda@gmail.com', 'fsdfgdrfhfgjfg', 'Lambonao', 'khjldsafas', 'Region X (Northern Mindanao)', 'Bukidnon', 'Malitbog', 'sadasda', 0, 'fsdfgdrfhfgjfg', 'Lambonao', 'khjldsafas', 'Region X (Northern Mindanao)', 'Bukidnon', 'Malitbog', 'sadasda', 1, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Mother', 'dsgsd', 'cxc', 'cxvxcvx', '', 'xcvxcv', 'xcvx', 'xcvxcvx', 'xcvxc', '135,000 to 250,000', 'High School/Junior High School', 'xcvxcv', 'xcvx', 'xcvxc', 'xcvx', 90.00, 2029, 'High School/Junior High School', 'hfkmghjdfg', 'asfasf', 'dasfsafas', '123', 78.00, 2025, 'Science, Technology, Engineering, and Mathematics (STEM)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-02', 1),
 (328, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1),
-(329, '2025100220_1by1_2025.png', 1, 'Techvoc', 'Freshman (First Year)', 'ALS Passer', '16', '12', '17', 'First Year', 'Tamad', 'Juan', 'J', '', 'GNASJGN', '5\'11', '60', '12345678', 0, 0, 0, '', '', '2003-06-26', 51, 'gvdsg', 'fsdf', 'BOLIVIAN', 'Christian', 'Single', 'Bagobo', '4567890', 'markmontano0626@gmail.com', 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Cousin', 'Parker', 'gsdgsd', 'gdfjghkiju', '', 'fsdgsdgsd', '789 Recto Av', 'safasf', 'hrfthsdgas', '80,000 and below', 'Senior High School', 'gfdhfg', 'gsdgsdg', 'fasf', 'fsaf', 100.00, 90, 'Senior High School', 'fasf', 'fasf', 'fsaf', '90', 100.00, 2000, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-03', 1);
+(329, '2025100220_1by1_2025.png', 1, 'Techvoc', 'Freshman (First Year)', 'ALS Passer', '16', '12', '17', 'First Year', 'Tamad', 'Juan', 'J', '', 'GNASJGN', '5\'11', '60', '12345678', 0, 0, 0, '', '', '2003-06-26', 51, 'gvdsg', 'fsdf', 'BOLIVIAN', 'Christian', 'Single', 'Bagobo', '4567890', 'markmontano0626@gmail.com', 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Cousin', 'Parker', 'gsdgsd', 'gdfjghkiju', '', 'fsdgsdgsd', '789 Recto Av', 'safasf', 'hrfthsdgas', '80,000 and below', 'Senior High School', 'gfdhfg', 'gsdgsdg', 'fasf', 'fsaf', 100.00, 90, 'Senior High School', 'fasf', 'fasf', 'fsaf', '90', 100.00, 2000, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-03', 1),
+(330, '2025100221_1by1_2025.png', 0, 'Undergraduate', 'Freshman (First Year)', 'ALS Passer', '3', '7', '8', 'First Year', 'Pedro', 'Penduco', 'Juan', '', 'fsa', '154', '40', '21353112', 0, 0, 0, '', '', '2003-10-07', 25, 'Manila', 'Tagalog', 'BRUNEI', 'Aglipay', 'Single', 'Bangon', '5125215125', 'markmontano0626@gmail.com', 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Brother/Sister', 'fsfas', 'fsaf', 'fasf', '', 'dfhdf', 'fasfasfa', '215264', 'markmontano522@gmail.com', '80,000 to 135,000', 'Senior High School', 'asgsag', 'sagasg', 'gsg', 'sgasg', 90.00, 2000, 'Senior High School', 'sgasg', 'sagsa', 'gasg', 'sagd', 85.00, 2008, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-07', 1);
 
 -- --------------------------------------------------------
 
@@ -2345,7 +2364,7 @@ INSERT INTO `requirement_uploads` (`upload_id`, `requirements_id`, `person_id`, 
 (156, 2, 61, NULL, '2025100061_Form138_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:16:34', '61'),
 (157, 3, 61, NULL, '2025100061_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:26:34', '61'),
 (158, 4, 61, NULL, '2025100061_CertificateOfGraduatingClass_2025.pdf', 'MONTAÃ?O.pdf', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:26:48', '61'),
-(159, 1, 61, NULL, '2025100061_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:27:56', '61'),
+(159, 1, 61, NULL, '2025100061_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 0, NULL, NULL, NULL, '2025-09-16 01:27:56', '61'),
 (160, 1, 309, NULL, '2025100203_BirthCertificate_2025.jpg', 'resize-17567036981757482186PurpleandWhiteBoxesWorkSchedulePlanner.jpg', 'Have failing Grades', 0, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:29:50', '61'),
 (161, 5, 61, NULL, '2025100061_VaccineCard_2025.jpg', 'my formal pic.jpg', NULL, 0, 'On process', NULL, NULL, '2025-09-16 01:31:17', '61'),
 (168, 1, 312, NULL, '2025100205_BirthCertificate_2025.jpg', 'my formal pic.jpg', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', '[]', NULL, '2025-09-16 12:08:59', '1'),
@@ -2373,16 +2392,21 @@ INSERT INTO `requirement_uploads` (`upload_id`, `requirements_id`, `person_id`, 
 (195, 3, 327, NULL, '2025100218_GoodMoralCharacter_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:47:00', NULL),
 (196, 4, 327, NULL, '2025100218_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:47:04', NULL),
 (197, 5, 327, NULL, '2025100218_VaccineCard_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, NULL, NULL, NULL, NULL, '2025-10-02 16:47:12', NULL),
-(215, 1, 1, NULL, '2025100001_BirthCertificate_2025.png', 'ProgramList.png', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 14:45:50', '61'),
+(215, 1, 1, NULL, '2025100001_BirthCertificate_2025.png', 'ProgramList.png', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'On process', NULL, NULL, '2025-10-03 14:45:50', '61'),
 (238, 1, 329, NULL, '2025100220_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:03:54', '61'),
 (239, 2, 329, NULL, '2025100220_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:08', '61'),
 (240, 3, 329, NULL, '2025100220_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:22', '61'),
 (241, 4, 329, NULL, '2025100220_CertificateOfGraduatingClass_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:25', '61'),
 (242, 5, 329, NULL, '2025100220_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, '2025-10-03 23:04:27', NULL),
-(243, 2, 1, NULL, '2025100001_Form138_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-10-04 13:51:00', '61'),
-(244, 3, 1, NULL, '2025100001_GoodMoralCharacter_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-10-04 13:51:03', '61'),
-(245, 4, 1, NULL, '2025100001_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-10-04 13:51:06', '61'),
-(246, 5, 1, NULL, '2025100001_VaccineCard_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, 0, 'On process', NULL, NULL, '2025-10-04 13:51:09', '61');
+(243, 2, 1, NULL, '2025100001_Form138_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:00', '61'),
+(244, 3, 1, NULL, '2025100001_GoodMoralCharacter_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:03', '61'),
+(245, 4, 1, NULL, '2025100001_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:06', '61'),
+(246, 5, 1, NULL, '2025100001_VaccineCard_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-10-04 13:51:09', '61'),
+(247, 1, 330, NULL, '2025100221_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:32', '61'),
+(248, 2, 330, NULL, '2025100221_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:36', '61'),
+(249, 3, 330, NULL, '2025100221_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:39', '61'),
+(250, 4, 330, NULL, '2025100221_CertificateOfGraduatingClass_2025.pdf', 'admissionformprocess.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:44', '61'),
+(251, 5, 330, NULL, '2025100221_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, '2025-10-07 14:56:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -2625,7 +2649,8 @@ INSERT INTO `user_accounts` (`user_id`, `person_id`, `email`, `password`, `role`
 (219, 326, 'clowy@gmail.com', '$2b$10$v9LlI3VuZEcyiopK4RDN8OVXWe8F0HarAaHXiHeHbtofMESY15Zli', 'applicant', NULL),
 (220, 327, 'clowy1@gmailcom', '$2b$10$hIDVWM9ql8Nr3FOZETS4xO4hZv2YFWxTmLhhr3kxFgV6dwynWL2BC', 'applicant', NULL),
 (221, 328, 'george@gmail.coom', '$2b$10$MH0EAO4jvvdCJzzEXTwM7ehc6giPY1py5wDOsXc359lH1vSJGZAty', 'applicant', NULL),
-(222, 329, 'barny@gmail.com', '$2b$10$KvRKLNTtmcCfY76VGvx.rOOORpmeJXVZ6oOujQAIRAVvGfllP.SK6', 'applicant', NULL);
+(222, 329, 'barny@gmail.com', '$2b$10$KvRKLNTtmcCfY76VGvx.rOOORpmeJXVZ6oOujQAIRAVvGfllP.SK6', 'applicant', NULL),
+(223, 330, 'eunice@gmail.com', '$2b$10$fVw5.lrwgg1lk5MHhf1lLOEs6p38M6F/S0eXIOwHwvs0z4If9ccF6', 'applicant', NULL);
 
 --
 -- Indexes for dumped tables
@@ -2740,7 +2765,7 @@ ALTER TABLE `admission_exam`
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `email_templates`
@@ -2758,7 +2783,7 @@ ALTER TABLE `entrance_exam_schedule`
 -- AUTO_INCREMENT for table `exam_applicants`
 --
 ALTER TABLE `exam_applicants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=330;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=331;
 
 --
 -- AUTO_INCREMENT for table `faculty_evaluation_table`
@@ -2770,7 +2795,7 @@ ALTER TABLE `faculty_evaluation_table`
 -- AUTO_INCREMENT for table `interview_applicants`
 --
 ALTER TABLE `interview_applicants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=217;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=218;
 
 --
 -- AUTO_INCREMENT for table `interview_exam_schedule`
@@ -2782,19 +2807,19 @@ ALTER TABLE `interview_exam_schedule`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=559;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=572;
 
 --
 -- AUTO_INCREMENT for table `person_status_table`
 --
 ALTER TABLE `person_status_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1622;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1623;
 
 --
 -- AUTO_INCREMENT for table `person_table`
 --
 ALTER TABLE `person_table`
-  MODIFY `person_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=330;
+  MODIFY `person_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=331;
 
 --
 -- AUTO_INCREMENT for table `requirements_table`
@@ -2806,13 +2831,13 @@ ALTER TABLE `requirements_table`
 -- AUTO_INCREMENT for table `requirement_uploads`
 --
 ALTER TABLE `requirement_uploads`
-  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=247;
+  MODIFY `upload_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
 
 --
 -- AUTO_INCREMENT for table `user_accounts`
 --
 ALTER TABLE `user_accounts`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=223;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

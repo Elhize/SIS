@@ -2399,6 +2399,65 @@ app.post("/api/person/import", upload.single("file"), async (req, res) => {
   }
 });
 
+// ✅ Search by student number or name in enrollment db3
+app.get("/api/search-person-student", async (req, res) => {
+  const { query } = req.query;
+  if (!query) return res.status(400).json({ error: "Missing search query" });
+
+  try {
+    const [rows] = await db3.query(`
+      SELECT p.*, s.student_number
+      FROM student_numbering_table s
+      JOIN person_table p ON s.person_id = p.person_id
+      WHERE s.student_number LIKE ?
+         OR p.last_name LIKE ?
+         OR p.first_name LIKE ?
+         OR p.emailAddress LIKE ?
+      LIMIT 1
+    `, [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`]);
+
+    if (!rows.length)
+      return res.status(404).json({ message: "No matching student found" });
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("❌ Error searching person (db3):", err);
+    res.status(500).json({ error: "Database error", details: err.message });
+  }
+});
+
+// ✅ Fetch full record
+app.get("/api/person/:person_id", async (req, res) => {
+  const { person_id } = req.params;
+  const [rows] = await db3.query(`
+    SELECT p.*, s.student_number
+    FROM person_table p
+    LEFT JOIN student_numbering_table s ON p.person_id = s.person_id
+    WHERE p.person_id = ?
+  `, [person_id]);
+  if (!rows.length) return res.status(404).json({ message: "Person not found" });
+  res.json(rows[0]);
+});
+
+
+// ✅ Update person in ENROLLMENT DB (db3)
+app.put("/api/enrollment/person/:person_id", async (req, res) => {
+  const { person_id } = req.params;
+  const updatedData = req.body;
+
+  try {
+    const [result] = await db3.query("UPDATE person_table SET ? WHERE person_id = ?", [updatedData, person_id]);
+
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Person not found in ENROLLMENT" });
+
+    res.json({ success: true, message: "Person updated successfully in ENROLLMENT DB3" });
+  } catch (err) {
+    console.error("❌ Error updating person in ENROLLMENT DB:", err);
+    res.status(500).json({ error: "Failed to update person in ENROLLMENT DB" });
+  }
+});
+
 
 // GET for Dashboard1
 app.get("/api/dashboard1/:id", checkStepAccess(1), async (req, res) => {

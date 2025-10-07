@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import ExamPermit from "../applicant/ExamPermit";
+import RegistrarExamPermit from "../registrar/RegistrarExamPermit";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import QRScanner from "../components/QRScanner"; // make sure path is correct
@@ -155,7 +155,7 @@ const ApplicantProfile = () => {
 
             {/* 📝 Display ExamPermit if person found */}
             {personId ? (
-                <ExamPermit personId={personId} />
+                <RegistrarExamPermit personId={personId} />
             ) : (
                 searchQuery && <div>Invalid Applicant Number or not found.</div>
             )}

@@ -43,11 +43,11 @@ const socket = io("http://localhost:5000");
 
 const AssignScheduleToApplicants = () => {
 
- const tabs = [
-    { 
-        label: <>Admission Process for <br /> Registrar</>, 
-        to: "/applicant_list_admin", 
-        icon: <SchoolIcon fontSize="large" /> 
+  const tabs = [
+    {
+      label: <>Admission Process for <br /> Registrar</>,
+      to: "/applicant_list_admin",
+      icon: <SchoolIcon fontSize="large" />
     },
     { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
     { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
@@ -55,7 +55,7 @@ const AssignScheduleToApplicants = () => {
     { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
     { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
     { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
-];
+  ];
 
 
   const location = useLocation();
@@ -86,6 +86,7 @@ const AssignScheduleToApplicants = () => {
     extension: "",
     emailAddress: "",
     program: "",
+    created_at: ""
   });
   const [selectedApplicantStatus, setSelectedApplicantStatus] = useState("");
   const [curriculumOptions, setCurriculumOptions] = useState([]);
@@ -558,27 +559,13 @@ const AssignScheduleToApplicants = () => {
 
 
   const sortedPersons = [...filteredPersons].sort((a, b) => {
-    if (sortBy === "name") {
-      // ✅ sort by last name first, then first + middle
-      const nameA = `${a.last_name ?? ""} ${a.first_name ?? ""} ${a.middle_name ?? ""}`.toLowerCase();
-      const nameB = `${b.last_name ?? ""} ${b.first_name ?? ""} ${b.middle_name ?? ""}`.toLowerCase();
-      return sortOrder === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-    }
+    const dateA = new Date(a.created_at);
+    const dateB = new Date(b.created_at);
 
-    if (sortBy === "id") {
-      const idA = a.applicant_number ?? "";
-      const idB = b.applicant_number ?? "";
-      return sortOrder === "asc" ? idA - idB : idB - idA;
-    }
-
-    if (sortBy === "email") {
-      const emailA = a.emailAddress?.toLowerCase() ?? "";
-      const emailB = b.emailAddress?.toLowerCase() ?? "";
-      return sortOrder === "asc" ? emailA.localeCompare(emailB) : emailB.localeCompare(emailA);
-    }
-
-    return 0;
+    // 🧭 Sort newest first if "desc", oldest first if "asc"
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
+
 
   // ✅ Step 3: Pagination (use sortedPersons instead of filteredPersons)
   const totalPages = Math.ceil(sortedPersons.length / itemsPerPage);
@@ -1243,6 +1230,7 @@ const AssignScheduleToApplicants = () => {
               <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Name</TableCell>
               <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Program</TableCell>
               <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Email Address</TableCell>
+              <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Date Applied</TableCell>
               <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -1308,6 +1296,10 @@ const AssignScheduleToApplicants = () => {
                     {/* Email */}
                     <TableCell sx={{ textAlign: "center", border: "2px solid maroon", fontSize: "12px" }}>
                       {person.emailAddress ?? "N/A"}
+                    </TableCell>
+
+                    <TableCell sx={{ textAlign: "center", border: "2px solid maroon", fontSize: "12px" }}>
+                      {person.created_at ?? "N/A"}
                     </TableCell>
 
                     {/* Action Buttons (from AssignScheduleToApplicants) */}

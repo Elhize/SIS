@@ -140,11 +140,17 @@ import StudentAdmissionFormProcess from './student/StudentAdmissionFormProcess';
 import EmailTemplateManager from './superadmin/EmailTemplateManager';
 import Announcement from './superadmin/Announcement';
 import SuperAdminApplicantList from './superadmin/SuperAdminApplicantList';
-import SuperAdminDashboard1 from './superadmin/SuperAdminDashboard1';
-import SuperAdminDashboard2 from './superadmin/SuperAdminDashboard2';
-import SuperAdminDashboard3 from './superadmin/SuperAdminDashboard3';
-import SuperAdminDashboard4 from './superadmin/SuperAdminDashboard4';
-import SuperAdminDashboard5 from './superadmin/SuperAdminDashboard5';
+import SuperAdminApplicantDashboard1 from './superadmin/SuperAdminApplicantDashboard1';
+import SuperAdminApplicantDashboard2 from './superadmin/SuperAdminApplicantDashboard2';
+import SuperAdminApplicantDashboard3 from './superadmin/SuperAdminApplicantDashboard3';
+import SuperAdminApplicantDashboard4 from './superadmin/SuperAdminApplicantDashboard4';
+import SuperAdminApplicantDashboard5 from './superadmin/SuperAdminApplicantDashboard5';
+
+import SuperAdminStudentDashboard1 from './superadmin/SuperAdminStudentDashboard1';
+import SuperAdminStudentDashboard2 from './superadmin/SuperAdminStudentDashboard2';
+import SuperAdminStudentDashboard3 from './superadmin/SuperAdminStudentDashboard3';
+import SuperAdminStudentDashboard4 from './superadmin/SuperAdminStudentDashboard4';
+import SuperAdminStudentDashboard5 from './superadmin/SuperAdminStudentDashboard5';
 import SuperAdminApplicantResetPassword from './superadmin/SuperAdminApplicantResetPassword';
 import SuperAdminStudentResetPassword from './superadmin/SuperAdminStudentResetPassword';
 import SuperAdminFacultyResetPassword from './superadmin/SuperAdminFacultyResetPassword';
@@ -266,7 +272,7 @@ function App() {
               <Route path="/faculty_masterlist" element={<ProtectedRoute><FacultyMasterList /></ProtectedRoute>} />
               <Route path="/subject_masterlist/:subject_id/:department_section_id/:school_year_id" element={<ProtectedRoute><FacultyStudentClassList /></ProtectedRoute>} />
               <Route path="/faculty_schedule" element={<ProtectedRoute><FacultySchedule /></ProtectedRoute>} />
-               <Route path="/program_evaluation" element={<ProtectedRoute><ProgramEvaluation /></ProtectedRoute>} />
+              <Route path="/program_evaluation" element={<ProtectedRoute><ProgramEvaluation /></ProtectedRoute>} />
               <Route path="/class_list/:course_id/:department_section_id/:school_year_id" element={<ProtectedRoute><FacultyStudentList /></ProtectedRoute>} />
 
               <Route path="/student_dashboard" element={<ProtectedRoute allowedRoles={'student'}><StudentDashboard /></ProtectedRoute>} />
@@ -311,11 +317,19 @@ function App() {
 
 
 
-              <Route path="/super_admin_dashboard1" element={<ProtectedRoute><SuperAdminDashboard1 /></ProtectedRoute>} />
-              <Route path="/super_admin_dashboard2" element={<ProtectedRoute><SuperAdminDashboard2 /></ProtectedRoute>} />
-              <Route path="/super_admin_dashboard3" element={<ProtectedRoute><SuperAdminDashboard3 /></ProtectedRoute>} />
-              <Route path="/super_admin_dashboard4" element={<ProtectedRoute><SuperAdminDashboard4 /></ProtectedRoute>} />
-              <Route path="/super_admin_dashboard5" element={<ProtectedRoute><SuperAdminDashboard5 /></ProtectedRoute>} />
+              <Route path="/super_admin_applicant_dashboard1" element={<ProtectedRoute><SuperAdminApplicantDashboard1 /></ProtectedRoute>} />
+              <Route path="/super_admin_applicant_dashboard2" element={<ProtectedRoute><SuperAdminApplicantDashboard2 /></ProtectedRoute>} />
+              <Route path="/super_admin_applicant_dashboard3" element={<ProtectedRoute><SuperAdminApplicantDashboard3 /></ProtectedRoute>} />
+              <Route path="/super_admin_applicant_dashboard4" element={<ProtectedRoute><SuperAdminApplicantDashboard4 /></ProtectedRoute>} />
+              <Route path="/super_admin_applicant_dashboard5" element={<ProtectedRoute><SuperAdminApplicantDashboard5 /></ProtectedRoute>} />
+
+              <Route path="/super_admin_student_dashboard1" element={<ProtectedRoute><SuperAdminStudentDashboard1 /></ProtectedRoute>} />
+              <Route path="/super_admin_student_dashboard2" element={<ProtectedRoute><SuperAdminStudentDashboard2 /></ProtectedRoute>} />
+              <Route path="/super_admin_student_dashboard3" element={<ProtectedRoute><SuperAdminStudentDashboard3 /></ProtectedRoute>} />
+              <Route path="/super_admin_student_dashboard4" element={<ProtectedRoute><SuperAdminStudentDashboard4 /></ProtectedRoute>} />
+              <Route path="/super_admin_student_dashboard5" element={<ProtectedRoute><SuperAdminStudentDashboard5 /></ProtectedRoute>} />
+
+
               <Route path="/applicant_dashboard" element={<ProtectedRoute allowedRoles={['applicant']}><ApplicantDashboard /></ProtectedRoute>} />
 
               {keys.step1 && <Route path={`/dashboard/${keys.step1}`} element={<ProtectedRoute allowedRoles={['applicant']}><Dashboard1 /></ProtectedRoute>} />}

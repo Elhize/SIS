@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ExamPermit from "../applicant/ExamPermit";
 
-const Dashboard5 = () => {
+const SuperAdminStudentDashboard5 = () => {
     const navigate = useNavigate();
     const [userID, setUserID] = useState("");
     const [user, setUser] = useState("");
@@ -67,17 +67,21 @@ const Dashboard5 = () => {
 
 
     const [selectedPerson, setSelectedPerson] = useState(null);
+
+
     const fetchByPersonId = async (personID) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/person_with_applicant/${personID}`);
+            const res = await axios.get(`http://localhost:5000/api/person/${personID}`);
             setPerson(res.data);
             setSelectedPerson(res.data);
             if (res.data?.applicant_number) {
+                // optional: whatever logic you want
             }
         } catch (err) {
-            console.error("❌ person_with_applicant failed:", err);
+            console.error("❌ person (DB3) fetch failed:", err);
         }
     };
+
 
     useEffect(() => {
         let consumedFlag = false;
@@ -117,11 +121,11 @@ const Dashboard5 = () => {
     const [clickedSteps, setClickedSteps] = useState([]);
 
     const steps = [
-        { label: "Personal Information", icon: <PersonIcon />, path: "/super_admin_dashboard1" },
-        { label: "Family Background", icon: <FamilyRestroomIcon />, path: "/super_admin_dashboard2" },
-        { label: "Educational Attainment", icon: <SchoolIcon />, path: "/super_admin_dashboard3" },
-        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: "/super_admin_dashboard4" },
-        { label: "Other Information", icon: <InfoIcon />, path: "/super_admin_dashboard5" },
+        { label: "Personal Information", icon: <PersonIcon />, path: "/super_admin_student_dashboard1" },
+        { label: "Family Background", icon: <FamilyRestroomIcon />, path: "/super_admin_student_dashboard2" },
+        { label: "Educational Attainment", icon: <SchoolIcon />, path: "/super_admin_student_dashboard3" },
+        { label: "Health Medical Records", icon: <HealthAndSafetyIcon />, path: "/super_admin_student_dashboard4" },
+        { label: "Other Information", icon: <InfoIcon />, path: "/super_admin_student_dashboard5" },
     ];
 
     const handleStepClick = (index) => {
@@ -151,25 +155,30 @@ const Dashboard5 = () => {
     };
 
 
-    // Real-time save on every character typed
+    // ⌨️ Triggered on every character change
     const handleChange = (e) => {
         const { name, type, checked, value } = e.target;
-        const updatedPerson = {
-            ...person,
-            [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
-        };
+        const updatedValue = type === "checkbox" ? (checked ? 1 : 0) : value;
+
+        const updatedPerson = { ...person, [name]: updatedValue };
+
+        // Auto-update dependent fields
+        if (name === "classifiedAs" && value === "Freshman (First Year)") {
+            updatedPerson.yearLevel = "First Year";
+        }
+
         setPerson(updatedPerson);
-        handleUpdate(updatedPerson); // No delay, real-time save
+        handleUpdate(updatedPerson); // 🔥 Real-time save to ENROLLMENT
     };
 
 
-
+    // 🖱️ Triggered when input loses focus (safety net)
     const handleBlur = async () => {
         try {
-            await axios.put(`http://localhost:5000/api/person/${userID}`, person);
-            console.log("Auto-saved");
+            await axios.put(`http://localhost:5000/api/enrollment/person/${userID}`, person);
+            console.log("✅ Auto-saved (on blur) to ENROLLMENT DB3");
         } catch (err) {
-            console.error("Auto-save failed", err);
+            console.error("❌ Auto-save failed (on blur):", err);
         }
     };
 
@@ -278,6 +287,20 @@ const Dashboard5 = () => {
     }, [userID]);
 
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchError, setSearchError] = useState("");
+
+    useEffect(() => {
+        const savedPerson = sessionStorage.getItem("admin_edit_person_data");
+        if (savedPerson) {
+            try {
+                const parsed = JSON.parse(savedPerson);
+                setPerson(parsed);
+            } catch (err) {
+                console.error("Failed to parse saved person:", err);
+            }
+        }
+    }, []);
 
 
     // dot not alter
@@ -312,7 +335,7 @@ const Dashboard5 = () => {
                         fontSize: '36px',
                     }}
                 >
-                    APPLICANT FORM
+                    STUDENT - OTHER INFORMATION
                 </Typography>
 
 
@@ -321,26 +344,24 @@ const Dashboard5 = () => {
             <hr style={{ border: "1px solid #ccc", width: "100%" }} />
             <br />
 
-
             <TableContainer component={Paper} sx={{ width: '100%', mb: 1 }}>
                 <Table>
                     <TableHead sx={{ backgroundColor: '#6D2323' }}>
                         <TableRow>
-                            {/* Left cell: Applicant ID */}
+                            {/* Left cell: Student Number */}
                             <TableCell sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}>
-                                Applicant ID:&nbsp;
+                                Student Number:&nbsp;
                                 <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
-                                    {person?.applicant_number || "N/A"}
-
+                                    {person?.student_number || "N/A"}
                                 </span>
                             </TableCell>
 
-                            {/* Right cell: Applicant Name */}
+                            {/* Right cell: Student Name */}
                             <TableCell
                                 align="right"
                                 sx={{ color: 'white', fontSize: '20px', fontFamily: 'Arial Black', border: 'none' }}
                             >
-                                Applicant Name:&nbsp;
+                                Student Name:&nbsp;
                                 <span style={{ fontFamily: "Arial", fontWeight: "normal", textDecoration: "underline" }}>
                                     {person?.last_name?.toUpperCase()}, {person?.first_name?.toUpperCase()}{" "}
                                     {person?.middle_name?.toUpperCase()} {person?.extension?.toUpperCase() || ""}
@@ -405,83 +426,83 @@ const Dashboard5 = () => {
                 </Box>
             </Box>
 
-         {/* Cards Section */}
-              <Box
+            {/* Cards Section */}
+            <Box
                 sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 2,
-                  mt: 2,
-                  pb: 1,
-                  justifyContent: "center", // Centers all cards horizontally
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 2,
+                    mt: 2,
+                    pb: 1,
+                    justifyContent: "center", // Centers all cards horizontally
                 }}
-              >
+            >
                 {links.map((lnk, i) => (
-                  <motion.div
-                    key={i}
-                    style={{ flex: "0 0 calc(30% - 16px)" }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1, duration: 0.4 }}
-                  >
-                    <Card
-                      sx={{
-                        minHeight: 60,
-                        borderRadius: 2,
-                        border: "2px solid #6D2323",
-                        backgroundColor: "#fff",
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        p: 1.5,
-                        cursor: "pointer",
-                        transition: "all 0.3s ease-in-out",
-                        "&:hover": {
-                          transform: "scale(1.05)",
-                          backgroundColor: "#6D2323", // ✅ background becomes maroon
-                          "& .card-text": {
-                            color: "#fff", // ✅ text becomes white
-                          },
-                          "& .card-icon": {
-                            color: "#fff", // ✅ icon becomes white
-                          },
-                        },
-                      }}
-                      onClick={() => {
-                        if (lnk.onClick) {
-                          lnk.onClick(); // run handler
-                        } else if (lnk.to) {
-                          navigate(lnk.to); // navigate if it has a `to`
-                        }
-                      }}
+                    <motion.div
+                        key={i}
+                        style={{ flex: "0 0 calc(30% - 16px)" }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1, duration: 0.4 }}
                     >
-                      {/* Icon */}
-                      <PictureAsPdfIcon
-                        className="card-icon"
-                        sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
-                      />
-        
-                      {/* Label */}
-                      <Typography
-                        className="card-text"
-                        sx={{
-                          color: "#6D2323",
-                          fontFamily: "Arial",
-                          fontWeight: "bold",
-                          fontSize: "0.85rem",
-                        }}
-                      >
-                        {lnk.label}
-                      </Typography>
-                    </Card>
-                  </motion.div>
+                        <Card
+                            sx={{
+                                minHeight: 60,
+                                borderRadius: 2,
+                                border: "2px solid #6D2323",
+                                backgroundColor: "#fff",
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                p: 1.5,
+                                cursor: "pointer",
+                                transition: "all 0.3s ease-in-out",
+                                "&:hover": {
+                                    transform: "scale(1.05)",
+                                    backgroundColor: "#6D2323", // ✅ background becomes maroon
+                                    "& .card-text": {
+                                        color: "#fff", // ✅ text becomes white
+                                    },
+                                    "& .card-icon": {
+                                        color: "#fff", // ✅ icon becomes white
+                                    },
+                                },
+                            }}
+                            onClick={() => {
+                                if (lnk.onClick) {
+                                    lnk.onClick(); // run handler
+                                } else if (lnk.to) {
+                                    navigate(lnk.to); // navigate if it has a `to`
+                                }
+                            }}
+                        >
+                            {/* Icon */}
+                            <PictureAsPdfIcon
+                                className="card-icon"
+                                sx={{ fontSize: 35, color: "#6D2323", mr: 1.5 }}
+                            />
+
+                            {/* Label */}
+                            <Typography
+                                className="card-text"
+                                sx={{
+                                    color: "#6D2323",
+                                    fontFamily: "Arial",
+                                    fontWeight: "bold",
+                                    fontSize: "0.85rem",
+                                }}
+                            >
+                                {lnk.label}
+                            </Typography>
+                        </Card>
+                    </motion.div>
                 ))}
-              </Box>
-        
-        
-        
+            </Box>
+
+
+
             <Container maxWidth="lg">
 
 
@@ -658,7 +679,7 @@ const Dashboard5 = () => {
                             <Button
                                 variant="contained"
                                 component={Link}
-                                to="/super_admin_dashboard4"
+                                to="/super_admin_student_dashboard4"
                                 startIcon={
                                     <ArrowBackIcon
                                         sx={{
@@ -756,4 +777,4 @@ const Dashboard5 = () => {
 };
 
 
-export default Dashboard5;
+export default SuperAdminStudentDashboard5;

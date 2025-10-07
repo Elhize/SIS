@@ -127,7 +127,8 @@ const AssignScheduleToApplicantsInterviewer = () => {
         extension: "",
         emailAddress: "",
         program: "",
-        middle_Code: ""
+        middle_Code: "",
+        created_at: ""
     });
     const [selectedApplicantStatus, setSelectedApplicantStatus] = useState("");
     const [curriculumOptions, setCurriculumOptions] = useState([]);
@@ -600,7 +601,7 @@ Please bring the following requirements:`
         return () => clearTimeout(delayDebounce);
     }, [searchQuery]);
 
-    const [sortBy, setSortBy] = useState("name");
+    const [sortBy, setSortBy] = useState("created_at");
     const [sortOrder, setSortOrder] = useState("asc");
     const [selectedDepartmentFilter, setSelectedDepartmentFilter] = useState("");
     const [selectedProgramFilter, setSelectedProgramFilter] = useState("");
@@ -608,8 +609,8 @@ Please bring the following requirements:`
     const [minScore, setMinScore] = useState("");
     const [maxScore, setMaxScore] = useState("");
     const [exactRating, setExactRating] = useState("");
-
-
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     // ✅ Step 1: Filtering
     const filteredPersons = persons.filter((personData) => {
         const finalRating = Number(personData.final_rating) || 0;
@@ -651,6 +652,11 @@ Please bring the following requirements:`
             selectedSchoolSemester === "" ||
             String(personData.middle_code) === String(selectedSchoolSemester);
 
+        // ✅ Created At (Date Applied) filter
+        const createdAtDate = new Date(personData.created_at);
+        const matchesDateRange =
+            (!startDate || createdAtDate >= new Date(startDate)) &&
+            (!endDate || createdAtDate <= new Date(endDate));
 
         return (
             (matchesApplicantID || matchesName || matchesEmail || matchesProgramQuery) &&
@@ -659,11 +665,12 @@ Please bring the following requirements:`
             matchesSchoolYear &&
             matchesSemester &&
             matchesScore &&
-            matchesExactRating // ✅ new exact filter
+            matchesExactRating &&
+            matchesDateRange // ✅ Added Date Applied filter
         );
     });
 
-
+    // ✅ Step 2: Sorting
     const sortedPersons = [...filteredPersons].sort((a, b) => {
         if (sortBy === "name") {
             const nameA = `${a.last_name ?? ""} ${a.first_name ?? ""} ${a.middle_name ?? ""}`.toLowerCase();
@@ -688,6 +695,39 @@ Please bring the following requirements:`
             const ratingB = Number(b.final_rating) || 0;
             return sortOrder === "asc" ? ratingA - ratingB : ratingB - ratingA;
         }
+
+   if (sortBy === "created_at") {
+    const parseDate = (d) => {
+        if (!d) return new Date(0);
+
+        // Normalize spacing and slashes
+        const clean = String(d).trim();
+
+        // Handle DD/MM/YYYY (European format)
+        if (clean.includes("/") && !clean.includes("-")) {
+            const [day, month, year] = clean.split("/");
+            return new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
+        }
+
+        // Handle ISO and MySQL datetime formats (e.g. "2025-09-14" or "2025-09-14T00:00:00.000Z")
+        if (clean.includes("-")) {
+            return new Date(clean);
+        }
+
+        // Handle fallback numeric timestamps
+        const ts = Date.parse(clean);
+        if (!isNaN(ts)) return new Date(ts);
+
+        return new Date(0);
+    };
+
+    const dateA = parseDate(a.created_at);
+    const dateB = parseDate(b.created_at);
+
+    // "desc" => newest first
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+}
+
 
         return 0;
     });
@@ -1006,6 +1046,7 @@ Please bring the following requirements:`
                                     <MenuItem value="id">Applicant ID</MenuItem>
                                     <MenuItem value="email">Email Address</MenuItem>
                                     <MenuItem value="final_rating">Final Rating</MenuItem> {/* ✅ New */}
+                                    <MenuItem value="created_at">Date Applied</MenuItem>
                                 </Select>
                             </FormControl>
                         </Box>
@@ -1375,6 +1416,7 @@ Please bring the following requirements:`
                             <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Program</TableCell>
                             <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Email Address</TableCell>
                             <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Final Rating</TableCell>
+                            <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Date Applied</TableCell>
                             <TableCell sx={{ color: "white", textAlign: "center", fontSize: "12px", color: "maroon", border: "2px solid maroon" }}>Action</TableCell>
                         </TableRow>
                     </TableHead>
@@ -1471,6 +1513,16 @@ Please bring the following requirements:`
                                             }}
                                         >
                                             {finalRating.toFixed(2)}
+                                        </TableCell>
+
+                                        <TableCell
+                                            sx={{
+                                                textAlign: "center",
+                                                border: "2px solid maroon",
+                                                fontSize: "12px",
+                                            }}
+                                        >
+                                            {person.created_at}
                                         </TableCell>
 
                                         {/* Action Buttons */}

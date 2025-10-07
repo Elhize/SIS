@@ -40,11 +40,7 @@ const AdmissionDashboardPanel = () => {
       link: "/applicant_list_admin",
       icon: <School className="text-maroon-500 text-2xl" />,
     },
-    {
-      title: "INFORMATION",
-      link: "/super_admin_dashboard1",
-      icon: <Info className="text-maroon-500 text-2xl" />,
-    },
+ 
     {
       title: "READMISSION",
       link: "/readmission",
