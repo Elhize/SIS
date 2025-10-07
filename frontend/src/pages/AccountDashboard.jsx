@@ -23,12 +23,12 @@ const AccountDashboard = () => {
     },
     {
       label: "APPLICANT INFORMATION",
-      link: "/super_admin_applicant_dashboard1",
+      path: "/super_admin_applicant_dashboard1",
       icon: <Info className="text-maroon-500 text-2xl" />,
     },
     {
       label: "STUDENT INFORMATION",
-      link: "/super_admin_student_dashboard1",
+      path: "/super_admin_student_dashboard1",
       icon: <Info className="text-maroon-500 text-2xl" />,
     },
     {
