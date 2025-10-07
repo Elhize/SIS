@@ -11,6 +11,15 @@ const RegistrarExamPermit = ({ personId }) => {
     const [person, setPerson] = useState(null);
     const [examSchedule, setExamSchedule] = useState(null);
     const [curriculumOptions, setCurriculumOptions] = useState([]);
+    const [examScores, setExamScores] = useState({
+        english: null,
+        science: null,
+        filipino: null,
+        math: null,
+        abstract: null,
+        final: null,
+    });
+    const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
     const [printed, setPrinted] = useState(false);
 
     // ✅ First data fetch
@@ -55,6 +64,12 @@ const RegistrarExamPermit = ({ personId }) => {
                 // Fetch programs
                 const progRes = await axios.get(`http://localhost:5000/api/applied_program`);
                 setCurriculumOptions(progRes.data);
+
+                // ✅ Fetch registrar (Scheduled By)
+                const registrarRes = await axios.get(`http://localhost:5000/api/scheduled-by/registrar`);
+                if (registrarRes.data?.fullName) {
+                    setScheduledBy(registrarRes.data.fullName);
+                }
 
             } catch (err) {
                 console.error("Error fetching exam permit data:", err);
@@ -103,15 +118,24 @@ const RegistrarExamPermit = ({ personId }) => {
             .get(`http://localhost:5000/api/applied_program`)
             .then((res) => setCurriculumOptions(res.data))
             .catch((err) => console.error(err));
+
+        // ✅ Fetch registrar name again for refresh
+        axios
+            .get(`http://localhost:5000/api/scheduled-by/registrar`)
+            .then((res) => {
+                if (res.data?.fullName) setScheduledBy(res.data.fullName);
+            })
+            .catch((err) => console.error("Error fetching registrar name:", err));
+
     }, [personId]);
 
+    // ✅ Fetch Exam Scores
     useEffect(() => {
         if (!person?.applicant_number) return;  // wait until applicant number is loaded
 
         const fetchScores = async () => {
             try {
                 const { data } = await axios.get("http://localhost:5000/api-applicant-scoring");
-
                 const applicantScores = data.find(d => d.applicant_number === person.applicant_number);
 
                 if (applicantScores) {
@@ -121,7 +145,7 @@ const RegistrarExamPermit = ({ personId }) => {
                         filipino: applicantScores.filipino ?? "N/A",
                         math: applicantScores.math ?? "N/A",
                         abstract: applicantScores.abstract ?? "N/A",
-                        final: applicantScores.final_rating ?? "N/A",  // ✅ match your backend
+                        final: applicantScores.final_rating ?? "N/A",
                     });
                 }
             } catch (err) {
@@ -130,18 +154,9 @@ const RegistrarExamPermit = ({ personId }) => {
         };
 
         fetchScores();
-    }, [person?.applicant_number]);   // ✅ run when applicant_number is set
+    }, [person?.applicant_number]);
 
-
-    const [examScores, setExamScores] = useState({
-        english: null,
-        science: null,
-        filipino: null,
-        math: null,
-        abstract: null,
-        final: null
-    });
-
+    
     if (!person) return <div>Loading Exam Permit...</div>;
 
     return (
@@ -411,7 +426,7 @@ const RegistrarExamPermit = ({ personId }) => {
                                             borderBottom: "1px solid black",
                                             minWidth: "200px",
                                             fontFamily: "Arial",
-                                          
+
                                         }}
                                     >
                                         {curriculumOptions.find(
@@ -594,7 +609,7 @@ const RegistrarExamPermit = ({ personId }) => {
                                             fontFamily: "Arial",
                                         }}
                                     >
-                                        {examSchedule?.proctor}
+                                        {scheduledBy || "N/A"}
                                     </span>
                                 </div>
                             </td>
@@ -652,7 +667,7 @@ const RegistrarExamPermit = ({ personId }) => {
                         )}
 
 
-                     
+
 
 
                     </tbody>

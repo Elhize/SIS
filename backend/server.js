@@ -11465,6 +11465,32 @@ app.get("/api/program_evaluation/details/:student_number", async (req, res) => {
   }
 });
 
+// ✅ GET registrar name (or any prof by role)
+app.get("/api/scheduled-by/:role", async (req, res) => {
+  const { role } = req.params;
+
+  try {
+    const [rows] = await db3.query(
+      `SELECT fname, mname, lname 
+       FROM prof_table 
+       WHERE role = ? 
+       LIMIT 1`,
+      [role]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ message: "No professor found for that role" });
+    }
+
+    const { fname, mname, lname } = rows[0];
+    const fullName = `${fname} ${mname ? mname + " " : ""}${lname}`.trim();
+    res.json({ fullName });
+  } catch (err) {
+    console.error("Error fetching professor:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 http.listen(5000, () => {
   console.log("Server with Socket.IO running on port 5000");

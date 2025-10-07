@@ -20,17 +20,18 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import PeopleIcon from "@mui/icons-material/People";
 import ExamPermit from "../applicant/ExamPermit";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 
 const RegistrarDashboard3 = () => {
     const stepsData = [
         { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
         { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Student Requirements", to: "/registrar_requirements", icon: <AssignmentTurnedInIcon fontSize="large" /> },
         { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
         { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
         { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
         { label: "Qualifying Exam Score", to: "/qualifying_exam_scores", icon: <PersonSearchIcon fontSize="large" /> },
         { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
-
     ];
     const [currentStep, setCurrentStep] = useState(1);
     const [visitedSteps, setVisitedSteps] = useState(Array(stepsData.length).fill(false));
@@ -369,7 +370,7 @@ const RegistrarDashboard3 = () => {
                         fontSize: '36px',
                     }}
                 >
-                    EDUCATIONAL ATTAINMENT
+                  APPLICANT FORM -  EDUCATIONAL ATTAINMENT
                 </Typography>
             </Box>
             <hr style={{ border: "1px solid #ccc", width: "100%" }} />
@@ -379,9 +380,10 @@ const RegistrarDashboard3 = () => {
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "center",
+                    flexWrap: "nowrap", // prevent wrapping
                     width: "100%",
-                    mt: 2,
+                    mt: 3,
+
                 }}
             >
                 {stepsData.map((step, index) => (
@@ -390,16 +392,14 @@ const RegistrarDashboard3 = () => {
                         <Card
                             onClick={() => handleNavigateStep(index, step.to)}
                             sx={{
-                                flex: 1,
-                                maxWidth: `${100 / stepsData.length}%`, // evenly fit 100%
-                                height: 100,
+                                flex: `1 1 ${100 / stepsData.length}%`, // evenly divide width
+                                height: 120,
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
                                 cursor: "pointer",
                                 borderRadius: 2,
                                 border: "2px solid #6D2323",
-
                                 backgroundColor: currentStep === index ? "#6D2323" : "#E8C999",
                                 color: currentStep === index ? "#fff" : "#000",
                                 boxShadow:
@@ -419,27 +419,32 @@ const RegistrarDashboard3 = () => {
                                     alignItems: "center",
                                 }}
                             >
-                                <Box sx={{ fontSize: 32, mb: 0.5 }}>{step.icon}</Box>
+                                <Box sx={{ fontSize: 40, mb: 1 }}>{step.icon}</Box>
                                 <Typography
-                                    sx={{ fontSize: 14, fontWeight: "bold", textAlign: "center" }}
+                                    sx={{
+                                        fontSize: 14,
+                                        fontWeight: "bold",
+                                        textAlign: "center",
+                                    }}
                                 >
                                     {step.label}
                                 </Typography>
                             </Box>
                         </Card>
 
-                        {/* Spacer instead of line */}
+                        {/* Spacer (line gap between steps) */}
                         {index < stepsData.length - 1 && (
                             <Box
                                 sx={{
-                                    flex: 0.1,
-                                    mx: 1, // margin to keep spacing
+                                    flex: 0.05,
+                                    mx: 1, // spacing between cards
                                 }}
                             />
                         )}
                     </React.Fragment>
                 ))}
             </Box>
+
 
             <br />
 

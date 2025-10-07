@@ -11,6 +11,7 @@ const ExamPermit = ({ personId }) => {
     const [person, setPerson] = useState(null);
     const [examSchedule, setExamSchedule] = useState(null);
     const [curriculumOptions, setCurriculumOptions] = useState([]);
+    const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
     const [printed, setPrinted] = useState(false);
 
     // ✅ First data fetch
@@ -55,6 +56,12 @@ const ExamPermit = ({ personId }) => {
                 // Fetch programs
                 const progRes = await axios.get(`http://localhost:5000/api/applied_program`);
                 setCurriculumOptions(progRes.data);
+
+                // ✅ Fetch registrar (Scheduled By)
+                const registrarRes = await axios.get(`http://localhost:5000/api/scheduled-by/registrar`);
+                if (registrarRes.data?.fullName) {
+                    setScheduledBy(registrarRes.data.fullName);
+                }
 
             } catch (err) {
                 console.error("Error fetching exam permit data:", err);
@@ -103,6 +110,14 @@ const ExamPermit = ({ personId }) => {
             .get(`http://localhost:5000/api/applied_program`)
             .then((res) => setCurriculumOptions(res.data))
             .catch((err) => console.error(err));
+
+        // ✅ Fetch registrar name again for refresh
+        axios
+            .get(`http://localhost:5000/api/scheduled-by/registrar`)
+            .then((res) => {
+                if (res.data?.fullName) setScheduledBy(res.data.fullName);
+            })
+            .catch((err) => console.error("Error fetching registrar name:", err));
     }, [personId]);
 
 
@@ -366,7 +381,7 @@ const ExamPermit = ({ personId }) => {
                             </td>
                             <td colSpan={20}>
                                 <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-                                    <label style={{ fontWeight: "bold", marginRight: "10px",}}>
+                                    <label style={{ fontWeight: "bold", marginRight: "10px", }}>
                                         Major:
                                     </label>
                                     <span
@@ -375,7 +390,7 @@ const ExamPermit = ({ personId }) => {
                                             borderBottom: "1px solid black",
                                             minWidth: "200px",
                                             fontFamily: "Arial",
-                                          
+
                                         }}
                                     >
                                         {curriculumOptions.find(
@@ -558,7 +573,7 @@ const ExamPermit = ({ personId }) => {
                                             fontFamily: "Arial",
                                         }}
                                     >
-                                        {examSchedule?.proctor}
+                                        {scheduledBy || "N/A"}
                                     </span>
                                 </div>
                             </td>
@@ -574,7 +589,7 @@ const ExamPermit = ({ personId }) => {
                         </tr>
 
 
-                    
+
 
                     </tbody>
                 </table>

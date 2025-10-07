@@ -40,7 +40,7 @@ import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import PeopleIcon from "@mui/icons-material/People";
-
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 
 
 
@@ -74,6 +74,7 @@ const ApplicantList = () => {
     const tabs = [
         { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
         { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Student Requirements", to: "/registrar_requirements", icon: <AssignmentTurnedInIcon fontSize="large" /> },
         { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
         { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
         { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
@@ -1379,7 +1380,7 @@ const ApplicantList = () => {
                             {confirmMessage || "Are you sure you want to update this applicant’s status?"}
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={() => setConfirmOpen(false)} color="error">
+                            <Button disabled onClick={() => setConfirmOpen(false)} color="error">
                                 Cancel
                             </Button>
                             <Button
@@ -1712,6 +1713,7 @@ const ApplicantList = () => {
                                 activePerson?.registrar_status === 1
                             ) && (
                                     <Button
+                                    disabled
                                         variant="contained"
                                         onClick={handleSaveMissingDocs}
                                         sx={{ background: "maroon" }}

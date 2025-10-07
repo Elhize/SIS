@@ -1714,6 +1714,7 @@ const AdminApplicantList = () => {
                                 activePerson?.registrar_status === 1
                             ) && (
                                     <Button
+                                    disabled
                                         variant="contained"
                                         onClick={handleSaveMissingDocs}
                                         sx={{ background: "maroon" }}

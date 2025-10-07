@@ -25,6 +25,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 
 
 const InterviewerApplicantList = () => {
@@ -32,6 +33,7 @@ const InterviewerApplicantList = () => {
   const tabs = [
     { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
     { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+    { label: "Student Requirements", to: "/registrar_requirements", icon: <AssignmentTurnedInIcon fontSize="large" /> },
     { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
     { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
     { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
@@ -39,7 +41,7 @@ const InterviewerApplicantList = () => {
     { label: "Student Numbering", to: "/student_numbering_per_college", icon: <DashboardIcon fontSize="large" /> },
   ];
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState(4);
+  const [activeStep, setActiveStep] = useState(5);
   const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
 
 

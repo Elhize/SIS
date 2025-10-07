@@ -58,10 +58,10 @@ import RegistrarDashboard2 from './registrar/RegistrarDashboard2';
 import RegistrarDashboard3 from './registrar/RegistrarDashboard3';
 import RegistrarDashboard4 from './registrar/RegistrarDashboard4';
 import RegistrarDashboard5 from './registrar/RegistrarDashboard5';
-
 import ApplicantList from './registrar/ApplicantList';
 import ApplicantListAdmin from './registrar/ApplicantListAdmin';
 import StudentRequirements from './registrar/StudentRequirements';
+import RegistrarRequirements from './registrar/RegistrarRequirements';
 import ExaminationProfile from './registrar/ExaminationProfile';
 import RegistrarExaminationProfile from './registrar/RegistrarExaminationProfile';
 import AssignScheduleToApplicants from './registrar/AssignScheduleToApplicants';
@@ -340,6 +340,7 @@ function App() {
 
               <Route path="/requirements_uploader" element={<ProtectedRoute allowedRoles={['applicant']}><RequirementUploader /></ProtectedRoute>} />
               <Route path="/student_requirements" element={<ProtectedRoute><StudentRequirements /></ProtectedRoute>} />
+              <Route path="/registrar_requirements" element={<ProtectedRoute><RegistrarRequirements /></ProtectedRoute>} />
               <Route path="/admin_ecat_application_form" element={<ProtectedRoute allowedRoles={['registrar', 'applicant']}><AdminECATApplicationForm /></ProtectedRoute>} />
               <Route path="/admin_personal_data_form" element={<ProtectedRoute allowedRoles={['registrar']}><AdminPersonalDataForm /></ProtectedRoute>} />
               <Route path="/admin_office_of_the_registrar" element={<ProtectedRoute allowedRoles={['registrar']}><AdminOfficeOfTheRegistrar /></ProtectedRoute>} />

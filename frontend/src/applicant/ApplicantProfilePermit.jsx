@@ -11,6 +11,7 @@ const ApplicantProfilePermit = ({ personId }) => {
     const [person, setPerson] = useState(null);
     const [examSchedule, setExamSchedule] = useState(null);
     const [curriculumOptions, setCurriculumOptions] = useState([]);
+    const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
     const [printed, setPrinted] = useState(false);
 
     // ✅ First data fetch
@@ -55,6 +56,12 @@ const ApplicantProfilePermit = ({ personId }) => {
                 // Fetch programs
                 const progRes = await axios.get(`http://localhost:5000/api/applied_program`);
                 setCurriculumOptions(progRes.data);
+
+                // ✅ Fetch registrar (Scheduled By)
+                const registrarRes = await axios.get(`http://localhost:5000/api/scheduled-by/registrar`);
+                if (registrarRes.data?.fullName) {
+                    setScheduledBy(registrarRes.data.fullName);
+                }
 
             } catch (err) {
                 console.error("Error fetching exam permit data:", err);
@@ -103,8 +110,16 @@ const ApplicantProfilePermit = ({ personId }) => {
             .get(`http://localhost:5000/api/applied_program`)
             .then((res) => setCurriculumOptions(res.data))
             .catch((err) => console.error(err));
-    }, [personId]);
 
+        // ✅ Fetch registrar name again for refresh
+        axios
+            .get(`http://localhost:5000/api/scheduled-by/registrar`)
+            .then((res) => {
+                if (res.data?.fullName) setScheduledBy(res.data.fullName);
+            })
+            .catch((err) => console.error("Error fetching registrar name:", err));
+
+    }, [personId]);
 
     if (!person) return <div>Loading Exam Permit...</div>;
 
@@ -476,7 +491,7 @@ const ApplicantProfilePermit = ({ personId }) => {
                                             style={{
                                                 width: "4.5cm", // same as profile box
                                                 height: "4.5cm",
-                                             
+
                                                 borderRadius: "4px",
                                                 background: "#fff",       // ✅ white background
                                                 display: "flex",
@@ -528,7 +543,7 @@ const ApplicantProfilePermit = ({ personId }) => {
                                             fontFamily: "Arial",
                                         }}
                                     >
-                                        {examSchedule?.proctor}
+                                        {scheduledBy || "N/A"}
                                     </span>
                                 </div>
                             </td>

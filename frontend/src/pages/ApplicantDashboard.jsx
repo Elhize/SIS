@@ -429,14 +429,28 @@ const ApplicantDashboard = (props) => {
   };
 
   const getCurrentStep = () => {
-    if (person?.final_status) return 5; // Final status reached
+    // ✅ Step 6 – Final status reached
+    if (person?.final_status === "Accepted" || person?.final_status === "Rejected") return 5;
+
+    // ✅ Step 5 – Medical submitted
     if (medicalUploads.length > 0) return 4;
-    if (collegeApproval) return 3;
+
+    // ✅ Step 4 – College approval received
+    if (collegeApproval === "Accepted" || collegeApproval === "Rejected") return 3;
+
+    // ✅ Step 3 – Interview scheduled or scored
     if (interviewSchedule || hasInterviewScores) return 2;
+
+    // ✅ Step 2 – Exam scheduled or scored
     if (hasSchedule || hasScores) return 1;
+
+    // ✅ Step 1 – Documents verified
     if (person?.document_status === "Documents Verified & ECAT") return 0;
-    return 0; // Default to first step
+
+    // ✅ Default – Documents submitted (registration done but no verification yet)
+    return 0;
   };
+
 
   const activeStep = getCurrentStep();
 
@@ -1004,7 +1018,7 @@ const ApplicantDashboard = (props) => {
               justifyContent: "center",
               alignItems: "center",
               mb: 2,
-              
+
             }}
           >
             <Typography sx={{ fontSize: "32px", fontWeight: "bold", color: "maroon" }}>
@@ -1025,7 +1039,7 @@ const ApplicantDashboard = (props) => {
                 borderColor: "#6D2323",   // maroon line
                 borderTopWidth: 3,
                 borderRadius: 8,
-                
+
               },
             }}
           >
@@ -1051,10 +1065,11 @@ const ApplicantDashboard = (props) => {
                           width: 60,
                           height: 60,
                           borderRadius: "50%",
-                          backgroundColor: isActive || isCompleted ? "#6D2323" : "#E8C999",
+                          backgroundColor: isActive ? "#800000" : isCompleted ? "#800000" : "#E8C999",
+
                           border: "2px solid #6D2323",
                           display: "flex",
-                          
+
                           alignItems: "center",
                           justifyContent: "center",
                           margin: "0 auto",
@@ -1090,8 +1105,8 @@ const ApplicantDashboard = (props) => {
                 item
                 xs={2} // each step gets equal space (12/6 = 2)
                 key={index}
-                
-                sx={{ display: "flex", justifyContent: "center",  }}
+
+                sx={{ display: "flex", justifyContent: "center", }}
               >
                 <Box
                   sx={{
@@ -1103,9 +1118,9 @@ const ApplicantDashboard = (props) => {
                     p: 2,
                     overflowY: "auto",
                     fontSize: "13px",
-                          transition: "transform 0.2s ease",
-              boxShadow: 3,
-              "&:hover": { transform: "scale(1.03)" },
+                    transition: "transform 0.2s ease",
+                    boxShadow: 3,
+                    "&:hover": { transform: "scale(1.03)" },
                     color: "maroon",
                     fontWeight: "bold",
                     lineHeight: 1.6,
@@ -1127,7 +1142,7 @@ const ApplicantDashboard = (props) => {
 
                       {hasSchedule && (
                         <>
-                          📝 Proctor: {proctor?.proctor || "TBA"} <br />
+                    
                           📅 Date: {proctor?.day_description || "TBA"} <br />
                           🏢 Building: {proctor?.building_description || "TBA"} <br />
                           🚪 Room: {proctor?.room_description || "TBA"} <br />
@@ -1229,7 +1244,7 @@ const ApplicantDashboard = (props) => {
                               : doc.status === 2
                                 ? "❌ Rejected"
                                 : "⏳ On Process"}
-                            {doc.remarks && ` 📝 Remarks: ${doc.remarks}`}
+                          
                           </div>
                         ))}
                     </>

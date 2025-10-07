@@ -36,6 +36,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 
 
 const socket = io("http://localhost:5000");
@@ -93,6 +94,7 @@ const AssignScheduleToApplicantsInterviewer = () => {
     const tabs = [
         { label: "Admission Process For College", to: "/applicant_list", icon: <SchoolIcon fontSize="large" /> },
         { label: "Applicant Form", to: "/registrar_dashboard1", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Student Requirements", to: "/registrar_requirements", icon: <AssignmentTurnedInIcon fontSize="large" /> },
         { label: "Interview Room Assignment", to: "/assign_interview_exam", icon: <MeetingRoomIcon fontSize="large" /> },
         { label: "Interview Schedule Management", to: "/assign_schedule_applicants_interview", icon: <ScheduleIcon fontSize="large" /> },
         { label: "Interviewer Applicant's List", to: "/interviewer_applicant_list", icon: <PeopleIcon fontSize="large" /> },
@@ -109,7 +111,7 @@ const AssignScheduleToApplicantsInterviewer = () => {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const [activeStep, setActiveStep] = useState(3);
+    const [activeStep, setActiveStep] = useState(4);
     const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
     const [applicants, setApplicants] = useState([]);
     const [selectedSchedule, setSelectedSchedule] = useState("");
@@ -696,37 +698,37 @@ Please bring the following requirements:`
             return sortOrder === "asc" ? ratingA - ratingB : ratingB - ratingA;
         }
 
-   if (sortBy === "created_at") {
-    const parseDate = (d) => {
-        if (!d) return new Date(0);
+        if (sortBy === "created_at") {
+            const parseDate = (d) => {
+                if (!d) return new Date(0);
 
-        // Normalize spacing and slashes
-        const clean = String(d).trim();
+                // Normalize spacing and slashes
+                const clean = String(d).trim();
 
-        // Handle DD/MM/YYYY (European format)
-        if (clean.includes("/") && !clean.includes("-")) {
-            const [day, month, year] = clean.split("/");
-            return new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
+                // Handle DD/MM/YYYY (European format)
+                if (clean.includes("/") && !clean.includes("-")) {
+                    const [day, month, year] = clean.split("/");
+                    return new Date(`${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`);
+                }
+
+                // Handle ISO and MySQL datetime formats (e.g. "2025-09-14" or "2025-09-14T00:00:00.000Z")
+                if (clean.includes("-")) {
+                    return new Date(clean);
+                }
+
+                // Handle fallback numeric timestamps
+                const ts = Date.parse(clean);
+                if (!isNaN(ts)) return new Date(ts);
+
+                return new Date(0);
+            };
+
+            const dateA = parseDate(a.created_at);
+            const dateB = parseDate(b.created_at);
+
+            // "desc" => newest first
+            return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
         }
-
-        // Handle ISO and MySQL datetime formats (e.g. "2025-09-14" or "2025-09-14T00:00:00.000Z")
-        if (clean.includes("-")) {
-            return new Date(clean);
-        }
-
-        // Handle fallback numeric timestamps
-        const ts = Date.parse(clean);
-        if (!isNaN(ts)) return new Date(ts);
-
-        return new Date(0);
-    };
-
-    const dateA = parseDate(a.created_at);
-    const dateB = parseDate(b.created_at);
-
-    // "desc" => newest first
-    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-}
 
 
         return 0;
