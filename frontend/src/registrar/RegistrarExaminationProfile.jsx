@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import {
-  Box,
-  Typography,
-  TextField,
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  Card
+    Box,
+    Typography,
+    TextField,
+    TableContainer,
+    Paper,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    Card
 } from "@mui/material";
 import EaristLogo from "../assets/EaristLogo.png";
 import EaristLogoBW from "../assets/earistblackandwhite.png";
@@ -28,175 +28,191 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import PeopleIcon from "@mui/icons-material/People";
 
 const ExaminationProfile = ({ personId }) => {
-  const tabs = [
-    {
-      label: <>Admission Process for <br /> Registrar</>,
-      to: "/applicant_list_admin",
-      icon: <SchoolIcon fontSize="large" />
-    },
-    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
-    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
-    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
-    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
-    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
-    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
-  ];
+    const tabs = [
+        {
+            label: <>Admission Process for <br /> Registrar</>,
+            to: "/applicant_list_admin",
+            icon: <SchoolIcon fontSize="large" />
+        },
+        { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+        { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+        { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+        { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+        { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+        { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+    ];
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState(5);
-  const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [activeStep, setActiveStep] = useState(5);
+    const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
 
-  const handleStepClick = (index, to) => {
-    setActiveStep(index);
-    navigate(to);
-  };
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [persons, setPersons] = useState([]);
-  const [selectedPerson, setSelectedPerson] = useState(null);
-  const [userID, setUserID] = useState("");
-  const [user, setUser] = useState("");
-  const [userRole, setUserRole] = useState("");
-  const [person, setPerson] = useState({
-    profile_img: "",
-    last_name: "",
-    first_name: "",
-    middle_name: "",
-    extension: "",
-  });
-
-  const [curriculumOptions, setCurriculumOptions] = useState([]);
-  const [examSchedule, setExamSchedule] = useState(null);
-  const [applicantNumber, setApplicantNumber] = useState("");
-  const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
-  const divToPrintRef = useRef();
-
-  // ✅ Check logged-in user
-  useEffect(() => {
-    const storedUser = localStorage.getItem("email");
-    const storedRole = localStorage.getItem("role");
-    const storedID = localStorage.getItem("person_id");
-
-    if (storedUser && storedRole && storedID && storedID !== "undefined") {
-      setUser(storedUser);
-      setUserRole(storedRole);
-      setUserID(storedID);
-
-      if (storedRole !== "registrar") {
-        window.location.href = "/login";
-      }
-    } else {
-      window.location.href = "/login";
-    }
-  }, []);
-
-  // ✅ Fetch persons list
-  useEffect(() => {
-    const fetchPersons = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/upload_documents");
-        setPersons(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error("Error fetching persons:", err);
-      }
+    const handleStepClick = (index, to) => {
+        setActiveStep(index);
+        navigate(to);
     };
-    fetchPersons();
-  }, []);
 
-  // ✅ Fetch single person
-  const fetchPersonData = async (personID) => {
-    if (!personID || personID === "undefined") return;
-    try {
-      const res = await axios.get(`http://localhost:5000/api/person/${personID}`);
-      setPerson(res.data || {});
-    } catch (error) {
-      console.error("❌ Failed to fetch person data:", error?.response?.data || error.message);
-    }
-  };
-
-  // ✅ When a person is selected, fetch data
-  useEffect(() => {
-    if (selectedPerson?.person_id) {
-      fetchPersonData(selectedPerson.person_id);
-      if (selectedPerson.applicant_number) {
-        setApplicantNumber(selectedPerson.applicant_number);
-      }
-    }
-  }, [selectedPerson]);
-
-  // ✅ Handle search by applicant number or name
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSelectedPerson(null);
-      return;
-    }
-
-    const match = persons.find((p) => {
-      const fullString = `${p.first_name ?? ""} ${p.middle_name ?? ""} ${p.last_name ?? ""} ${p.emailAddress ?? ""}`.toLowerCase();
-      const numberMatch = (p.applicant_number || "").toLowerCase() === searchQuery.toLowerCase();
-      const textMatch = fullString.includes(searchQuery.toLowerCase());
-      return numberMatch || textMatch;
+    const [searchQuery, setSearchQuery] = useState("");
+    const [persons, setPersons] = useState([]);
+    const [selectedPerson, setSelectedPerson] = useState(null);
+    const [userID, setUserID] = useState("");
+    const [user, setUser] = useState("");
+    const [userRole, setUserRole] = useState("");
+    const [person, setPerson] = useState({
+        campus: "",
+        profile_img: "",
+        last_name: "",
+        first_name: "",
+        middle_name: "",
+        extension: "",
     });
 
-    if (match) {
-      setSelectedPerson(match);
-      setPerson(match);
-    } else {
-      axios
-        .get(`http://localhost:5000/api/person-by-applicant/${searchQuery}`)
-        .then((res) => {
-          if (res.data?.person_id) {
-            setSelectedPerson(res.data);
-            fetchPersonData(res.data.person_id);
-          }
-        })
-        .catch(() => setSelectedPerson(null));
-    }
-  }, [searchQuery, persons]);
+    useEffect(() => {
+        console.log("Fetched campus:", person.campus);
+    }, [person]);
 
-  // ✅ Fetch curriculum options
-  useEffect(() => {
-    const fetchCurriculums = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/applied_program");
-        setCurriculumOptions(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error("Error fetching curriculum options:", error);
-      }
+
+    const campusAddresses = {
+        0: "Nagtahan St. Sampaloc, Manila",
+        1: "Poblacion 5, Congressional Road, General Mariano Alvarez,",
     };
-    fetchCurriculums();
-  }, []);
 
-  // ✅ Fetch exam schedule when applicant is selected
-  useEffect(() => {
-    if (selectedPerson?.applicant_number) {
-      axios
-        .get(`http://localhost:5000/api/exam-schedule/${selectedPerson.applicant_number}`)
-        .then((res) => setExamSchedule(res.data))
-        .catch((err) => {
-          console.error("Error fetching exam schedule:", err);
-          setExamSchedule(null);
+
+    const campusAddress = campusAddresses[person?.campus] || "";
+
+
+
+    const [curriculumOptions, setCurriculumOptions] = useState([]);
+    const [examSchedule, setExamSchedule] = useState(null);
+    const [applicantNumber, setApplicantNumber] = useState("");
+    const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
+    const divToPrintRef = useRef();
+
+    // ✅ Check logged-in user
+    useEffect(() => {
+        const storedUser = localStorage.getItem("email");
+        const storedRole = localStorage.getItem("role");
+        const storedID = localStorage.getItem("person_id");
+
+        if (storedUser && storedRole && storedID && storedID !== "undefined") {
+            setUser(storedUser);
+            setUserRole(storedRole);
+            setUserID(storedID);
+
+            if (storedRole !== "registrar") {
+                window.location.href = "/login";
+            }
+        } else {
+            window.location.href = "/login";
+        }
+    }, []);
+
+    // ✅ Fetch persons list
+    useEffect(() => {
+        const fetchPersons = async () => {
+            try {
+                const res = await axios.get("http://localhost:5000/api/upload_documents");
+                setPersons(Array.isArray(res.data) ? res.data : []);
+            } catch (err) {
+                console.error("Error fetching persons:", err);
+            }
+        };
+        fetchPersons();
+    }, []);
+
+    // ✅ Fetch single person
+    const fetchPersonData = async (personID) => {
+        if (!personID || personID === "undefined") return;
+        try {
+            const res = await axios.get(`http://localhost:5000/api/person/${personID}`);
+            setPerson(res.data || {});
+        } catch (error) {
+            console.error("❌ Failed to fetch person data:", error?.response?.data || error.message);
+        }
+    };
+
+    // ✅ When a person is selected, fetch data
+    useEffect(() => {
+        if (selectedPerson?.person_id) {
+            fetchPersonData(selectedPerson.person_id);
+            if (selectedPerson.applicant_number) {
+                setApplicantNumber(selectedPerson.applicant_number);
+            }
+        }
+    }, [selectedPerson]);
+
+    // ✅ Handle search by applicant number or name
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setSelectedPerson(null);
+            return;
+        }
+
+        const match = persons.find((p) => {
+            const fullString = `${p.first_name ?? ""} ${p.middle_name ?? ""} ${p.last_name ?? ""} ${p.emailAddress ?? ""}`.toLowerCase();
+            const numberMatch = (p.applicant_number || "").toLowerCase() === searchQuery.toLowerCase();
+            const textMatch = fullString.includes(searchQuery.toLowerCase());
+            return numberMatch || textMatch;
         });
-    }
-  }, [selectedPerson]);
 
-  // ✅ Fetch registrar name (Scheduled By)
-  useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/scheduled-by/registrar`)
-      .then((res) => {
-        if (res.data?.fullName) setScheduledBy(res.data.fullName);
-      })
-      .catch((err) => console.error("Error fetching registrar name:", err));
-  }, []);
+        if (match) {
+            setSelectedPerson(match);
+            setPerson(match);
+        } else {
+            axios
+                .get(`http://localhost:5000/api/person-by-applicant/${searchQuery}`)
+                .then((res) => {
+                    if (res.data?.person_id) {
+                        setSelectedPerson(res.data);
+                        fetchPersonData(res.data.person_id);
+                    }
+                })
+                .catch(() => setSelectedPerson(null));
+        }
+    }, [searchQuery, persons]);
 
-  const printDiv = () => {
-    const divToPrint = divToPrintRef.current;
-    if (!divToPrint) return;
-    const newWin = window.open("", "Print-Window");
-    newWin.document.open();
-    newWin.document.write(`
+    // ✅ Fetch curriculum options
+    useEffect(() => {
+        const fetchCurriculums = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/applied_program");
+                setCurriculumOptions(Array.isArray(response.data) ? response.data : []);
+            } catch (error) {
+                console.error("Error fetching curriculum options:", error);
+            }
+        };
+        fetchCurriculums();
+    }, []);
+
+    // ✅ Fetch exam schedule when applicant is selected
+    useEffect(() => {
+        if (selectedPerson?.applicant_number) {
+            axios
+                .get(`http://localhost:5000/api/exam-schedule/${selectedPerson.applicant_number}`)
+                .then((res) => setExamSchedule(res.data))
+                .catch((err) => {
+                    console.error("Error fetching exam schedule:", err);
+                    setExamSchedule(null);
+                });
+        }
+    }, [selectedPerson]);
+
+    // ✅ Fetch registrar name (Scheduled By)
+    useEffect(() => {
+        axios
+            .get(`http://localhost:5000/api/scheduled-by/registrar`)
+            .then((res) => {
+                if (res.data?.fullName) setScheduledBy(res.data.fullName);
+            })
+            .catch((err) => console.error("Error fetching registrar name:", err));
+    }, []);
+
+    const printDiv = () => {
+        const divToPrint = divToPrintRef.current;
+        if (!divToPrint) return;
+        const newWin = window.open("", "Print-Window");
+        newWin.document.open();
+        newWin.document.write(`
       <html>
         <head><title>Print</title></head>
         <body onload="window.print(); setTimeout(() => window.close(), 100);">
@@ -204,29 +220,29 @@ const ExaminationProfile = ({ personId }) => {
         </body>
       </html>
     `);
-    newWin.document.close();
-  };
+        newWin.document.close();
+    };
 
-  const [showPrintView, setShowPrintView] = useState(false);
+    const [showPrintView, setShowPrintView] = useState(false);
 
-  const handlePrintClick = async () => {
-    if (!selectedPerson?.person_id) {
-      alert("Please select a person first.");
-      return;
-    }
+    const handlePrintClick = async () => {
+        if (!selectedPerson?.person_id) {
+            alert("Please select a person first.");
+            return;
+        }
 
-    // Fetch fresh person data before printing
-    await fetchPersonData(selectedPerson.person_id);
+        // Fetch fresh person data before printing
+        await fetchPersonData(selectedPerson.person_id);
 
-    // Show print layout (hidden in normal view)
-    setShowPrintView(true);
+        // Show print layout (hidden in normal view)
+        setShowPrintView(true);
 
-    // Wait a moment to ensure rendering is complete
-    setTimeout(() => {
-      printDiv();
-      setShowPrintView(false);
-    }, 200);
-  };
+        // Wait a moment to ensure rendering is complete
+        setTimeout(() => {
+            printDiv();
+            setShowPrintView(false);
+        }, 200);
+    };
 
     return (
         <Box sx={{ height: 'calc(100vh - 120px)', overflowY: 'auto', paddingRight: 1, backgroundColor: 'transparent' }}>
@@ -481,13 +497,14 @@ const ExaminationProfile = ({ personId }) => {
                                     <tr>
 
                                         <td colSpan={40} style={{ height: "0.5in", textAlign: "center" }}>
-                                            <table width="100%" style={{ borderCollapse: "collapse", marginTop: "-30px" }}>
+                                            {/* Header */}
+                                            <table width="100%" style={{ borderCollapse: "collapse", marginTop: "-30px", fontFamily: "Arial" }}>
                                                 <tbody>
                                                     <tr>
 
 
                                                         <td style={{ width: "20%", textAlign: "center" }}>
-                                                            <img src={EaristLogo} alt="Earist Logo" style={{ marginLeft: "10px", width: "140px", height: "140px", }} />
+                                                            <img src={EaristLogo} alt="Earist Logo" style={{ marginLeft: "-10px", width: "140px", height: "140px", }} />
                                                         </td>
 
                                                         {/* Center Column - School Information */}
@@ -495,12 +512,17 @@ const ExaminationProfile = ({ personId }) => {
                                                             <div>Republic of the Philippines</div>
                                                             <b style={{ letterSpacing: '1px', fontSize: "20px" }}>Eulogio "Amang" Rodriguez</b>
                                                             <div style={{ letterSpacing: '1px', fontSize: "20px" }}><b>Institute of Science and Technology</b></div>
-                                                            <div>Nagtahan St. Sampaloc, Manila</div>
+
+                                                            {campusAddress && (
+                                                                <div style={{ fontSize: "16px", letterSpacing: "1px", fontFamily: "Arial" }}>
+                                                                    {campusAddress}
+                                                                </div>
+                                                            )}
 
                                                             {/* Add spacing here */}
                                                             <div style={{ marginTop: "30px" }}>
                                                                 <b style={{ fontSize: "24px", letterSpacing: '1px', fontWeight: "bold" }}>
-                                                                    APPLICATION PERMIT
+                                                                    EXAMINATION PERMIT
                                                                 </b>
                                                             </div>
                                                         </td>
@@ -524,7 +546,7 @@ const ExaminationProfile = ({ personId }) => {
                                                                     justifyContent: "center",
                                                                     alignItems: "center",
                                                                     position: "relative",
-                                                                    border: "1px solid #ccc",
+                                                                    border: "2px solid black",
                                                                     overflow: "hidden",
                                                                     borderRadius: "4px",
                                                                 }}
@@ -537,6 +559,7 @@ const ExaminationProfile = ({ personId }) => {
                                                                             width: "100%",
                                                                             height: "100%",
                                                                             objectFit: "cover",
+
                                                                         }}
                                                                     />
                                                                 ) : (
@@ -791,7 +814,7 @@ const ExaminationProfile = ({ personId }) => {
                                                     justifyContent: "space-between", // space text & QR
                                                 }}
                                             >
-                                                <div style={{ display: "flex", alignItems: "center", marginTop: "-145px" }}>
+                                                <div style={{ display: "flex", alignItems: "center", marginTop: "-148px" }}>
                                                     <label
                                                         style={{
                                                             fontWeight: "bold",
@@ -895,7 +918,7 @@ const ExaminationProfile = ({ personId }) => {
 
                                     <tr style={{ fontFamily: "Times New Roman", fontSize: "15px" }}>
                                         <td colSpan={20}>
-                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-125px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", width: "100%", marginTop: "-128px" }}>
                                                 <label style={{ fontWeight: "bold", whiteSpace: "nowrap", marginRight: "10px" }}>Scheduled by:</label>
                                                 <span
                                                     style={{

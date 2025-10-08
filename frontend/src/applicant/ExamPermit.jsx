@@ -8,11 +8,32 @@ import "../styles/Print.css";
 // ✅ Accept personId as a prop
 const ExamPermit = ({ personId }) => {
     const divToPrintRef = useRef(null);
-    const [person, setPerson] = useState(null);
     const [examSchedule, setExamSchedule] = useState(null);
     const [curriculumOptions, setCurriculumOptions] = useState([]);
     const [scheduledBy, setScheduledBy] = useState(""); // ✅ added
     const [printed, setPrinted] = useState(false);
+    const [person, setPerson] = useState({
+        campus: "",
+        profile_img: "",
+        last_name: "",
+        first_name: "",
+        middle_name: "",
+        extension: "",
+    });
+
+    useEffect(() => {
+        console.log("Fetched campus:", person.campus);
+    }, [person]);
+
+
+    const campusAddresses = {
+        0: "Nagtahan St. Sampaloc, Manila",
+        1: "Poblacion 5, Congressional Road, General Mariano Alvarez,",
+    };
+
+
+    const campusAddress = campusAddresses[person?.campus] || "";
+
 
     // ✅ First data fetch
     useEffect(() => {
@@ -133,7 +154,7 @@ const ExamPermit = ({ personId }) => {
                 padding: "20px",
                 margin: "0 auto",
                 position: "relative",
-                marginTop: "-20px",
+                marginTop: "10px",
                 boxSizing: "border-box",
             }}
         >
@@ -182,61 +203,76 @@ const ExamPermit = ({ personId }) => {
             </div>
 
             {/* Header */}
-            <table
-                style={{
-                    borderCollapse: "collapse",
-                    width: "8in",
-                    margin: "0 auto",
-                    textAlign: "center",
-                }}
-            >
+            <table width="100%" style={{ borderCollapse: "collapse", marginTop: "-30px", fontFamily: "Arial" }}>
                 <tbody>
                     <tr>
-                        <td style={{ width: "20%" }}>
-                            <img
-                                src={EaristLogo}
-                                alt="Earist Logo"
-                                style={{ width: "120px", height: "120px" }}
-                            />
-                        </td>
-                        <td style={{ width: "60%", textAlign: "center", lineHeight: "1.4" }}>
-                            <div>Republic of the Philippines</div>
-                            <b style={{ fontSize: "20px", letterSpacing: "1px" }}>
-                                Eulogio "Amang" Rodriguez
-                            </b>
-                            <div style={{ fontSize: "20px", fontWeight: "bold" }}>
-                                Institute of Science and Technology
-                            </div>
-                            <div>Nagtahan St. Sampaloc, Manila</div>
-                            <div style={{ marginTop: "20px" }}>
-                                <b style={{ fontSize: "26px" }}>EXAMINATION PERMIT</b>
-                            </div>
-                        </td>
+
+
                         <td style={{ width: "20%", textAlign: "center" }}>
+                            <img src={EaristLogo} alt="Earist Logo" style={{ marginLeft: "-10px", width: "140px", height: "140px", }} />
+                        </td>
+
+                        {/* Center Column - School Information */}
+                        <td style={{ width: "60%", textAlign: "center", lineHeight: "1", }}>
+                            <div>Republic of the Philippines</div>
+                            <b style={{ letterSpacing: '1px', fontSize: "20px" }}>Eulogio "Amang" Rodriguez</b>
+                            <div style={{ letterSpacing: '1px', fontSize: "20px" }}><b>Institute of Science and Technology</b></div>
+
+                            {campusAddress && (
+                                <div style={{ fontSize: "16px", letterSpacing: "1px", fontFamily: "Arial" }}>
+                                    {campusAddress}
+                                </div>
+                            )}
+
+                            {/* Add spacing here */}
+                            <div style={{ marginTop: "30px" }}>
+                                <b style={{ fontSize: "24px", letterSpacing: '1px', fontWeight: "bold" }}>
+                                    EXAMINATION PERMIT
+                                </b>
+                            </div>
+                        </td>
+
+                        <td
+                            colSpan={4}
+                            rowSpan={6}
+                            style={{
+                                textAlign: "center",
+                                position: "relative",
+                                width: "4.5cm",
+                                height: "4.5cm",
+                            }}
+                        >
                             <div
                                 style={{
-                                    width: "4.5cm",
-                                    height: "4.5cm",
-                                    border: "1px solid #ccc",
-                                    borderRadius: "4px",
-                                    overflow: "hidden",
+                                    width: "4.70cm",
+                                    height: "4.70cm",
+                                    marginRight: "10px",
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    margin: "0 auto",
+                                    position: "relative",
+                                     border: "2px solid black",
+                                    overflow: "hidden",
+                                    borderRadius: "4px",
                                 }}
                             >
                                 {person.profile_img ? (
                                     <img
                                         src={`http://localhost:5000/uploads/${person.profile_img}`}
                                         alt="Profile"
-                                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                        style={{
+                                            width: "100%",
+                                            height: "100%",
+                                            objectFit: "cover",
+                                          
+                                        }}
                                     />
                                 ) : (
                                     <span style={{ fontSize: "12px", color: "#888" }}>No Image</span>
                                 )}
                             </div>
                         </td>
+
                     </tr>
                 </tbody>
             </table>
@@ -287,13 +323,13 @@ const ExamPermit = ({ personId }) => {
                 >
                     <tbody>
                         {/* Applicant Number */}
-                        <tr>
+                        <tr style={{ fontFamily: "Times New Roman", fontSize: "15px" }}>
                             <td colSpan={40}>
                                 <div
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
-                                        justifyContent: "flex-start",
+                                        justifyContent: "flex-end",
                                         width: "100%",
                                         gap: "10px",
                                     }}
@@ -305,7 +341,9 @@ const ExamPermit = ({ personId }) => {
                                         style={{
                                             borderBottom: "1px solid black",
                                             fontFamily: "Arial",
-                                            minWidth: "220px",
+                                            fontWeight: "normal",
+                                            fontSize: "15px",
+                                            minWidth: "278px",
                                             height: "1.2em",
                                             display: "flex",
                                             alignItems: "center",
@@ -315,6 +353,8 @@ const ExamPermit = ({ personId }) => {
                                     </div>
                                 </div>
                             </td>
+
+
                         </tr>
 
                         {/* Name + Permit No. */}
@@ -470,8 +510,8 @@ const ExamPermit = ({ personId }) => {
                                         width: "100%",
                                     }}
                                 >
-                                    <div style={{ display: "flex", alignItems: "center", marginTop: "-135px" }}>
-                                        <label style={{ fontWeight: "bold", marginRight: "10px" }}>
+                                    <div style={{ display: "flex", alignItems: "center", marginTop: "-145px" }}>
+                                        <label style={{ fontWeight: "bold", marginRight: "10px", width: "80px" }}>
                                             Room No.:
                                         </label>
                                         <span
@@ -580,13 +620,6 @@ const ExamPermit = ({ personId }) => {
 
                         </tr>
 
-                        <tr>
-                            <td colSpan={40}>
-                                <div style={{ marginTop: "-50px", textAlign: "center" }}>
-                                    <b style={{ fontSize: "24px", fontFamily: "Arial" }}>ENTRANCE EXAMINATION SCORES</b>
-                                </div>
-                            </td>
-                        </tr>
 
 
 

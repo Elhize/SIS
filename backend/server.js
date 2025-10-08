@@ -447,6 +447,7 @@ app.get("/api/applicant_number/:person_id", async (req, res) => {
   }
 });
 
+// 11:19AM 10-08-2025 --------------- APPLICANT SIDE ----------- THIS PART SHOULD BE NOT HARR CODED -------------- //
 
 // 📌 Converts full requirement description to short label
 const getShortLabel = (desc) => {
@@ -523,6 +524,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     res.status(500).json({ message: "Upload failed", error: err.message });
   }
 });
+
+// 11:19AM 10-08-2025 --------------- APPLICANT SIDE ----------- THIS PART SHOULD BE NOT HARR CODED -------------- //
 
 
 // REQUIREMENTS PANEL (UPDATED!) ADMIN
@@ -614,6 +617,9 @@ async function getActorInfo(user_person_id) {
   return { actorEmail, actorName };
 }
 
+// 11:19AM 10-08-2025 --------------- ADMIN SIDE ----------- THIS PART SHOULD BE NOT HARR CODED -------------- //
+
+
 app.post("/api/upload", upload.single("file"), async (req, res) => {
   const { requirements_id, person_id, remarks } = req.body;
 
@@ -694,6 +700,8 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     res.status(500).json({ error: "Failed to save upload", details: err.message });
   }
 });
+
+
 // ✅ ADMIN DELETE
 app.delete("/admin/uploads/:uploadId", async (req, res) => {
   const { uploadId } = req.params;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 07, 2025 at 09:03 AM
+-- Generation Time: Oct 08, 2025 at 05:37 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -518,7 +518,8 @@ INSERT INTO `applicant_numbering_table` (`applicant_number`, `person_id`, `qr_co
 ('2025100218', 327, '2025100218_qrcode.png'),
 ('2025100219', 328, '2025100219_qrcode.png'),
 ('2025100220', 329, '2025100220_qrcode.png'),
-('2025100221', 330, '2025100221_qrcode.png');
+('2025100221', 330, '2025100221_qrcode.png'),
+('2025100222', 331, '2025100222_qrcode.png');
 
 -- --------------------------------------------------------
 
@@ -839,7 +840,7 @@ CREATE TABLE `interview_applicants` (
 --
 
 INSERT INTO `interview_applicants` (`id`, `schedule_id`, `applicant_id`, `email_sent`, `status`, `action`, `created_at`) VALUES
-(1, NULL, '2025100001', 0, 'Accepted', 1, '2025-09-17 05:47:54'),
+(1, NULL, '2025100001', 0, 'Waiting List', 0, '2025-09-17 05:47:54'),
 (2, NULL, '2025100002', 0, 'Waiting List', 0, '2025-09-17 05:47:54'),
 (3, NULL, '2025100003', 0, 'Waiting List', 0, '2025-09-17 05:47:54'),
 (4, NULL, '2025100004', 0, 'Waiting List', 0, '2025-09-17 05:47:54'),
@@ -1055,7 +1056,8 @@ INSERT INTO `interview_applicants` (`id`, `schedule_id`, `applicant_id`, `email_
 (214, NULL, '2025100218', 0, 'Waiting List', 0, '2025-10-02 08:46:01'),
 (215, NULL, '2025100219', 0, 'Waiting List', 0, '2025-10-02 08:58:33'),
 (216, NULL, '2025100220', 0, 'Waiting List', 0, '2025-10-03 07:43:00'),
-(217, NULL, '2025100221', 0, 'Waiting List', 0, '2025-10-07 06:53:10');
+(217, NULL, '2025100221', 0, 'Waiting List', 0, '2025-10-07 06:53:10'),
+(218, NULL, '2025100222', 0, 'Waiting List', 0, '2025-10-07 07:31:55');
 
 -- --------------------------------------------------------
 
@@ -1643,7 +1645,13 @@ INSERT INTO `notifications` (`id`, `type`, `message`, `applicant_number`, `actor
 (568, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:37'),
 (569, 'update', '✏️ Updated document status (Applicant #2025100221 - Pedro, Penduco J.)', '2025100221', NULL, NULL, '2025-10-07 14:57:37'),
 (570, 'email', '📧 Exam schedule email sent for Applicant #2025100221 (Schedule #23)', '2025100221', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:58:41'),
-(571, 'email', '📧 Exam schedule email sent for Applicant #2025100201 (Schedule #23)', '2025100201', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:58:41');
+(571, 'email', '📧 Exam schedule email sent for Applicant #2025100201 (Schedule #23)', '2025100201', 'markmontano522@gmail.com', 'REGISTRAR', '2025-10-07 14:58:41'),
+(572, 'update', '✏️ Updated document status (Applicant #2025100001 - Montaño, Mark Anthony P.)', '2025100001', NULL, NULL, '2025-10-07 15:59:22'),
+(573, 'update', '✏️ Updated document status (Applicant #2025100204 - San Jose, Dhani J.)', '2025100204', NULL, NULL, '2025-10-07 17:00:38'),
+(574, 'update', '✏️ Updated document status (Applicant #2025100204 - San Jose, Dhani J.)', '2025100204', NULL, NULL, '2025-10-07 17:00:40'),
+(575, 'update', '✏️ Updated document status (Applicant #2025100204 - San Jose, Dhani J.)', '2025100204', NULL, NULL, '2025-10-07 17:00:42'),
+(576, 'update', '✏️ Updated document status (Applicant #2025100204 - San Jose, Dhani J.)', '2025100204', NULL, NULL, '2025-10-07 17:00:44'),
+(577, 'update', '✏️ Updated document status (Applicant #2025100204 - San Jose, Dhani J.)', '2025100204', NULL, NULL, '2025-10-07 17:00:46');
 
 -- --------------------------------------------------------
 
@@ -1890,7 +1898,8 @@ INSERT INTO `person_status_table` (`id`, `person_id`, `applicant_id`, `exam_stat
 (1619, 327, 2025100218, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
 (1620, 328, 2025100219, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
 (1621, 329, 2025100220, NULL, 0, 0, 0, 0, 0, 0, 0, 0),
-(1622, 330, 2025100221, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+(1622, 330, 2025100221, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+(1623, 331, 2025100222, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -2278,7 +2287,8 @@ INSERT INTO `person_table` (`person_id`, `profile_img`, `campus`, `academicProgr
 (327, '2025100218_1by1_2025.png', 0, 'Undergraduate', 'Freshman (First Year)', 'Senior High School Graduate', '15', '14', '16', 'First Year', 'Montaño123', 'Mark Anthony12', 'Placido12', '', 'Mark', '131', '12', '12345678', 0, 0, 0, '', '', '2025-10-02', 25, 'gvdsg', 'fsdf', 'BERMUDAN', 'Christian', 'Single', 'Balangao', '4567890', 'adasdsda@gmail.com', 'fsdfgdrfhfgjfg', 'Lambonao', 'khjldsafas', 'Region X (Northern Mindanao)', 'Bukidnon', 'Malitbog', 'sadasda', 0, 'fsdfgdrfhfgjfg', 'Lambonao', 'khjldsafas', 'Region X (Northern Mindanao)', 'Bukidnon', 'Malitbog', 'sadasda', 1, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Mother', 'dsgsd', 'cxc', 'cxvxcvx', '', 'xcvxcv', 'xcvx', 'xcvxcvx', 'xcvxc', '135,000 to 250,000', 'High School/Junior High School', 'xcvxcv', 'xcvx', 'xcvxc', 'xcvx', 90.00, 2029, 'High School/Junior High School', 'hfkmghjdfg', 'asfasf', 'dasfsafas', '123', 78.00, 2025, 'Science, Technology, Engineering, and Mathematics (STEM)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-02', 1),
 (328, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1),
 (329, '2025100220_1by1_2025.png', 1, 'Techvoc', 'Freshman (First Year)', 'ALS Passer', '16', '12', '17', 'First Year', 'Tamad', 'Juan', 'J', '', 'GNASJGN', '5\'11', '60', '12345678', 0, 0, 0, '', '', '2003-06-26', 51, 'gvdsg', 'fsdf', 'BOLIVIAN', 'Christian', 'Single', 'Bagobo', '4567890', 'markmontano0626@gmail.com', 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 'fsdfgdrfhfgjfg', 'Dalid', 'khjldsafas', 'Region VIII (Eastern Visayas)', 'Eastern Samar', 'Oras', 'fsaffs', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Cousin', 'Parker', 'gsdgsd', 'gdfjghkiju', '', 'fsdgsdgsd', '789 Recto Av', 'safasf', 'hrfthsdgas', '80,000 and below', 'Senior High School', 'gfdhfg', 'gsdgsdg', 'fasf', 'fsaf', 100.00, 90, 'Senior High School', 'fasf', 'fasf', 'fsaf', '90', 100.00, 2000, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-03', 1),
-(330, '2025100221_1by1_2025.png', 0, 'Undergraduate', 'Freshman (First Year)', 'ALS Passer', '3', '7', '8', 'First Year', 'Pedro', 'Penduco', 'Juan', '', 'fsa', '154', '40', '21353112', 0, 0, 0, '', '', '2003-10-07', 25, 'Manila', 'Tagalog', 'BRUNEI', 'Aglipay', 'Single', 'Bangon', '5125215125', 'markmontano0626@gmail.com', 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Brother/Sister', 'fsfas', 'fsaf', 'fasf', '', 'dfhdf', 'fasfasfa', '215264', 'markmontano522@gmail.com', '80,000 to 135,000', 'Senior High School', 'asgsag', 'sagasg', 'gsg', 'sgasg', 90.00, 2000, 'Senior High School', 'sgasg', 'sagsa', 'gasg', 'sagd', 85.00, 2008, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-07', 1);
+(330, '2025100221_1by1_2025.png', 1, 'Undergraduate', 'Freshman (First Year)', 'ALS Passer', '3', '7', '8', 'First Year', 'Pedro', 'Penduco', 'Juan', '', 'fsa', '154', '40', '21353112', 0, 0, 0, '', '', '2003-10-07', 25, 'Manila', 'Tagalog', 'BRUNEI', 'Aglipay', 'Single', 'Bangon', '5125215125', 'markmontano0626@gmail.com', 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 'FASGASG', 'Malayo Sur', '1115', 'Region VII (Central Visayas)', 'Bohol', 'Cortes', 'RASRAS', 0, 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '', '', 0, '', '', '', '', '', '', '', '', '', '', 'Brother/Sister', 'fsfas', 'fsaf', 'fasf', '', 'dfhdf', 'fasfasfa', '215264', 'markmontano522@gmail.com', '80,000 to 135,000', 'Senior High School', 'asgsag', 'sagasg', 'gsg', 'sgasg', 90.00, 2000, 'Senior High School', 'sgasg', 'sagsa', 'gasg', 'sagd', 85.00, 2008, 'Information and Communications Technology (ICT)', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', '', 0, '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', 1, '2025-10-07', 1),
+(331, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -2300,7 +2310,8 @@ INSERT INTO `requirements_table` (`id`, `description`) VALUES
 (2, 'Form 138 (4th Quarter / No failing Grades)'),
 (3, 'Certificate of Good Moral Character\n'),
 (4, 'Certificate belonging to Graduating Class'),
-(5, 'Copy of Vaccine Card (1st and 2nd Dose)');
+(5, 'Copy of Vaccine Card (1st and 2nd Dose)'),
+(8, 'THESIS PURPOSES');
 
 -- --------------------------------------------------------
 
@@ -2320,6 +2331,7 @@ CREATE TABLE `requirement_uploads` (
   `document_status` varchar(255) DEFAULT NULL,
   `missing_documents` varchar(255) DEFAULT NULL,
   `registrar_status` int(11) DEFAULT NULL,
+  `submitted_medical` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `last_updated_by` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -2328,85 +2340,85 @@ CREATE TABLE `requirement_uploads` (
 -- Dumping data for table `requirement_uploads`
 --
 
-INSERT INTO `requirement_uploads` (`upload_id`, `requirements_id`, `person_id`, `submitted_documents`, `file_path`, `original_name`, `remarks`, `status`, `document_status`, `missing_documents`, `registrar_status`, `created_at`, `last_updated_by`) VALUES
-(105, 1, 305, NULL, '2025100008_BirthCertificate_2025.pdf', 'Certifate_of_registration (1).pdf', NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:05', NULL),
-(106, 2, 305, NULL, '2025100008_Form138_2025.pdf', 'Certifate_of_registration.pdf', NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:03', NULL),
-(107, 4, 305, NULL, '2025100008_CertificateOfGraduatingClass_2025.png', 'MONTANO.png', NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:02', NULL),
-(108, 3, 305, NULL, '2025100008_GoodMoralCharacter_2025.png', 'Untitled design.png', NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:00', NULL),
-(109, 5, 305, NULL, '2025100008_VaccineCard_2025.pdf', 'Certifate_of_registration (1).pdf', NULL, NULL, NULL, NULL, NULL, '2025-08-21 04:47:50', NULL),
-(110, 2, 204, NULL, '2025100005_Form138_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', 'Submit good moral year 2022', 1, 'Program Closed', NULL, NULL, '2025-08-17 04:54:24', NULL),
-(113, 4, 204, NULL, '2025100005_CertificateOfGraduatingClass_2025.pdf', 'Certifate_of_registration.pdf', 'Conflict of Lastname with birth certificate', 2, 'Program Closed', NULL, NULL, '2025-08-17 04:55:36', NULL),
-(114, 3, 204, NULL, '2025100005_GoodMoralCharacter_2025.pdf', 'Certifate_of_registration (1).pdf', 'Attachments were blurry', 2, NULL, NULL, NULL, '2025-08-17 04:55:38', NULL),
-(115, 5, 204, 0, '2025100005_VaccineCard_2025.png', 'Untitled design.png', NULL, 0, 'Program Closed', NULL, 0, '2025-08-18 15:09:57', NULL),
-(116, 1, 3, NULL, '2025100003_BirthCertificate_2025.pdf', 'Certifate_of_registration.pdf', 'Attachments were blurry', NULL, 'Documents Verified & ECAT', NULL, 1, '2025-08-17 04:31:23', NULL),
-(118, 3, 3, NULL, '2025100003_GoodMoralCharacter_2025.pdf', 'Mark.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, '2025-08-17 04:31:23', NULL),
-(119, 4, 3, 1, '2025100003_CertificateOfGraduatingClass_2025.pdf', 'MONTAÃ?O, MARK ANTHONY.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, '2025-08-23 15:11:56', NULL),
-(120, 1, 2, NULL, '2025100002_BirthCertificate_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', NULL, NULL, NULL, NULL, NULL, '2025-09-12 01:25:08', '61'),
-(121, 1, 2, 1, '2025100002_BirthCertificate_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', 'Good Moral is outdated must be 2022', 0, 'On process', NULL, 1, '2025-09-12 01:25:08', '61'),
-(134, 1, 306, NULL, '2025100061_BirthCertificate_2025.png', '2.png', NULL, 1, NULL, NULL, NULL, '2025-09-06 19:29:09', '61'),
-(135, 2, 306, NULL, '2025100061_Form138_2025.png', '3.png', NULL, 2, NULL, NULL, NULL, '2025-09-06 19:29:10', '61'),
-(136, 3, 306, NULL, '2025100061_GoodMoralCharacter_2025.png', '4.png', NULL, 1, NULL, NULL, NULL, '2025-09-06 19:29:11', '61'),
-(137, 4, 306, NULL, '2025100061_CertificateOfGraduatingClass_2025.png', '5.png', NULL, 2, NULL, NULL, NULL, '2025-09-06 19:29:12', '61'),
-(138, 5, 306, 1, '2025100061_VaccineCard_2025.png', '4.png', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, '2025-09-06 19:29:05', '61'),
-(140, 1, 307, NULL, '2025100201_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-12 14:39:46', NULL),
-(141, 2, 307, NULL, '2025100201_Form138_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', NULL, 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-12 14:39:46', NULL),
-(142, 3, 307, NULL, '2025100201_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', NULL, 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-12 14:39:46', NULL),
-(143, 4, 307, NULL, '2025100201_CertificateOfGraduatingClass_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-12 14:39:46', NULL),
-(144, 5, 307, 0, '2025100201_VaccineCard_2025.pdf', 'Certifate_of_registration.pdf', NULL, NULL, 'Documents Verified & ECAT', '[]', 1, '2025-09-12 14:39:46', NULL),
-(146, 2, 309, 1, '2025100203_Form138_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-14 19:39:33', '61'),
-(147, 4, 309, 1, '2025100203_CertificateOfGraduatingClass_2025.jpg', 'resize-17567036981757482186PurpleandWhiteBoxesWorkSchedulePlanner.jpg', 'Birth Certificate with Sarical Surname', 2, 'Documents Verified & ECAT', '[]', 1, '2025-09-14 19:39:38', '61'),
-(149, 3, 309, 1, '2025100203_GoodMoralCharacter_2025.pdf', 'Certifate_of_registration (2).pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-14 19:39:53', '61'),
-(150, 1, 310, 1, '2025100204_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', '1', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-15 01:37:52', '61'),
-(151, 2, 310, 1, '2025100204_Form138_2025.jpg', 'my formal pic.jpg', '1', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-15 01:37:55', '61'),
-(152, 3, 310, 1, '2025100204_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', '1', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-15 01:37:58', '61'),
-(153, 4, 310, 1, '2025100204_CertificateOfGraduatingClass_2025.jpeg', '1234.jpeg', '1', 1, 'Documents Verified & ECAT', '[]', 1, '2025-09-15 01:38:01', '61'),
-(154, 5, 310, 1, '2025100204_VaccineCard_2025.pdf', 'Certifate_of_registration (2).pdf', '1', 1, NULL, '[]', 1, '2025-09-15 01:38:05', '61'),
-(156, 2, 61, NULL, '2025100061_Form138_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:16:34', '61'),
-(157, 3, 61, NULL, '2025100061_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:26:34', '61'),
-(158, 4, 61, NULL, '2025100061_CertificateOfGraduatingClass_2025.pdf', 'MONTAÃ?O.pdf', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:26:48', '61'),
-(159, 1, 61, NULL, '2025100061_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 0, NULL, NULL, NULL, '2025-09-16 01:27:56', '61'),
-(160, 1, 309, NULL, '2025100203_BirthCertificate_2025.jpg', 'resize-17567036981757482186PurpleandWhiteBoxesWorkSchedulePlanner.jpg', 'Have failing Grades', 0, 'Documents Verified & ECAT', NULL, NULL, '2025-09-16 01:29:50', '61'),
-(161, 5, 61, NULL, '2025100061_VaccineCard_2025.jpg', 'my formal pic.jpg', NULL, 0, 'On process', NULL, NULL, '2025-09-16 01:31:17', '61'),
-(168, 1, 312, NULL, '2025100205_BirthCertificate_2025.jpg', 'my formal pic.jpg', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', '[]', NULL, '2025-09-16 12:08:59', '1'),
-(169, 2, 312, NULL, '2025100205_Form138_2025.pdf', 'Certifate_of_registration (2).pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', NULL, '2025-09-16 12:09:03', '1'),
-(170, 3, 312, NULL, '2025100205_GoodMoralCharacter_2025.pdf', 'Mark.pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', NULL, '2025-09-16 12:09:06', '1'),
-(171, 4, 312, NULL, '2025100205_CertificateOfGraduatingClass_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', 'Documents did not match with the Requirement', 1, 'Documents Verified & ECAT', '[]', NULL, '2025-09-16 12:09:16', '1'),
-(172, 5, 312, NULL, '2025100205_VaccineCard_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', '0', 1, NULL, '[]', NULL, '2025-09-16 12:09:20', '61'),
-(173, 1, 313, 0, '2025100206_BirthCertificate_2025.png', 'dhani PDS ID.png', '0', 1, NULL, NULL, 0, '2025-09-16 15:20:25', '61'),
-(174, 2, 313, 0, '2025100206_Form138_2025.jpg', 'DHANI I. SAN JOSE (1)_page-0001.jpg', '0', 1, NULL, NULL, 0, '2025-09-16 15:20:30', '61'),
-(175, 3, 313, 0, '2025100206_GoodMoralCharacter_2025.png', '1752055171951_3dy7qp_b0ba1e6dfe7a4703a2d1401b97f1390a_1_1752055169_9995_watermarked.png', '0', 1, NULL, NULL, 0, '2025-09-16 15:20:33', '61'),
-(176, 4, 313, 0, '2025100206_CertificateOfGraduatingClass_2025.jpg', 'maxresdefault.jpg', '0', 1, NULL, NULL, 0, '2025-09-16 15:20:38', '61'),
-(177, 5, 313, 0, '2025100206_VaccineCard_2025.png', 'hero.png', '0', NULL, NULL, NULL, 0, '2025-09-16 15:20:42', NULL),
-(178, 1, 319, NULL, '2025100212_BirthCertificate_2025.png', 'ProgramList.png', NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:34', NULL),
-(179, 2, 319, NULL, '2025100212_Form138_2025.pdf', 'IAAS2_Midterm Activity No 2.pdf', NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:37', NULL),
-(180, 3, 319, NULL, '2025100212_GoodMoralCharacter_2025.jpg', '1 (2).jpg', NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:45', NULL),
-(181, 4, 319, NULL, '2025100212_CertificateOfGraduatingClass_2025.png', '124.png', NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:50', NULL),
-(182, 5, 319, NULL, '2025100212_VaccineCard_2025.png', '127.png', NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:54', NULL),
-(183, 1, 323, NULL, '2025100214_BirthCertificate_2025.pdf', 'personaldataformprint.pdf', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-01 16:05:17', '61'),
-(184, 2, 323, NULL, '2025100214_Form138_2025.pdf', 'examinationpermit.pdf', 'GWA did not meet the Requirements', 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-01 16:05:20', '61'),
-(185, 3, 323, NULL, '2025100214_GoodMoralCharacter_2025.pdf', 'officeoftheregistrar.pdf', 'FORM 138 IS NOT COMPLETE', 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-01 16:05:23', '61'),
-(186, 4, 323, NULL, '2025100214_CertificateOfGraduatingClass_2025.pdf', 'IAAS2_Midterm Activity No 2.pdf', 'Have failed and incomplete grades', 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-01 16:05:28', '61'),
-(187, 5, 323, NULL, '2025100214_VaccineCard_2025.pdf', 'examinationpermit.pdf', NULL, 1, 'Disapproved', NULL, NULL, '2025-10-01 16:05:32', '61'),
-(193, 1, 327, NULL, '2025100218_BirthCertificate_2025.pdf', 'admissionservices.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:46:49', NULL),
-(194, 2, 327, NULL, '2025100218_Form138_2025.pdf', 'officeoftheregistrar.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:46:54', NULL),
-(195, 3, 327, NULL, '2025100218_GoodMoralCharacter_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:47:00', NULL),
-(196, 4, 327, NULL, '2025100218_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, '2025-10-02 16:47:04', NULL),
-(197, 5, 327, NULL, '2025100218_VaccineCard_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, NULL, NULL, NULL, NULL, '2025-10-02 16:47:12', NULL),
-(215, 1, 1, NULL, '2025100001_BirthCertificate_2025.png', 'ProgramList.png', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'On process', NULL, NULL, '2025-10-03 14:45:50', '61'),
-(238, 1, 329, NULL, '2025100220_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:03:54', '61'),
-(239, 2, 329, NULL, '2025100220_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:08', '61'),
-(240, 3, 329, NULL, '2025100220_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:22', '61'),
-(241, 4, 329, NULL, '2025100220_CertificateOfGraduatingClass_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-03 23:04:25', '61'),
-(242, 5, 329, NULL, '2025100220_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, '2025-10-03 23:04:27', NULL),
-(243, 2, 1, NULL, '2025100001_Form138_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:00', '61'),
-(244, 3, 1, NULL, '2025100001_GoodMoralCharacter_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:03', '61'),
-(245, 4, 1, NULL, '2025100001_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, 1, 'On process', NULL, NULL, '2025-10-04 13:51:06', '61'),
-(246, 5, 1, NULL, '2025100001_VaccineCard_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, '2025-10-04 13:51:09', '61'),
-(247, 1, 330, NULL, '2025100221_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:32', '61'),
-(248, 2, 330, NULL, '2025100221_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:36', '61'),
-(249, 3, 330, NULL, '2025100221_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:39', '61'),
-(250, 4, 330, NULL, '2025100221_CertificateOfGraduatingClass_2025.pdf', 'admissionformprocess.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, '2025-10-07 14:56:44', '61'),
-(251, 5, 330, NULL, '2025100221_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, '2025-10-07 14:56:47', NULL);
+INSERT INTO `requirement_uploads` (`upload_id`, `requirements_id`, `person_id`, `submitted_documents`, `file_path`, `original_name`, `remarks`, `status`, `document_status`, `missing_documents`, `registrar_status`, `submitted_medical`, `created_at`, `last_updated_by`) VALUES
+(105, 1, 305, NULL, '2025100008_BirthCertificate_2025.pdf', 'Certifate_of_registration (1).pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:05', NULL),
+(106, 2, 305, NULL, '2025100008_Form138_2025.pdf', 'Certifate_of_registration.pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:03', NULL),
+(107, 4, 305, NULL, '2025100008_CertificateOfGraduatingClass_2025.png', 'MONTANO.png', NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:02', NULL),
+(108, 3, 305, NULL, '2025100008_GoodMoralCharacter_2025.png', 'Untitled design.png', NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-17 04:24:00', NULL),
+(109, 5, 305, NULL, '2025100008_VaccineCard_2025.pdf', 'Certifate_of_registration (1).pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-08-21 04:47:50', NULL),
+(110, 2, 204, NULL, '2025100005_Form138_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', 'Submit good moral year 2022', 1, 'Program Closed', NULL, NULL, NULL, '2025-08-17 04:54:24', NULL),
+(113, 4, 204, NULL, '2025100005_CertificateOfGraduatingClass_2025.pdf', 'Certifate_of_registration.pdf', 'Conflict of Lastname with birth certificate', 2, 'Program Closed', NULL, NULL, NULL, '2025-08-17 04:55:36', NULL),
+(114, 3, 204, NULL, '2025100005_GoodMoralCharacter_2025.pdf', 'Certifate_of_registration (1).pdf', 'Attachments were blurry', 2, NULL, NULL, NULL, NULL, '2025-08-17 04:55:38', NULL),
+(115, 5, 204, 0, '2025100005_VaccineCard_2025.png', 'Untitled design.png', NULL, 0, 'Program Closed', NULL, 0, NULL, '2025-08-18 15:09:57', NULL),
+(116, 1, 3, NULL, '2025100003_BirthCertificate_2025.pdf', 'Certifate_of_registration.pdf', 'Attachments were blurry', NULL, 'Documents Verified & ECAT', NULL, 1, NULL, '2025-08-17 04:31:23', NULL),
+(118, 3, 3, NULL, '2025100003_GoodMoralCharacter_2025.pdf', 'Mark.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, NULL, '2025-08-17 04:31:23', NULL),
+(119, 4, 3, 1, '2025100003_CertificateOfGraduatingClass_2025.pdf', 'MONTAÃ?O, MARK ANTHONY.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, NULL, '2025-08-23 15:11:56', NULL),
+(120, 1, 2, NULL, '2025100002_BirthCertificate_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-12 01:25:08', '61'),
+(121, 1, 2, 1, '2025100002_BirthCertificate_2025.pdf', 'National_Skill_Registration_Program_Jobseeker_Registration_Form.pdf', 'Good Moral is outdated must be 2022', 0, 'On process', NULL, 1, NULL, '2025-09-12 01:25:08', '61'),
+(134, 1, 306, NULL, '2025100061_BirthCertificate_2025.png', '2.png', NULL, 1, NULL, NULL, NULL, NULL, '2025-09-06 19:29:09', '61'),
+(135, 2, 306, NULL, '2025100061_Form138_2025.png', '3.png', NULL, 2, NULL, NULL, NULL, NULL, '2025-09-06 19:29:10', '61'),
+(136, 3, 306, NULL, '2025100061_GoodMoralCharacter_2025.png', '4.png', NULL, 1, NULL, NULL, NULL, NULL, '2025-09-06 19:29:11', '61'),
+(137, 4, 306, NULL, '2025100061_CertificateOfGraduatingClass_2025.png', '5.png', NULL, 2, NULL, NULL, NULL, NULL, '2025-09-06 19:29:12', '61'),
+(138, 5, 306, 1, '2025100061_VaccineCard_2025.png', '4.png', NULL, NULL, 'Documents Verified & ECAT', NULL, 1, NULL, '2025-09-06 19:29:05', '61'),
+(140, 1, 307, NULL, '2025100201_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-12 14:39:46', NULL),
+(141, 2, 307, NULL, '2025100201_Form138_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', NULL, 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-12 14:39:46', NULL),
+(142, 3, 307, NULL, '2025100201_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', NULL, 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-12 14:39:46', NULL),
+(143, 4, 307, NULL, '2025100201_CertificateOfGraduatingClass_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-12 14:39:46', NULL),
+(144, 5, 307, 0, '2025100201_VaccineCard_2025.pdf', 'Certifate_of_registration.pdf', NULL, NULL, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-12 14:39:46', NULL),
+(146, 2, 309, 1, '2025100203_Form138_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-14 19:39:33', '61'),
+(147, 4, 309, 1, '2025100203_CertificateOfGraduatingClass_2025.jpg', 'resize-17567036981757482186PurpleandWhiteBoxesWorkSchedulePlanner.jpg', 'Birth Certificate with Sarical Surname', 2, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-14 19:39:38', '61'),
+(149, 3, 309, 1, '2025100203_GoodMoralCharacter_2025.pdf', 'Certifate_of_registration (2).pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', 1, NULL, '2025-09-14 19:39:53', '61'),
+(150, 1, 310, 1, '2025100204_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', 'Attachments were blurry', 1, NULL, '[]', 1, NULL, '2025-09-15 01:37:52', '61'),
+(151, 2, 310, 1, '2025100204_Form138_2025.jpg', 'my formal pic.jpg', 'Have failed and incomplete grades', 1, NULL, '[]', 1, NULL, '2025-09-15 01:37:55', '61'),
+(152, 3, 310, 1, '2025100204_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', 'Card No Name/Details of the Applicant', 1, NULL, '[]', 1, NULL, '2025-09-15 01:37:58', '61'),
+(153, 4, 310, 1, '2025100204_CertificateOfGraduatingClass_2025.jpeg', '1234.jpeg', 'FORM 138 IS NOT COMPLETE', 1, NULL, '[]', 1, NULL, '2025-09-15 01:38:01', '61'),
+(154, 5, 310, 1, '2025100204_VaccineCard_2025.pdf', 'Certifate_of_registration (2).pdf', '1', 1, NULL, '[]', 1, NULL, '2025-09-15 01:38:05', '61'),
+(156, 2, 61, NULL, '2025100061_Form138_2025.pdf', 'Certifate_of_registration (2).pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-09-16 01:16:34', '61'),
+(157, 3, 61, NULL, '2025100061_GoodMoralCharacter_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-09-16 01:26:34', '61'),
+(158, 4, 61, NULL, '2025100061_CertificateOfGraduatingClass_2025.pdf', 'MONTAÃ?O.pdf', NULL, 2, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-09-16 01:26:48', '61'),
+(159, 1, 61, NULL, '2025100061_BirthCertificate_2025.pdf', 'Certifate_of_registration (2).pdf', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 0, NULL, NULL, NULL, NULL, '2025-09-16 01:27:56', '61'),
+(160, 1, 309, NULL, '2025100203_BirthCertificate_2025.jpg', 'resize-17567036981757482186PurpleandWhiteBoxesWorkSchedulePlanner.jpg', 'Have failing Grades', 0, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-09-16 01:29:50', '61'),
+(161, 5, 61, NULL, '2025100061_VaccineCard_2025.jpg', 'my formal pic.jpg', NULL, 0, 'On process', NULL, NULL, NULL, '2025-09-16 01:31:17', '61'),
+(168, 1, 312, NULL, '2025100205_BirthCertificate_2025.jpg', 'my formal pic.jpg', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', '[]', NULL, NULL, '2025-09-16 12:08:59', '1'),
+(169, 2, 312, NULL, '2025100205_Form138_2025.pdf', 'Certifate_of_registration (2).pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', NULL, NULL, '2025-09-16 12:09:03', '1'),
+(170, 3, 312, NULL, '2025100205_GoodMoralCharacter_2025.pdf', 'Mark.pdf', 'Birth Certificate with Sarical Surname', 1, 'Documents Verified & ECAT', '[]', NULL, NULL, '2025-09-16 12:09:06', '1'),
+(171, 4, 312, NULL, '2025100205_CertificateOfGraduatingClass_2025.jpg', 'Purple and White Boxes Work Schedule Planner (1).jpg', 'Documents did not match with the Requirement', 1, 'Documents Verified & ECAT', '[]', NULL, NULL, '2025-09-16 12:09:16', '1'),
+(172, 5, 312, NULL, '2025100205_VaccineCard_2025.jpg', 'Purple and White Boxes Work Schedule Planner.jpg', '0', 1, NULL, '[]', NULL, NULL, '2025-09-16 12:09:20', '61'),
+(173, 1, 313, 0, '2025100206_BirthCertificate_2025.png', 'dhani PDS ID.png', '0', 1, NULL, NULL, 0, NULL, '2025-09-16 15:20:25', '61'),
+(174, 2, 313, 0, '2025100206_Form138_2025.jpg', 'DHANI I. SAN JOSE (1)_page-0001.jpg', '0', 1, NULL, NULL, 0, NULL, '2025-09-16 15:20:30', '61'),
+(175, 3, 313, 0, '2025100206_GoodMoralCharacter_2025.png', '1752055171951_3dy7qp_b0ba1e6dfe7a4703a2d1401b97f1390a_1_1752055169_9995_watermarked.png', '0', 1, NULL, NULL, 0, NULL, '2025-09-16 15:20:33', '61'),
+(176, 4, 313, 0, '2025100206_CertificateOfGraduatingClass_2025.jpg', 'maxresdefault.jpg', '0', 1, NULL, NULL, 0, NULL, '2025-09-16 15:20:38', '61'),
+(177, 5, 313, 0, '2025100206_VaccineCard_2025.png', 'hero.png', '0', NULL, NULL, NULL, 0, NULL, '2025-09-16 15:20:42', NULL),
+(178, 1, 319, NULL, '2025100212_BirthCertificate_2025.png', 'ProgramList.png', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:34', NULL),
+(179, 2, 319, NULL, '2025100212_Form138_2025.pdf', 'IAAS2_Midterm Activity No 2.pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:37', NULL),
+(180, 3, 319, NULL, '2025100212_GoodMoralCharacter_2025.jpg', '1 (2).jpg', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:45', NULL),
+(181, 4, 319, NULL, '2025100212_CertificateOfGraduatingClass_2025.png', '124.png', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:50', NULL),
+(182, 5, 319, NULL, '2025100212_VaccineCard_2025.png', '127.png', NULL, NULL, NULL, NULL, NULL, NULL, '2025-09-26 02:47:54', NULL),
+(183, 1, 323, NULL, '2025100214_BirthCertificate_2025.pdf', 'personaldataformprint.pdf', '75% OF ATTENDANCE IS NEEDED FOR TRANSFEREE', 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-01 16:05:17', '61'),
+(184, 2, 323, NULL, '2025100214_Form138_2025.pdf', 'examinationpermit.pdf', 'GWA did not meet the Requirements', 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-01 16:05:20', '61'),
+(185, 3, 323, NULL, '2025100214_GoodMoralCharacter_2025.pdf', 'officeoftheregistrar.pdf', 'FORM 138 IS NOT COMPLETE', 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-01 16:05:23', '61'),
+(186, 4, 323, NULL, '2025100214_CertificateOfGraduatingClass_2025.pdf', 'IAAS2_Midterm Activity No 2.pdf', 'Have failed and incomplete grades', 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-01 16:05:28', '61'),
+(187, 5, 323, NULL, '2025100214_VaccineCard_2025.pdf', 'examinationpermit.pdf', NULL, 1, 'Disapproved', NULL, NULL, NULL, '2025-10-01 16:05:32', '61'),
+(193, 1, 327, NULL, '2025100218_BirthCertificate_2025.pdf', 'admissionservices.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-02 16:46:49', NULL),
+(194, 2, 327, NULL, '2025100218_Form138_2025.pdf', 'officeoftheregistrar.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-02 16:46:54', NULL),
+(195, 3, 327, NULL, '2025100218_GoodMoralCharacter_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-02 16:47:00', NULL),
+(196, 4, 327, NULL, '2025100218_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, NULL, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-02 16:47:04', NULL),
+(197, 5, 327, NULL, '2025100218_VaccineCard_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-02 16:47:12', NULL),
+(215, 1, 1, NULL, '2025100001_BirthCertificate_2025.png', 'ProgramList.png', 'Attachments were blurry', 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-03 14:45:50', '61'),
+(238, 1, 329, NULL, '2025100220_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-03 23:03:54', '61'),
+(239, 2, 329, NULL, '2025100220_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-03 23:04:08', '61'),
+(240, 3, 329, NULL, '2025100220_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-03 23:04:22', '61'),
+(241, 4, 329, NULL, '2025100220_CertificateOfGraduatingClass_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-03 23:04:25', '61'),
+(242, 5, 329, NULL, '2025100220_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, NULL, '2025-10-03 23:04:27', NULL),
+(243, 2, 1, NULL, '2025100001_Form138_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-04 13:51:00', '61'),
+(244, 3, 1, NULL, '2025100001_GoodMoralCharacter_2025.pdf', 'INITITIAL-PROPOSAL-DOCUMENT.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-04 13:51:03', '61'),
+(245, 4, 1, NULL, '2025100001_CertificateOfGraduatingClass_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-04 13:51:06', '61'),
+(246, 5, 1, NULL, '2025100001_VaccineCard_2025.pdf', 'INITIAL-PRESENTATION-RUBRICS-SYSARCH2-4B.docx.pdf', NULL, 0, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-04 13:51:09', '61'),
+(247, 1, 330, NULL, '2025100221_BirthCertificate_2025.pdf', 'officeoftheregistrar.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-07 14:56:32', '61'),
+(248, 2, 330, NULL, '2025100221_Form138_2025.pdf', 'admissionservices.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-07 14:56:36', '61'),
+(249, 3, 330, NULL, '2025100221_GoodMoralCharacter_2025.pdf', 'exampermit.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-07 14:56:39', '61'),
+(250, 4, 330, NULL, '2025100221_CertificateOfGraduatingClass_2025.pdf', 'admissionformprocess.pdf', NULL, 1, 'Documents Verified & ECAT', NULL, NULL, NULL, '2025-10-07 14:56:44', '61'),
+(251, 5, 330, NULL, '2025100221_VaccineCard_2025.pdf', 'personaldataformprint.pdf', NULL, 0, NULL, NULL, NULL, NULL, '2025-10-07 14:56:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -2650,7 +2662,8 @@ INSERT INTO `user_accounts` (`user_id`, `person_id`, `email`, `password`, `role`
 (220, 327, 'clowy1@gmailcom', '$2b$10$hIDVWM9ql8Nr3FOZETS4xO4hZv2YFWxTmLhhr3kxFgV6dwynWL2BC', 'applicant', NULL),
 (221, 328, 'george@gmail.coom', '$2b$10$MH0EAO4jvvdCJzzEXTwM7ehc6giPY1py5wDOsXc359lH1vSJGZAty', 'applicant', NULL),
 (222, 329, 'barny@gmail.com', '$2b$10$KvRKLNTtmcCfY76VGvx.rOOORpmeJXVZ6oOujQAIRAVvGfllP.SK6', 'applicant', NULL),
-(223, 330, 'eunice@gmail.com', '$2b$10$fVw5.lrwgg1lk5MHhf1lLOEs6p38M6F/S0eXIOwHwvs0z4If9ccF6', 'applicant', NULL);
+(223, 330, 'eunice@gmail.com', '$2b$10$fVw5.lrwgg1lk5MHhf1lLOEs6p38M6F/S0eXIOwHwvs0z4If9ccF6', 'applicant', NULL),
+(224, 331, 'lalamo@gmail.com', '$2b$10$jub2wV16/p66BljMKo7iV.5abZQBEoSPxgaLSAnUsPT6JiXYR/COO', 'applicant', NULL);
 
 --
 -- Indexes for dumped tables
@@ -2795,7 +2808,7 @@ ALTER TABLE `faculty_evaluation_table`
 -- AUTO_INCREMENT for table `interview_applicants`
 --
 ALTER TABLE `interview_applicants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=218;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=219;
 
 --
 -- AUTO_INCREMENT for table `interview_exam_schedule`
@@ -2807,25 +2820,25 @@ ALTER TABLE `interview_exam_schedule`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=572;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=578;
 
 --
 -- AUTO_INCREMENT for table `person_status_table`
 --
 ALTER TABLE `person_status_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1623;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1624;
 
 --
 -- AUTO_INCREMENT for table `person_table`
 --
 ALTER TABLE `person_table`
-  MODIFY `person_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=331;
+  MODIFY `person_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=332;
 
 --
 -- AUTO_INCREMENT for table `requirements_table`
 --
 ALTER TABLE `requirements_table`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `requirement_uploads`
@@ -2837,7 +2850,7 @@ ALTER TABLE `requirement_uploads`
 -- AUTO_INCREMENT for table `user_accounts`
 --
 ALTER TABLE `user_accounts`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=225;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
