@@ -20,7 +20,6 @@ import {
   TableRow,
   MenuItem
 } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import Search from '@mui/icons-material/Search';
 import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -42,25 +41,20 @@ const socket = io("http://localhost:5000");
 
 
 
-const requiredDocs = [
-  { label: 'PSA Birth Certificate', key: 'BirthCertificate' },
-  { label: 'Form 138 (4th Quarter / No failing Grades)', key: 'Form138' },
-  { label: 'Certificate of Good Moral Character', key: 'GoodMoralCharacter' },
-  { label: 'Certificate Belonging to Graduating Class', key: 'CertificateOfGraduatingClass' }
-];
 
- const tabs = [
-    { 
-        label: <>Admission Process for <br /> Registrar</>, 
-        to: "/applicant_list_admin", 
-        icon: <SchoolIcon fontSize="large" /> 
-    },
-    { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
-    { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
-    { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
-    { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
-    { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
-    { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
+
+const tabs = [
+  {
+    label: <>Admission Process for <br /> Registrar</>,
+    to: "/applicant_list_admin",
+    icon: <SchoolIcon fontSize="large" />
+  },
+  { label: "Applicant Form", to: "/admin_dashboard1", icon: <DashboardIcon fontSize="large" /> },
+  { label: "Student Requirements", to: "/student_requirements", icon: <AssignmentIcon fontSize="large" /> },
+  { label: "Entrance Exam Room Assignment", to: "/assign_entrance_exam", icon: <MeetingRoomIcon fontSize="large" /> },
+  { label: "Entrance Exam Schedule Management", to: "/assign_schedule_applicant", icon: <ScheduleIcon fontSize="large" /> },
+  { label: "Examination Profile", to: "/registrar_examination_profile", icon: <PersonSearchIcon fontSize="large" /> },
+  { label: "Proctor's Applicant List", to: "/proctor_applicant_list", icon: <PeopleIcon fontSize="large" /> },
 ];
 
 
@@ -159,6 +153,23 @@ const StudentRequirements = () => {
   const [clickedSteps, setClickedSteps] = useState(Array(tabs.length).fill(false));
   const socketRef = useRef(null);
 
+
+  // ------------------------------------
+  const [requirements, setRequirements] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/requirements")
+      .then((res) => setRequirements(res.data))
+      .catch((err) => console.error("Error loading requirements:", err));
+  }, []);
+  // -------------------------------------
+
+
+
+
+
+
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -220,20 +231,9 @@ const StudentRequirements = () => {
     applicant_number: "",
   });
   const [editingRemarkId, setEditingRemarkId] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [newRemarkMode, setNewRemarkMode] = useState({}); // { [upload_id]: true|false }
   const [documentStatus, setDocumentStatus] = useState("");
 
-
-
-  useEffect(() => {
-    const socket = io("http://localhost:5000");
-    socket.on("notification", (data) => {
-      setNotifications((prev) => [data, ...prev]);
-    });
-    return () => socket.disconnect();
-  }, []);
 
 
 
@@ -507,15 +507,19 @@ const StudentRequirements = () => {
         }
       );
 
-      // ✅ Refresh evaluator right after update
+      // ✅ Refresh evaluator and document status
       await fetchDocumentStatus(person.applicant_number);
 
-      console.log("Document status updated successfully!");
+      // ✅ Also refresh uploads list to update row values in the table
+      if (person.applicant_number) {
+        await fetchUploadsByApplicantNumber(person.applicant_number);
+      }
+
+      console.log("Document status updated and UI refreshed!");
     } catch (err) {
       console.error("Error updating document status:", err);
     }
   };
-
 
 
   const handleUploadSubmit = async () => {
@@ -577,20 +581,9 @@ const StudentRequirements = () => {
   };
 
 
-  useEffect(() => {
-    socket.on("notification", (data) => {
-      console.log("📢 Notification:", data);
-      if (selectedPerson?.applicant_number) {
-        fetchUploadsByApplicantNumber(selectedPerson.applicant_number);
-      }
-    });
-
-    return () => socket.off("notification");
-  }, [selectedPerson]);
-
 
   const renderRow = (doc) => {
-    const uploaded = uploads.find((u) => u.short_label === doc.key);
+    const uploaded = uploads.find((u) => u.description === doc.label);
 
     const uploadId = uploaded?.upload_id;
 
@@ -859,51 +852,7 @@ const StudentRequirements = () => {
   return (
     <Box sx={{ height: 'calc(100vh - 150px)', overflowY: 'auto', paddingRight: 1 }}>
       <Box sx={{ px: 2 }}>
-        <Box sx={{ position: 'absolute', top: 10, right: 24 }}>
-          <Button
-            sx={{ width: 65, height: 65, borderRadius: '50%', '&:hover': { backgroundColor: '#E8C999' } }}
-            onClick={() => setShowNotifications(!showNotifications)}
-          >
-            <NotificationsIcon sx={{ fontSize: 50, color: 'white' }} />
-            {notifications.length > 0 && (
-              <Box sx={{
-                position: 'absolute', top: 5, right: 5,
-                background: 'red', color: 'white',
-                borderRadius: '50%', width: 20, height: 20,
-                display: 'flex', justifyContent: 'center', alignItems: 'center',
-                fontSize: '12px'
-              }}>
-                {notifications.length}
-              </Box>
-            )}
-          </Button>
 
-          {showNotifications && (
-            <Paper sx={{
-              position: 'absolute',
-              top: 70, right: 0,
-              width: 300, maxHeight: 400,
-              overflowY: 'auto',
-              bgcolor: 'white',
-              boxShadow: 3,
-              zIndex: 10,
-              borderRadius: 1
-            }}>
-              {notifications.length === 0 ? (
-                <Typography sx={{ p: 2 }}>No notifications</Typography>
-              ) : (
-                notifications.map((notif, idx) => (
-                  <Box key={idx} sx={{ p: 1, borderBottom: '1px solid #ccc' }}>
-                    <Typography sx={{ fontSize: '14px' }}>{notif.message}</Typography>
-                    <Typography sx={{ fontSize: '10px', color: '#888' }}>
-                      {new Date(notif.timestamp).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}
-                    </Typography>
-                  </Box>
-                ))
-              )}
-            </Paper>
-          )}
-        </Box>
 
         {/* Top header: DOCUMENTS SUBMITTED + Search */}
         <Box
@@ -1162,10 +1111,10 @@ const StudentRequirements = () => {
                   <MenuItem value="">
                     <em>Select Document Status</em>
                   </MenuItem>
-                  <MenuItem value="On process">On process</MenuItem>
-                  <MenuItem value="Disapproved">Disapproved</MenuItem>
-                  <MenuItem value="Program Closed">Program Closed</MenuItem>
+                  <MenuItem value="On Process">On Process</MenuItem>
                   <MenuItem value="Documents Verified & ECAT">Documents Verified & ECAT</MenuItem>
+                  <MenuItem value="Disapproved / Program Closed">Disapproved / Program Closed</MenuItem>
+
                 </TextField>
 
                 {person?.evaluator?.evaluator_email && (
@@ -1188,7 +1137,7 @@ const StudentRequirements = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 4, mb: 2 }}>
 
                 {/* Document Type */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, }}>
+                {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, }}>
                   <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "90px" }}>
                     Document Type:
                   </Typography>
@@ -1215,9 +1164,43 @@ const StudentRequirements = () => {
                     <MenuItem value={3}>Certificate of Good Moral Character</MenuItem>
                     <MenuItem value={4}>Certificate Belonging to Graduating Class</MenuItem>
                   </TextField>
-                </Box>
+                </Box> */}
 
-                {/* Remarks */}
+
+                {/* ---------------------------------------------------------------------- */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "90px" }}>
+                    Document Type:
+                  </Typography>
+                  <TextField
+                    select
+                    size="small"
+                    placeholder="Select Documents"
+                    value={selectedFiles.requirements_id || ''}
+                    onChange={(e) =>
+                      setSelectedFiles(prev => ({
+                        ...prev,
+                        requirements_id: e.target.value,
+                      }))
+                    }
+                    sx={{ width: 200 }}
+                    InputProps={{ sx: { height: 38 } }}
+                    inputProps={{ style: { padding: "4px 8px", fontSize: "12px" } }}
+                  >
+                    <MenuItem value="">
+                      <em>Select Documents</em>
+                    </MenuItem>
+                    {/* ✅ Dynamically map requirements from DB */}
+                    {requirements.map((req) => (
+                      <MenuItem key={req.id} value={req.id}>
+                        {req.description}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                {/* ---------------------------------------------------------------------- */}
+                {/*
+                Remarks
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "80px" }}>
                     Remarks
@@ -1247,11 +1230,42 @@ const StudentRequirements = () => {
                     ))}
                   </TextField>
                 </Box>
-
+*/}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginLeft: "-25px" }}>
-                  <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "100px", textAlign: "center" }}>
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Arial Black",
+                      width: "100px",
+                      textAlign: "center"
+                    }}
+                  >
                     Document File:
                   </Typography>
+
+                  {/* 📂 Gray Box Always Visible */}
+                  <Box
+                    sx={{
+                      backgroundColor: '#e0e0e0',
+                      padding: '6px 12px',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      height: 38,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 250,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                    title={selectedFiles.file ? selectedFiles.file.name : "No file selected"}
+                  >
+                    {selectedFiles.file ? selectedFiles.file.name : "No file selected"}
+                  </Box>
+
+                  {/* 📁 Browse Button */}
                   <Button
                     variant="contained"
                     startIcon={<CloudUploadIcon />}
@@ -1260,18 +1274,17 @@ const StudentRequirements = () => {
                       backgroundColor: '#1976d2',
                       color: 'white',
                       textTransform: 'none',
-                      width: 450,
+                      width: 250,
                       height: 38,
                       fontSize: "15px",
                       fontWeight: 'bold',
-                      justifyContent: "center", // center icon and text
-                      '&:hover': {
-                        backgroundColor: '#1565c0'
-                      }
+                      justifyContent: "center",
+                      '&:hover': { backgroundColor: '#1565c0' }
                     }}
                   >
-                    {selectedFiles.file ? selectedFiles.file.name : "Select File"}
+                    Browse File
                   </Button>
+
                   <input
                     id="fileInput"
                     type="file"
@@ -1284,26 +1297,24 @@ const StudentRequirements = () => {
                       }))
                     }
                   />
+
+                  {/* 🟢 Submit Button */}
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{
+                      textTransform: "none",
+                      fontWeight: "bold",
+                      height: 38,
+                      width: 250
+                    }}
+                    onClick={() => handleConfirmUpload({ label: "New Document" })}
+                    disabled={!selectedFiles.file}
+                  >
+                    Submit Documents
+                  </Button>
                 </Box>
-
               </Box>
-
-
-              <Button
-                variant="contained"
-                color="success"
-                sx={{
-                  ml: 2,
-                  textTransform: "none",
-                  fontWeight: "bold",
-                  height: "35px",
-                  width: "200px"
-                }}
-                onClick={() => handleConfirmUpload({ label: "New Document" })}
-                disabled={!selectedFiles.requirements_id || !selectedFiles.file}
-              >
-                Submit Documents
-              </Button>
             </Box>
 
             {/* Right side: ID Photo */}
@@ -1314,7 +1325,7 @@ const StudentRequirements = () => {
                   height: "2.10in",
                   border: "1px solid #ccc",
                   overflow: "hidden",
-                  marginTop: "-280px",
+                  marginTop: "-250px",
                   borderRadius: "4px",
                 }}
               >
@@ -1345,7 +1356,13 @@ const StudentRequirements = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {requiredDocs.map(doc => renderRow(doc))}
+                {requirements.map((doc) =>
+                  renderRow({
+                    label: doc.description,
+                    key: doc.short_label || doc.description.replace(/\s+/g, ""),
+                    id: doc.id,
+                  })
+                )}
               </TableBody>
             </Table>
           </TableContainer>

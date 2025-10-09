@@ -20,16 +20,10 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
 import ErrorIcon from "@mui/icons-material/Error";
 
-const requiredDocs = [
-  { label: 'PSA Birth Certificate', key: 'BirthCertificate' },
-  { label: 'Form 138 (4th Quarter / No failing Grades)', key: 'Form138' },
-  { label: 'Certificate of Good Moral Character', key: 'GoodMoralCharacter' },
-  { label: 'Certificate Belonging to Graduating Class', key: 'CertificateOfGraduatingClass' }
-];
-
-const vaccineDoc = { label: 'Copy of Vaccine Card (1st and 2nd Dose)', key: 'VaccineCard' };
 
 const RequirementUploader = () => {
+  const [requirements, setRequirements] = useState([]); // ✅ dynamic requirements
+
   const [uploads, setUploads] = useState([]);
   const [userID, setUserID] = useState('');
   const [selectedFiles, setSelectedFiles] = useState({});
@@ -44,6 +38,11 @@ const RequirementUploader = () => {
       setUserID(id);
       fetchUploads(id);
     }
+
+    // ✅ Fetch all requirements dynamically from backend
+    axios.get("http://localhost:5000/requirements")
+      .then((res) => setRequirements(res.data))
+      .catch((err) => console.error("Error loading requirements:", err));
   }, []);
 
   const fetchUploads = async (personId) => {
@@ -57,20 +56,13 @@ const RequirementUploader = () => {
 
       const rebuiltSelectedFiles = {};
       uploadsData.forEach((upload) => {
-        const description = upload.description.toLowerCase();
-        const filename = upload.original_name;
-
-        if (description.includes('form 138')) rebuiltSelectedFiles['Form138'] = filename;
-        if (description.includes('good moral')) rebuiltSelectedFiles['GoodMoralCharacter'] = filename;
-        if (description.includes('birth certificate')) rebuiltSelectedFiles['BirthCertificate'] = filename;
-        if (description.includes('graduating class')) rebuiltSelectedFiles['CertificateOfGraduatingClass'] = filename;
-        if (description.includes('vaccine card')) rebuiltSelectedFiles['VaccineCard'] = filename;
+        // Match dynamically using the requirement_id
+        rebuiltSelectedFiles[upload.requirements_id] = upload.original_name;
       });
-
       setSelectedFiles(rebuiltSelectedFiles);
 
       const allRequired = [...requiredDocs, vaccineDoc].every(
-        (doc) => rebuiltSelectedFiles[doc.key]
+        (doc) => rebuiltSelectedFiles[doc.id]
       );
 
       // ✅ Only show snackbar when going from incomplete → complete
@@ -97,12 +89,12 @@ const RequirementUploader = () => {
 
     setSelectedFiles((prev) => ({ ...prev, [key]: file.name }));
 
-    const requirementId = await getRequirementIdByKey(key);
+    const requirementId = key;
     if (!requirementId) return alert('Requirement not found.');
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('requirements_id', requirementId);
+    formData.append('requirements_id', key); // ✅ key is already the doc.id
     formData.append('person_id', userID);
 
     try {
@@ -119,19 +111,7 @@ const RequirementUploader = () => {
     }
   };
 
-  const getRequirementIdByKey = async (key) => {
-    const res = await axios.get('http://localhost:5000/requirements');
-    const match = res.data.find((r) => {
-      const lower = r.description.toLowerCase();
-      if (key === 'Form138') return lower.includes('form 138');
-      if (key === 'GoodMoralCharacter') return lower.includes('good moral');
-      if (key === 'BirthCertificate') return lower.includes('birth certificate');
-      if (key === 'CertificateOfGraduatingClass') return lower.includes('graduating class');
-      if (key === 'VaccineCard') return lower.includes('vaccine card');
-      return false;
-    });
-    return match?.id || null;
-  };
+
 
   const handleDelete = async (uploadId) => {
     try {
@@ -153,7 +133,8 @@ const RequirementUploader = () => {
 
   const renderRow = (doc) => {
     const uploaded = uploads.find((u) =>
-      u.description.toLowerCase().includes(doc.label.toLowerCase())
+      u.description && u.description.toLowerCase().includes(doc.label.toLowerCase())
+
     );
 
     // 🔒 Disable right-click
@@ -177,12 +158,12 @@ const RequirementUploader = () => {
 
 
     return (
-      <TableRow key={doc.key}>
+      <TableRow key={doc.id}>
         <TableCell sx={{ fontWeight: 'bold', width: '25%', border: "2px solid maroon" }}>{doc.label}</TableCell>
         <TableCell sx={{ width: '25%', border: "2px solid maroon", textAlign: "Center" }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
             <Box sx={{ width: '220px', flexShrink: 0, textAlign: "center" }}>
-              {selectedFiles[doc.key] ? (
+              {selectedFiles[doc.id] ? (
                 <Box
                   sx={{
                     backgroundColor: '#e0e0e0',
@@ -198,9 +179,9 @@ const RequirementUploader = () => {
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                   }}
-                  title={selectedFiles[doc.key]}
+                  title={selectedFiles[doc.id]}
                 >
-                  {selectedFiles[doc.key]}
+                  {selectedFiles[doc.id]}
                 </Box>
               ) : (
                 <Box sx={{ height: '40px' }} />
@@ -227,7 +208,8 @@ const RequirementUploader = () => {
                   hidden
                   type="file"
                   accept=".jpg,.jpeg,.png,.pdf"
-                  onChange={(e) => handleUpload(doc.key, e.target.files[0])}
+                  onChange={(e) => handleUpload(doc.id, e.target.files[0])}
+
                 />
               </Button>
             </Box>
@@ -376,53 +358,81 @@ const RequirementUploader = () => {
       </Box>
 
 
-      <Box sx={{ mt: 2, px: 2, marginLeft: "-10px" }}>
-        <Container>
-          <h1 style={{ fontSize: "50px", fontWeight: "bold", textAlign: "center", color: "maroon", marginTop: "25px" }}>UPLOAD DOCUMENTS</h1>
-          <div style={{ textAlign: "center" }}>Complete the applicant form to secure your place for the upcoming academic year at EARIST.</div>
-        </Container>
+      <Box sx={{ px: 2, marginLeft: "-10px" }}>
+        {Object.entries(
+          requirements.reduce((acc, r) => {
+            const cat = r.category || "Regular";
+            if (!acc[cat]) acc[cat] = [];
+            acc[cat].push(r);
+            return acc;
+          }, {})
+        ).map(([category, docs]) => (
+          <Box key={category} sx={{ mt: 4 }}>
+            <Container>
+              <h1
+                style={{
+                  fontSize: "45px",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  color: "maroon",
+                  marginTop: "25px",
+                }}
+              >
+                {category === "Medical"
+                  ? "UPLOAD MEDICAL DOCUMENTS"
+                  : category === "Others"
+                    ? "OTHER REQUIREMENTS"
+                    : "UPLOAD DOCUMENTS"}
+              </h1>
 
-        <div style={{ height: "25px" }}></div>
+              {/* 📝 Show message only below UPLOAD DOCUMENTS title */}
+              {category !== "Medical" && category !== "Others" && (
+                <div
+                  style={{
+                    textAlign: "center",
+                    fontSize: "18px",
+                    marginTop: "10px",
+                    marginBottom: "30px",
+                    color: "#333",
+                  }}
+                >
+                  Complete the applicant form to secure your place for the upcoming academic year at{" "}
+                  <b>EARIST</b>.
+                </div>
+              )}
+            </Container>
 
+            <TableContainer
+              component={Paper}
+              sx={{ width: "95%", mt: 2, border: "2px solid maroon" }}
+            >
+              <Table>
+                <TableHead sx={{ backgroundColor: "#6D2323", border: "2px solid maroon" }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "white", border: "2px solid maroon" }}>Document</TableCell>
+                    <TableCell sx={{ color: "white", border: "2px solid maroon" }}>Upload</TableCell>
+                    <TableCell sx={{ color: "white" }}>Remarks</TableCell>
+                    <TableCell sx={{ color: "white" }}>Preview</TableCell>
+                    <TableCell sx={{ color: "white" }}>Delete</TableCell>
+                  </TableRow>
+                </TableHead>
 
+                <TableBody>
+                  {docs.map((doc) =>
+                    renderRow({
+                      id: doc.id,
+                      label: doc.description,
+                    })
+                  )}
 
-        <TableContainer component={Paper} sx={{ width: '95%', border: "2px solid maroon" }}>
-          <Table>
-            <TableHead sx={{ backgroundColor: '#6D2323', border: "2px solid maroon" }}>
-              <TableRow>
-                <TableCell sx={{ color: 'white', border: "2px solid maroon" }}>Document</TableCell>
-                <TableCell sx={{ color: 'white', border: "2px solid maroon" }}>Upload</TableCell>
-                <TableCell sx={{ color: 'white' }}>Remarks</TableCell>
-                <TableCell sx={{ color: 'white' }}>Preview</TableCell>
-                <TableCell sx={{ color: 'white' }}>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{requiredDocs.map((doc) => renderRow(doc))}</TableBody>
-          </Table>
-        </TableContainer>
+                </TableBody>
 
-        <Container>
-          <h1 style={{ fontSize: "50px", fontWeight: "bold", textAlign: "center", color: "maroon", marginTop: "25px" }}> UPLOAD MEDICAL DOCUMENTS</h1>
-
-        </Container>
-
-
-
-        <TableContainer component={Paper} sx={{ width: '95%', mt: 2, border: "2px solid maroon" }}>
-          <Table>
-            <TableHead sx={{ backgroundColor: '#6D2323', border: "2px solid maroon" }}>
-              <TableRow>
-                <TableCell sx={{ color: 'white' }}>Document</TableCell>
-                <TableCell sx={{ color: 'white' }}>Upload</TableCell>
-                <TableCell sx={{ color: 'white' }}>Remarks</TableCell>
-                <TableCell sx={{ color: 'white' }}>Preview</TableCell>
-                <TableCell sx={{ color: 'white' }}>Delete</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>{renderRow(vaccineDoc)}</TableBody>
-          </Table>
-        </TableContainer>
+              </Table>
+            </TableContainer>
+          </Box>
+        ))}
       </Box>
+
     </Box>
   );
 };

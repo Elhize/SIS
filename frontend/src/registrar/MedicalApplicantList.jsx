@@ -213,27 +213,25 @@ const MedicalApplicantList = () => {
     const [confirmMessage, setConfirmMessage] = useState("");
 
 
-    const handleSubmittedDocumentsChange = async (upload_id, checked, person_id) => {
+    const handleSubmittedMedicalChange = async (upload_id, checked) => {
         try {
             const res = await axios.put(
-                `http://localhost:5000/api/submitted-documents/${upload_id}`,
+                `http://localhost:5000/api/submitted-medical/${upload_id}`,
                 {
-                    submitted_documents: checked ? 1 : 0,
-                    user_person_id: localStorage.getItem("person_id")
+                    submitted_medical: checked ? 1 : 0,
+                    user_person_id: localStorage.getItem("person_id"),
                 }
             );
 
-            if (checked && res.data.allCompleted) {
-                await handleRegistrarStatusChange(person_id, 1);
-                setSnack({ open: true, message: "All documents completed ✅ Registrar status set to Submitted", severity: "success" });
-            } else if (!checked) {
-                await handleRegistrarStatusChange(person_id, 0);
-                setSnack({ open: true, message: "Marked as Unsubmitted ❌", severity: "warning" });
-            }
+            setSnack({
+                open: true,
+                message: checked ? "Medical submitted ✅" : "Medical unsubmitted ❌",
+                severity: checked ? "success" : "warning",
+            });
 
-            fetchApplicants();
+            fetchApplicants(); // refresh the table
         } catch (err) {
-            console.error("❌ Failed to update submitted documents:", err);
+            console.error("❌ Failed to update medical status:", err);
         }
     };
 
@@ -739,7 +737,7 @@ const MedicalApplicantList = () => {
         <Box sx={{ height: 'calc(100vh - 150px)', overflowY: 'auto', pr: 1, p: 2 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h4" fontWeight="bold" color="maroon">
-                MEDICAL RECORDS
+                    MEDICAL RECORDS
                 </Typography>
                 <Box sx={{ position: 'absolute', top: 10, right: 24 }}>
                     <Button
@@ -1349,11 +1347,11 @@ const MedicalApplicantList = () => {
                             <TableCell sx={{ color: "white", textAlign: "center", width: "10%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Program
                             </TableCell>
-                        
+
                             <TableCell sx={{ color: "white", textAlign: "center", width: "8%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Date Applied
                             </TableCell>
-                         
+
                             <TableCell sx={{ color: "white", textAlign: "center", width: "16%", py: 0.5, fontSize: "12px", border: "2px solid maroon" }}>
                                 Applicant Status
                             </TableCell>
@@ -1402,27 +1400,24 @@ const MedicalApplicantList = () => {
                                 {/* ✅ Submitted Checkbox */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
                                     <Checkbox
-                                        checked={Number(person.submitted_documents) === 1}
+                                        checked={Number(person.submitted_medical) === 1}
                                         onChange={(e) => {
                                             const checked = e.target.checked;
                                             setConfirmMessage(
-                                                `Are you sure you want to mark this applicant’s Original Documents as ${checked ? "Submitted" : "Unsubmitted"}?`
+                                                `Are you sure you want to mark this applicant’s Medical as ${checked ? "Submitted" : "Unsubmitted"
+                                                }?`
                                             );
                                             setConfirmAction(() => async () => {
-                                                // Optimistic UI update
+                                                // 🧠 Optimistic UI update
                                                 setPersons((prev) =>
                                                     prev.map((p) =>
                                                         p.person_id === person.person_id
-                                                            ? { ...p, submitted_documents: checked ? 1 : 0 }
+                                                            ? { ...p, submitted_medical: checked ? 1 : 0 }
                                                             : p
                                                     )
                                                 );
-                                                // Call backend
-                                                await handleSubmittedDocumentsChange(
-                                                    person.upload_id,
-                                                    checked,
-                                                    person.person_id
-                                                );
+                                                // 🔥 Call backend
+                                                await handleSubmittedMedicalChange(person.upload_id, checked);
                                             });
                                             setConfirmOpen(true);
                                         }}
@@ -1434,6 +1429,7 @@ const MedicalApplicantList = () => {
                                         }}
                                     />
                                 </TableCell>
+
 
                                 {/* Applicant Number */}
                                 <TableCell
@@ -1469,14 +1465,14 @@ const MedicalApplicantList = () => {
                                     )?.program_code ?? "N/A"}
                                 </TableCell>
 
-                            
+
 
                                 {/* Created Date */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>
                                     {person.created_at}
                                 </TableCell>
 
-                           
+
 
                                 {/* Status */}
                                 <TableCell sx={{ textAlign: "center", border: "2px solid maroon" }}>

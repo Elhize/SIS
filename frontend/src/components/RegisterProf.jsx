@@ -256,7 +256,7 @@ const RegisterProf = () => {
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         {/* Left: Header */}
         <Typography variant="h4" fontWeight="bold" color="maroon">
-          PROFESSOR'S ACCOUNT
+        PROFESSOR ACCOUNTS
         </Typography>
 
         {/* Right: Search */}

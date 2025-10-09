@@ -266,8 +266,7 @@ const Dashboard = () => {
             sx={{
               border: "2px solid maroon",
               boxShadow: 3,
-
-              height: "135px",
+              height: "140px",
               marginLeft: "10px",
               p: 2,
               transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -278,77 +277,93 @@ const Dashboard = () => {
             }}
           >
             <CardContent>
-              {/* ✅ Your original Box layout stays here */}
               <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Box sx={{ mb: 4, color: "maroon", marginTop: "-10px" }}>
-                  <Typography variant="h4" fontWeight="bold">
-                    Welcome back! {user.split("@")[0]}!
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{ color: "black", fontSize: "25px" }}
+
+                {/* 👤 Left Section - Avatar + Welcome */}
+                <Box display="flex" alignItems="center">
+
+                  {/* Avatar */}
+                  <Box
+                    position="relative"
+                    display="inline-block"
+                    mr={2}
+                    onMouseEnter={() => setHovered(true)}
+                    onMouseLeave={() => setHovered(false)}
                   >
+                    <Avatar
+                      src={
+                        personData?.profile_image
+                          ? `http://localhost:5000/uploads/${personData.profile_image}`
+                          : undefined
+                      }
+                      alt={personData?.fname}
+                      sx={{
+                        width: 90,
+                        height: 90,
+                        border: "2px solid maroon",
+                        cursor: "pointer",
+                        mt: -1.5,
+                      }}
+                      onClick={() => fileInputRef.current.click()}
+                    >
+                      {personData?.fname?.[0]}
+                    </Avatar>
+
+                    {/* Hover upload button */}
+                    {hovered && (
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          bgcolor: "maroon",
+                          color: "white",
+                          "&:hover": { bgcolor: "#6D2323" },
+                        }}
+                        onClick={() => fileInputRef.current.click()}
+                      >
+                        <AddIcon fontSize="small" />
+                      </IconButton>
+                    )}
+
+                    {/* Hidden file input */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                    />
+                  </Box>
+
+                  {/* Welcome text and Employee info */}
+                  <Box sx={{ color: "maroon" }}>
+                    <Typography variant="h4" fontWeight="bold" mt={-1}>
+                      Welcome back!  {personData
+                        ? `${personData.lname}, ${personData.fname} ${personData.mname || ""}`
+                        : ""}
+                    </Typography>
+
+                    <Typography variant="body1" color="black" fontSize={20}>
+                      <b>Employee ID:</b> {personData?.employee_id || "N/A"}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* 📅 Right Section - Date */}
+                <Box textAlign="right" sx={{ color: "black" }}>
+                  <Typography variant="body1" fontSize="20px">
                     {formattedDate}
                   </Typography>
                 </Box>
 
-                <Box
-                  position="relative"
-                  display="inline-block"
-                  onMouseEnter={() => setHovered(true)}
-                  onMouseLeave={() => setHovered(false)}
-                >
-                  <Avatar
-                    src={
-                      personData?.profile_image
-                        ? `http://localhost:5000/uploads/${personData.profile_image}`
-                        : undefined
-                    }
-                    alt={personData?.fname}
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      marginTop: "-40px",
-                      border: "2px solid maroon",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    {personData?.fname?.[0]}
-                  </Avatar>
-
-                  {/* + overlay on hover */}
-                  {hovered && (
-                    <IconButton
-                      size="small"
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        bgcolor: "maroon",
-                        color: "white",
-                        "&:hover": { bgcolor: "#6D2323" },
-                      }}
-                      onClick={() => fileInputRef.current.click()}
-                    >
-                      <AddIcon fontSize="small" />
-                    </IconButton>
-                  )}
-
-                  {/* Hidden file input */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                  />
-                </Box>
               </Box>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
 
 
 

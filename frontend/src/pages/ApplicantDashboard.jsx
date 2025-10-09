@@ -564,8 +564,8 @@ const ApplicantDashboard = (props) => {
                       {person.last_name}, {person.first_name}{" "}
                       {person.middle_name} {person.extension}
                     </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      Applicant ID: {applicantID || "N/A"}
+                    <Typography variant="body1" color="black" fontSize={20}>
+                      <b>Applicant ID:</b> {applicantID || "N/A"}
                     </Typography>
                   </Box>
                 </Stack>

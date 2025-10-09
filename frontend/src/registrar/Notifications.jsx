@@ -304,14 +304,38 @@ const Notifications = () => {
 
                                             <Typography sx={{ fontSize: "14px", lineHeight: "1.2" }}>
                                                 By:{" "}
-                                                <span style={{ color: "maroon", fontWeight: "bold" }}>
-                                                    {n.actor_name || "Unknown"}
-                                                </span>{" "}
-                                                -{" "}
-                                                <span style={{ color: "blue" }}>
-                                                    {n.actor_email || "System"}
-                                                </span>
+                                                {(() => {
+                                                    const actorName = n.actor_name || "Unknown";
+                                                    // Extract employee ID inside parentheses
+                                                    const match = actorName.match(/(.*)\s\(([^)]+)\)(.*)/);
+
+                                                    if (match) {
+                                                        const before = match[1];      // role or text before parentheses
+                                                        const employeeId = match[2];  // text inside parentheses
+                                                        const after = match[3];       // text after parentheses
+
+                                                        return (
+                                                            <>
+                                                                <span style={{ color: "maroon", fontWeight: "bold" }}>{before} </span>
+                                                                <span style={{ color: "green", fontWeight: "bold" }}>({employeeId})</span>
+                                                                <span style={{ color: "maroon", fontWeight: "bold" }}>{after}</span>{" "}
+                                                                -{" "}
+                                                                <span style={{ color: "blue" }}>{n.actor_email || "System"}</span>
+                                                            </>
+                                                        );
+                                                    }
+
+                                                    // fallback if no employee ID
+                                                    return (
+                                                        <>
+                                                            <span style={{ color: "maroon", fontWeight: "bold" }}>{actorName}</span>{" "}
+                                                            -{" "}
+                                                            <span style={{ color: "blue" }}>{n.actor_email || "System"}</span>
+                                                        </>
+                                                    );
+                                                })()}
                                             </Typography>
+
 
                                         </TableCell>
                                     </TableRow>

@@ -17,9 +17,14 @@ import { Link } from "react-router-dom";
 const AccountDashboard = () => {
   const menuItems = [
     {
-      label: "ACCOUNT PROFESSOR",
+      label: "ADD FACULTY ACCOUNTS",
       icon: <PersonAdd className="text-maroon-500 text-2xl" />,
       path: "/register_prof",
+    },
+    {
+      label: "ADD REGISTRAR'S ACCOUNT",
+      icon: <PersonAdd className="text-maroon-500 text-2xl" />,
+      path: "/register_registrar",
     },
     {
       label: "APPLICANT INFORMATION",

@@ -16,6 +16,7 @@ import Footer from './components/Footer';
 import SideBar from './components/Sidebar';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegisterProf from './components/RegisterProf';
+import RegisterRegistrar from './components/RegisterRegistrar';
 import PageCRUD from './components/PageCRUD';
 import UserPageAccess from './components/UserPageAccess';
 
@@ -102,6 +103,12 @@ import ScheduleChecker from './registrar/ScheduleChecker';
 import RoomRegistration from './registrar/RoomRegistration';
 import RegistrarExamPermit from './registrar/RegistrarExamPermit';
 import MedicalApplicantList from './registrar/MedicalApplicantList';
+import ApplicantProfile from './registrar/ApplicantProfile';
+import ApplicantProfilePermit from './registrar/ApplicantProfile';
+import ReportOfGrade from './registrar/ReportOfGrade';
+import MedicalRequirementsForm from './registrar/MedicalRequirementsForm';
+import TranscriptOfRecords from './registrar/TranscriptOfRecords';
+
 
 // APPLICANT FOLDER
 import Dashboard1 from './applicant/Dashboard1';
@@ -156,9 +163,6 @@ import SuperAdminStudentResetPassword from './superadmin/SuperAdminStudentResetP
 import SuperAdminFacultyResetPassword from './superadmin/SuperAdminFacultyResetPassword';
 import SuperAdminRegistrarPassword from './superadmin/SuperAdminRegistrarResetPassword';
 import Notifications from './superadmin/Notifications';
-import ApplicantProfile from './registrar/ApplicantProfile';
-import ApplicantProfilePermit from './applicant/applicantProfilePermit';
-import ReportOfGrade from './registrar/ReportOfGrade';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -224,6 +228,7 @@ function App() {
               <Route path="/faculty_dashboard" element={<ProtectedRoute allowedRoles={['faculty']}><FacultyDashboard /></ProtectedRoute>} />
               <Route path="/applicant_dashboard" element={<ProtectedRoute><ApplicantDashboard /></ProtectedRoute>} />
               <Route path="/register_prof" element={<ProtectedRoute><RegisterProf /></ProtectedRoute>} />
+              <Route path="/register_registrar" element={<ProtectedRoute><RegisterRegistrar /></ProtectedRoute>} />
 
               <Route path="/room_registration" element={<ProtectedRoute><RoomRegistration /></ProtectedRoute>} />
               <Route path="/course_management" element={<ProtectedRoute><CourseManagement /></ProtectedRoute>} />
@@ -315,7 +320,7 @@ function App() {
               <Route path="/registrar_dashboard4" element={<ProtectedRoute><RegistrarDashboard4 /></ProtectedRoute>} />
               <Route path="/registrar_dashboard5" element={<ProtectedRoute><RegistrarDashboard5 /></ProtectedRoute>} />
 
-
+              <Route path="/medical_requirements_form" element={<ProtectedRoute><MedicalRequirementsForm /></ProtectedRoute>} />
 
               <Route path="/super_admin_applicant_dashboard1" element={<ProtectedRoute><SuperAdminApplicantDashboard1 /></ProtectedRoute>} />
               <Route path="/super_admin_applicant_dashboard2" element={<ProtectedRoute><SuperAdminApplicantDashboard2 /></ProtectedRoute>} />
@@ -352,6 +357,7 @@ function App() {
 
 
               <Route path="/class_roster" element={<ProtectedRoute ><ClassRoster /></ProtectedRoute>} />
+              <Route path="/transcript_of_records" element={<ProtectedRoute ><TranscriptOfRecords /></ProtectedRoute>} />
               <Route path="/class_roster/class_list/ccs/:curriculum_id" element={<ProtectedRoute ><ClassList /></ProtectedRoute>} />
               <Route path="/class_list/ccs/:curriculum_id/:dstID" element={<ProtectedRoute><ProfessorListPerSection /></ProtectedRoute>} />
               <Route path="/email_template_manager" element={<ProtectedRoute><EmailTemplateManager /></ProtectedRoute>} />

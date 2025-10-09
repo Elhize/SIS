@@ -40,7 +40,7 @@ const AdmissionDashboardPanel = () => {
       link: "/applicant_list_admin",
       icon: <School className="text-maroon-500 text-2xl" />,
     },
- 
+
     {
       title: "READMISSION",
       link: "/readmission",
@@ -104,6 +104,11 @@ const AdmissionDashboardPanel = () => {
     {
       title: "MEDICAL APPLICANT LIST",
       link: "/medical_applicant_list",
+      icon: <People className="text-maroon-500 text-2xl" />,
+    },
+    {
+      title: "TRANSCRIPT OF RECORDS",
+      link: "/transcript_of_records",
       icon: <People className="text-maroon-500 text-2xl" />,
     },
     {

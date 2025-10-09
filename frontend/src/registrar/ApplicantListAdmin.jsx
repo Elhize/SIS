@@ -896,72 +896,9 @@ const AdminApplicantList = () => {
             <TableContainer component={Paper} sx={{ width: '100%', border: "2px solid maroon", p: 2 }}>
                 <Box display="flex" justifyContent="space-between" flexWrap="wrap" rowGap={2}>
 
-                    {/* Left Side: From and To Date */}
-                    <Box display="flex" flexDirection="column" gap={2}>
-
-                        {/* From Date + Print Button */}
-                        <Box display="flex" alignItems="flex-end" gap={2}>
-
-                            <FormControl size="small" sx={{ width: 200 }}>
-                                <InputLabel shrink htmlFor="from-date">From Date</InputLabel>
-                                <TextField
-                                    id="from-date"
-                                    type="date"
-                                    size="small"
-                                    name="fromDate"
-                                    value={person.fromDate || ""}
-                                    onChange={(e) => setPerson(prev => ({ ...prev, fromDate: e.target.value }))}
-                                    InputLabelProps={{ shrink: true }}
-                                />
-                            </FormControl>
-
-                            <button
-                                onClick={printDiv}
-                                style={{
-                                    padding: "5px 20px",
-                                    border: "2px solid black",
-                                    backgroundColor: "#f0f0f0",
-                                    color: "black",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "14px",
-                                    fontWeight: "bold",
-                                    transition: "background-color 0.3s, transform 0.2s",
-                                    height: "40px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "8px",
-                                    userSelect: "none",
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#d3d3d3"}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
-                                onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.95)"}
-                                onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
-                                type="button"
-                            >
-                                <FcPrint size={20} />
-                                Print Applicant List
-                            </button>
-                        </Box>
-
-                        {/* To Date */}
-                        <FormControl size="small" sx={{ width: 200 }}>
-                            <InputLabel shrink htmlFor="to-date">To Date</InputLabel>
-                            <TextField
-                                id="to-date"
-                                type="date"
-                                size="small"
-                                name="toDate"
-                                value={person.toDate || ""}
-                                onChange={(e) => setPerson(prev => ({ ...prev, toDate: e.target.value }))}
-                                InputLabelProps={{ shrink: true }}
-                            />
-                        </FormControl>
-                    </Box>
-
-                    {/* Right Side: Campus Dropdown */}
+                    {/* Left Side: Campus Dropdown */}
                     <Box display="flex" flexDirection="column" gap={1} sx={{ minWidth: 200 }}>
-                        <Typography fontSize={13} >Campus:</Typography>
+                        <Typography fontSize={13}>Campus:</Typography>
                         <FormControl size="small" sx={{ width: "200px" }}>
                             <InputLabel id="campus-label">Campus</InputLabel>
                             <Select
@@ -979,11 +916,73 @@ const AdminApplicantList = () => {
                                 <MenuItem value="1">CAVITE</MenuItem>
                             </Select>
                         </FormControl>
+                    </Box>
 
+                    {/* Right Side: Print Button + Dates (in one row) */}
+                    <Box display="flex" alignItems="flex-end" gap={2}>
+
+                        {/* Print Button */}
+                        <button
+                            onClick={printDiv}
+                            style={{
+                                padding: "5px 20px",
+                                border: "2px solid black",
+                                backgroundColor: "#f0f0f0",
+                                color: "black",
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                                transition: "background-color 0.3s, transform 0.2s",
+                                height: "40px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                userSelect: "none",
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#d3d3d3"}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#f0f0f0"}
+                            onMouseDown={(e) => e.currentTarget.style.transform = "scale(0.95)"}
+                            onMouseUp={(e) => e.currentTarget.style.transform = "scale(1)"}
+                            type="button"
+                        >
+                            <FcPrint size={20} />
+                            Print Applicant List
+                        </button>
+
+                        {/* To Date */}
+                        <FormControl size="small" sx={{ width: 200 }}>
+
+                            <InputLabel shrink htmlFor="to-date">To Date</InputLabel>
+                            <TextField
+                                id="to-date"
+                                type="date"
+                                size="small"
+                                name="toDate"
+                                value={person.toDate || ""}
+                                onChange={(e) => setPerson(prev => ({ ...prev, toDate: e.target.value }))}
+                                InputLabelProps={{ shrink: true }}
+                            />
+                        </FormControl>
+
+                        {/* From Date */}
+                        <FormControl size="small" sx={{ width: 200 }}>
+                            <InputLabel shrink htmlFor="from-date">From Date</InputLabel>
+                            <TextField
+                                id="from-date"
+                                type="date"
+                                size="small"
+                                name="fromDate"
+                                value={person.fromDate || ""}
+                                onChange={(e) => setPerson(prev => ({ ...prev, fromDate: e.target.value }))}
+                                InputLabelProps={{ shrink: true }}
+                            />
+                        </FormControl>
                     </Box>
 
                 </Box>
             </TableContainer>
+
 
             <TableContainer component={Paper} sx={{ width: '100%', }}>
                 <Table size="small">
@@ -1206,24 +1205,21 @@ const AdminApplicantList = () => {
                             </FormControl>
                         </Box>
 
-                        {/* Registrar Status + Submitted Docs Checkbox */}
-                        <Box display="flex" alignItems="center" gap={2}>
-                            <Typography fontSize={13} sx={{ minWidth: "140px" }}>Registrar Status:</Typography>
-                            <FormControl size="small" sx={{ width: "275px" }}>
-                                <Select
-                                    value={selectedRegistrarStatus}
-                                    onChange={(e) => setSelectedRegistrarStatus(e.target.value)}
-                                    displayEmpty
-                                >
-                                    <MenuItem value="">Select status</MenuItem>
-                                    <MenuItem value="Submitted">Submitted</MenuItem>
-                                    <MenuItem value="Unsubmitted / Incomplete">Unsubmitted / Incomplete</MenuItem>
-                                </Select>
-                            </FormControl>
+                 
+{/* 
+                        <Typography fontSize={13} sx={{ minWidth: "140px" }}>Registrar Status:</Typography>
+                        <FormControl size="small" sx={{ width: "275px" }}>
+                            <Select
+                                value={selectedRegistrarStatus}
+                                onChange={(e) => setSelectedRegistrarStatus(e.target.value)}
+                                displayEmpty
+                            >
+                                <MenuItem value="">Select status</MenuItem>
+                                <MenuItem value="Submitted">Submitted</MenuItem>
+                                <MenuItem value="Unsubmitted / Incomplete">Unsubmitted / Incomplete</MenuItem>
+                            </Select>
+                        </FormControl> */}
 
-                            {/* ✅ New Checkbox for Submitted Documents */}
-
-                        </Box>
                         <FormControl size="small" sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                             <Checkbox
                                 checked={showSubmittedOnly}
@@ -1714,7 +1710,7 @@ const AdminApplicantList = () => {
                                 activePerson?.registrar_status === 1
                             ) && (
                                     <Button
-                                    disabled
+                                        disabled
                                         variant="contained"
                                         onClick={handleSaveMissingDocs}
                                         sx={{ background: "maroon" }}

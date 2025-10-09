@@ -1230,7 +1230,7 @@ const RegistrarRequirements = () => {
                                 </Box>
 
                                 {/* Remarks */}
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "80px" }}>
                                         Remarks
                                     </Typography>
@@ -1259,7 +1259,7 @@ const RegistrarRequirements = () => {
                                             </MenuItem>
                                         ))}
                                     </TextField>
-                                </Box>
+                                </Box> */}
 
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginLeft: "-25px" }}>
                                     <Typography sx={{ fontSize: "14px", fontFamily: "Arial Black", width: "100px", textAlign: "center" }}>
