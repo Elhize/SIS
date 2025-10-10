@@ -1311,7 +1311,27 @@ app.put("/api/submitted-documents/:upload_id", async (req, res) => {
 
 app.get("/api/verified-exam-applicants", async (req, res) => {
   try {
-    const [rows] = await db.query(`
+    // 1️⃣ Get all verifiable Regular requirement IDs dynamically
+    const [reqRows] = await db.query(`
+      SELECT id 
+      FROM requirements_table 
+      WHERE category = 'Regular' 
+      AND is_verifiable = 1
+    `);
+
+    // 2️⃣ Convert the list of IDs into an array
+    const requirementIds = reqRows.map(r => r.id);
+
+    if (requirementIds.length === 0) {
+      return res.status(400).json({ error: "No verifiable Regular requirements found." });
+    }
+
+    // 3️⃣ Construct placeholders for the IN clause dynamically
+    const placeholders = requirementIds.map(() => "?").join(",");
+
+    // 4️⃣ Use those IDs in the main query
+    const [rows] = await db.query(
+      `
       SELECT 
           ea.id AS exam_applicant_id,
           ea.applicant_id,
@@ -1331,12 +1351,14 @@ app.get("/api/verified-exam-applicants", async (req, res) => {
           SELECT person_id
           FROM requirement_uploads
           WHERE document_status = 'Documents Verified & ECAT'
-            AND requirements_id IN (1,2,3,4)
+            AND requirements_id IN (${placeholders})
           GROUP BY person_id
-          HAVING COUNT(DISTINCT requirements_id) = 4
+          HAVING COUNT(DISTINCT requirements_id) = ?
       )
       ORDER BY p.last_name ASC, p.first_name ASC
-    `);
+      `,
+      [...requirementIds, requirementIds.length]
+    );
 
     res.json(rows);
   } catch (err) {
@@ -11743,22 +11765,25 @@ app.get("/api/scheduled-by/:role", async (req, res) => {
 
   try {
     const [rows] = await db3.query(
-      `SELECT fname, mname, lname 
-       FROM prof_table 
-       WHERE role = ? 
-       LIMIT 1`,
+      `
+      SELECT first_name, middle_name, last_name 
+      FROM user_accounts 
+      WHERE role = ? 
+      LIMIT 1
+      `,
       [role]
     );
 
     if (!rows.length) {
-      return res.status(404).json({ message: "No professor found for that role" });
+      return res.status(404).json({ message: "No user found for that role" });
     }
 
-    const { fname, mname, lname } = rows[0];
-    const fullName = `${fname} ${mname ? mname + " " : ""}${lname}`.trim();
+    const { first_name, middle_name, last_name } = rows[0];
+    const fullName = `${first_name || ""} ${middle_name ? middle_name + " " : ""}${last_name || ""}`.trim();
+
     res.json({ fullName });
   } catch (err) {
-    console.error("Error fetching professor:", err);
+    console.error("❌ Error fetching user by role:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
