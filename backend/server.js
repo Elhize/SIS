@@ -11745,7 +11745,7 @@ app.get("/api/program_evaluation/details/:student_number", async (req, res) => {
           LEFT JOIN program_table AS pgt ON cct.program_id = pgt.program_id
           LEFT JOIN semester_table AS smt ON sy.semester_id = smt.semester_id
           LEFT JOIN year_table AS yt ON sy.year_id = yt.year_id
-        WHERE es.student_number= ?;
+        WHERE es.student_number= ? ORDER BY current_year, smt.semester_description;
     `, [student_number]);
 
     if (rows.length === 0) {

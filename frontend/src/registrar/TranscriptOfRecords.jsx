@@ -159,8 +159,6 @@ const TOR = () => {
         window.print();
     };
 
-
-
     return(
         <Box className="body" sx={{ height: 'calc(100vh - 150px)', overflowY: 'auto', overflowX: 'hidden', pr: 1, p: 2 }}>
             <Box className="navbars" sx={{display: "flex", background: "white", alignItems: "center"}}>    
@@ -213,7 +211,7 @@ const TOR = () => {
                     .body{
                         margin-top: -11rem;
                         position: absolute !important;
-                        margin-left: -3.5rem;
+                        margin-left: -24.5rem;
                         overflow: visible !important;  /* show all content */
                         height: auto !important;       /* expand height */
                         max-height: none !important;   /* no max height limit */
