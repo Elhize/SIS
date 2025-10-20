@@ -9460,17 +9460,49 @@ app.get("/api/student/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db3.execute(`SELECT snt.person_id, pt.profile_img AS profile_image, ua.role, pt.extension, pt.last_name, pt.first_name, pt.middle_name, snt.student_number FROM student_numbering_table AS snt 
+    const [rows] = await db3.execute(`SELECT DISTINCT snt.person_id, pt.profile_img AS profile_image, ua.role, pt.extension, es.active_school_year_id, pt.last_name, pt.first_name, pt.middle_name, snt.student_number, es.curriculum_id, sy.semester_id, sst.year_level_id FROM student_numbering_table AS snt 
     INNER JOIN person_table AS pt ON snt.person_id = pt.person_id
     INNER JOIN user_accounts AS ua ON pt.person_id = ua.person_id
-    WHERE pt.person_id = ?`, [id]);
+    INNER JOIN enrolled_subject AS es ON snt.student_number = es.student_number
+    INNER JOIN student_status_table AS sst ON snt.student_number = sst.student_number
+    INNER JOIN active_school_year_table AS sy ON es.active_school_year_id = sy.id
+    WHERE pt.person_id = ? AND sy.astatus = 1`, [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "Person not found" });
     }
 
-    res.json(rows[0]);
-    console.log(rows[0]);
+    const student_number = rows[0].student_number;
+    const year_level_id = rows[0].year_level_id;
+    const curriculum_id = rows[0].curriculum_id;
+    const semester_id = rows[0].semester_id;
+
+    const checkTotalRequiredUnits = `
+      SELECT (SUM(ct.course_unit) + SUM(ct.lab_unit)) AS required_total_units FROM program_tagging_table AS ptt
+      INNER JOIN course_table AS ct ON ptt.course_id = ct.course_id
+      WHERE ptt.year_level_id = ? AND ptt.semester_id = ? AND ptt.curriculum_id = ?
+    `
+
+    const [requiredUnits] = await db3.execute(checkTotalRequiredUnits, [year_level_id, semester_id, curriculum_id]);
+    console.log("Required Units for this program is ", requiredUnits)
+
+    const checkTotalEnrolledUnits = `
+      SELECT (SUM(ct.course_unit) + SUM(ct.lab_unit)) AS enrolled_total_units FROM enrolled_subject AS es
+          INNER JOIN course_table AS ct ON es.course_id = ct.course_id
+          INNER JOIN student_status_table AS sst ON es.student_number = sst.student_number
+          INNER JOIN active_school_year_table AS sy ON es.active_school_year_id = sy.id
+          WHERE sy.astatus = 1 AND es.student_number = ? AND sst.year_level_id = ?;
+      `
+    const [enrolledUnits] = await db3.execute(checkTotalEnrolledUnits, [student_number, year_level_id]);
+
+    const requiredTotal = requiredUnits[0]?.required_total_units || 0;
+    const enrolledTotal = enrolledUnits[0]?.enrolled_total_units || 0;
+    console.log(enrolledTotal)
+    console.log(requiredTotal)
+
+    const student_status = enrolledTotal === requiredTotal ? "Regular" : "Irregular";
+
+    res.json({...rows[0], student_status});
   } catch (error) {
     console.error("Error fetching person:", error);
     res.status(500).json({ error: "Database error" });

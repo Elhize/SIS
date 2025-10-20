@@ -414,16 +414,6 @@ const CourseTagging = () => {
     }
   });
 
-  if (hasAccess === null) {
-    return <div>Loading access information...</div>;
-  }
-
-  if (!hasAccess) {
-    return (
-      <Unauthorized />
-    );
-  }
-
   return (
     <Box sx={{ height: "calc(100vh - 150px)", overflowY: "auto", paddingRight: 1, backgroundColor: "transparent" }}>
 
